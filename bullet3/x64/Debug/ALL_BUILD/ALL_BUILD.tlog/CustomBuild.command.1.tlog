@@ -1,0 +1,10 @@
+^C:\USERS\IVAN\DOWNLOADS\BULLET3-2.89\BULLET3-2.89\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/ivan/Downloads/bullet3-2.89/bullet3-2.89 -BC:/Users/ivan/Downloads/bullet3-2.89/bullet3-2.89/cmakeBuild --check-stamp-file C:/Users/ivan/Downloads/bullet3-2.89/bullet3-2.89/cmakeBuild/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

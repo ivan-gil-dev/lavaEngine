@@ -1,0 +1,15 @@
+﻿  btAlignedAllocator.cpp
+  btConvexHull.cpp
+  btConvexHullComputer.cpp
+  btGeometryUtil.cpp
+  btPolarDecomposition.cpp
+  btQuickprof.cpp
+  btSerializer.cpp
+  btSerializer64.cpp
+  btThreads.cpp
+  btVector3.cpp
+  btTaskScheduler.cpp
+  btThreadSupportPosix.cpp
+  btThreadSupportWin32.cpp
+  Создание кода...
+  LinearMath.vcxproj -> C:\Users\ivan\Downloads\bullet3-2.89\bullet3-2.89\cmakeBuild\lib\Debug\LinearMath_Debug.lib

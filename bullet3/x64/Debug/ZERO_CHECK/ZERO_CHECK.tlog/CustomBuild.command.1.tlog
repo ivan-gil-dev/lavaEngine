@@ -1,0 +1,10 @@
+^C:\USERS\IVAN\DOWNLOADS\BULLET3-2.89\BULLET3-2.89\CMAKEBUILD\CMAKEFILES\2481F4E6647D80A7BD9A869650852240\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/ivan/Downloads/bullet3-2.89/bullet3-2.89 -BC:/Users/ivan/Downloads/bullet3-2.89/bullet3-2.89/cmakeBuild --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/ivan/Downloads/bullet3-2.89/bullet3-2.89/cmakeBuild/BULLET_PHYSICS.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
