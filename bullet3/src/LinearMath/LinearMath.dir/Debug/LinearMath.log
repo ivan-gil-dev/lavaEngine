@@ -1,0 +1,17 @@
+﻿  Building Custom Rule C:/Users/ivan/Downloads/bullet3-master(1)/bullet3-master/src/LinearMath/CMakeLists.txt
+  btAlignedAllocator.cpp
+  btConvexHull.cpp
+  btConvexHullComputer.cpp
+  btGeometryUtil.cpp
+  btPolarDecomposition.cpp
+  btQuickprof.cpp
+  btReducedVector.cpp
+  btSerializer.cpp
+  btSerializer64.cpp
+  btThreads.cpp
+  btVector3.cpp
+  btTaskScheduler.cpp
+  btThreadSupportPosix.cpp
+  btThreadSupportWin32.cpp
+  Создание кода...
+  LinearMath.vcxproj -> C:\Users\ivan\Downloads\bullet3-master(1)\bullet3-master\MahBuild\lib\Debug\LinearMath_Debug.lib

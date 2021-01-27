@@ -1,0 +1,6 @@
+﻿  Building Custom Rule C:/Users/ivan/Downloads/bullet3-master(1)/bullet3-master/src/Bullet3Common/CMakeLists.txt
+  b3AlignedAllocator.cpp
+  b3Vector3.cpp
+  b3Logging.cpp
+  Создание кода...
+  Bullet3Common.vcxproj -> C:\Users\ivan\Downloads\bullet3-master(1)\bullet3-master\MahBuild\lib\Debug\Bullet3Common_Debug.lib

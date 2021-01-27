@@ -1,0 +1,8 @@
+﻿  Building Custom Rule C:/Users/ivan/Downloads/bullet3-master(1)/bullet3-master/src/Bullet3Collision/CMakeLists.txt
+  b3DynamicBvh.cpp
+  b3DynamicBvhBroadphase.cpp
+  b3OverlappingPairCache.cpp
+  b3ConvexUtility.cpp
+  b3CpuNarrowPhase.cpp
+  Создание кода...
+  Bullet3Collision.vcxproj -> C:\Users\ivan\Downloads\bullet3-master(1)\bullet3-master\MahBuild\lib\Debug\Bullet3Collision_Debug.lib

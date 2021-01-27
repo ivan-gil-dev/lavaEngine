@@ -1,0 +1,19 @@
+﻿  Building Custom Rule C:/Users/ivan/Downloads/bullet3-master(1)/bullet3-master/src/BulletSoftBody/CMakeLists.txt
+  btSoftBody.cpp
+  btSoftBodyConcaveCollisionAlgorithm.cpp
+  btSoftBodyHelpers.cpp
+  btSoftBodyRigidBodyCollisionConfiguration.cpp
+  btSoftRigidCollisionAlgorithm.cpp
+  btSoftRigidDynamicsWorld.cpp
+  btSoftMultiBodyDynamicsWorld.cpp
+  btSoftSoftCollisionAlgorithm.cpp
+  btDefaultSoftBodySolver.cpp
+  btDeformableBackwardEulerObjective.cpp
+  btDeformableBodySolver.cpp
+  btDeformableMultiBodyConstraintSolver.cpp
+  btDeformableContactProjection.cpp
+  btDeformableMultiBodyDynamicsWorld.cpp
+  btDeformableContactConstraint.cpp
+  poly34.cpp
+  Создание кода...
+  BulletSoftBody.vcxproj -> C:\Users\ivan\Downloads\bullet3-master(1)\bullet3-master\MahBuild\lib\Debug\BulletSoftBody_Debug.lib

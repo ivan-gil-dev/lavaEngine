@@ -1,0 +1,83 @@
+﻿Сборка начата 28.01.2021 00:04:49.
+Уровень детализации журнала: Normal.     1>Проект "E:\dev\cpp\WinAPI Branch\Lava\Lava.vcxproj" в узле 2 (целевые объекты Build).
+     1>InitializeBuildStatus:
+         Создание "x64\Debug\Lava.tlog\unsuccessfulbuild", так как было задано "AlwaysCreate".
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.24.28314\bin\HostX86\x64\CL.exe /c /ZI /JMC /nologo /W3 /WX- /diagnostics:column /sdl /Od /D BT_USE_DOUBLE_PRECISION /D _DEBUG /D _CONSOLE /D VK_USE_PLATFORM_WIN32_KHR /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /permissive- /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"x64\Debug\\" /Fd"x64\Debug\vc142.pdb" /Gd /TP /FC /errorReport:prompt src\EntryPoint.cpp
+         EntryPoint.cpp
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Instance.h(50,13): warning C4101: count: неиспользованная локальная переменная
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Events.h(74,18): warning C4244: =: преобразование "double" в "T", возможна потеря данных
+                 with
+                 [
+                     T=float
+                 ]
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Events.h(75,18): warning C4244: =: преобразование "double" в "T", возможна потеря данных
+                 with
+                 [
+                     T=float
+                 ]
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Pipelines.h(404,53): warning C4244: =: преобразование "uint32_t" в "float", возможна потеря данных
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Pipelines.h(405,52): warning C4244: =: преобразование "uint32_t" в "float", возможна потеря данных
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Application.h(124,76): warning C4244: =: преобразование "uint32_t" в "float", возможна потеря данных
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Application.h(259,71): warning C4244: =: преобразование "uint32_t" в "float", возможна потеря данных
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Application.h(391,19): warning C4244: =: преобразование "uint32_t" в "float", возможна потеря данных
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Application.h(392,19): warning C4244: =: преобразование "uint32_t" в "float", возможна потеря данных
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Application.h(414,1): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Application.h(432,1): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\EntryPoint.cpp(15,45): warning C4311: приведение типов: усечение указателя из "HANDLE" в "long"
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\EntryPoint.cpp(15,45): warning C4302: приведение типов: усечение из "HANDLE" к "long"
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\EntryPoint.cpp(21,40): warning C4311: приведение типов: усечение указателя из "HANDLE" в "long"
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\EntryPoint.cpp(21,40): warning C4302: приведение типов: усечение из "HANDLE" к "long"
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Application.h(361): warning C4715: WndProc: значение возвращается не при всех путях выполнения
+     1>E:\dev\cpp\WinAPI Branch\Lava\src\Headers\RigidBody.h(60): warning C4715: Lava::RigidBody::LoadVertices: значение возвращается не при всех путях выполнения
+         Для всех выходных данных обновления не требуется.
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.24.28314\bin\HostX86\x64\link.exe /ERRORREPORT:PROMPT /OUT:"E:\dev\cpp\WinAPI Branch\x64\Debug\Lava.exe" /INCREMENTAL /NOLOGO glfw3.lib LinearMath_Debug.lib BulletDynamics_Debug.lib BulletCollision_Debug.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG:FASTLINK /PDB:"E:\dev\cpp\WinAPI Branch\x64\Debug\Lava.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\dev\cpp\WinAPI Branch\x64\Debug\Lava.lib" /MACHINE:X64 /FORCE:MULTIPLE x64\Debug\EntryPoint.obj
+         x64\Debug\imgui.obj
+         x64\Debug\imgui_demo.obj
+         x64\Debug\imgui_draw.obj
+         x64\Debug\imgui_impl_glfw.obj
+         x64\Debug\imgui_impl_vulkan.obj
+         x64\Debug\imgui_impl_win32.obj
+         x64\Debug\imgui_widgets.obj
+         x64\Debug\volk.obj
+     1>LINK : warning LNK4075: не учитывается "/INCREMENTAL" из-за спецификации "/FORCE"
+     1>LINK : warning LNK4098: библиотека по умолчанию "MSVCRT" конфликтует с использованием других библиотек; используйте /NODEFAULTLIB:library
+         Lava.vcxproj -> E:\dev\cpp\WinAPI Branch\x64\Debug\Lava.exe
+       FinalizeBuildStatus:
+         Файл "x64\Debug\Lava.tlog\unsuccessfulbuild" удаляется.
+         Обращение к "x64\Debug\Lava.tlog\Lava.lastbuildstate".
+     1>Сборка проекта "E:\dev\cpp\WinAPI Branch\Lava\Lava.vcxproj" завершена (целевые объекты Build).
+
+Сборка успешно завершена.
+
+       "E:\dev\cpp\WinAPI Branch\Lava\Lava.vcxproj" (целевой объект Build ) (1) ->
+       (Целевой объект ClCompile) -> 
+         E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Instance.h(50,13): warning C4101: count: неиспользованная локальная переменная
+         E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Events.h(74,18): warning C4244: =: преобразование "double" в "T", возможна потеря данных
+         E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Events.h(75,18): warning C4244: =: преобразование "double" в "T", возможна потеря данных
+         E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Pipelines.h(404,53): warning C4244: =: преобразование "uint32_t" в "float", возможна потеря данных
+         E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Pipelines.h(405,52): warning C4244: =: преобразование "uint32_t" в "float", возможна потеря данных
+         E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Application.h(124,76): warning C4244: =: преобразование "uint32_t" в "float", возможна потеря данных
+         E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Application.h(259,71): warning C4244: =: преобразование "uint32_t" в "float", возможна потеря данных
+         E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Application.h(391,19): warning C4244: =: преобразование "uint32_t" в "float", возможна потеря данных
+         E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Application.h(392,19): warning C4244: =: преобразование "uint32_t" в "float", возможна потеря данных
+         E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Application.h(414,1): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+         E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Application.h(432,1): warning C4244: аргумент: преобразование "float" в "int", возможна потеря данных
+         E:\dev\cpp\WinAPI Branch\Lava\src\EntryPoint.cpp(15,45): warning C4311: приведение типов: усечение указателя из "HANDLE" в "long"
+         E:\dev\cpp\WinAPI Branch\Lava\src\EntryPoint.cpp(15,45): warning C4302: приведение типов: усечение из "HANDLE" к "long"
+         E:\dev\cpp\WinAPI Branch\Lava\src\EntryPoint.cpp(21,40): warning C4311: приведение типов: усечение указателя из "HANDLE" в "long"
+         E:\dev\cpp\WinAPI Branch\Lava\src\EntryPoint.cpp(21,40): warning C4302: приведение типов: усечение из "HANDLE" к "long"
+         E:\dev\cpp\WinAPI Branch\Lava\src\Headers\Application.h(361): warning C4715: WndProc: значение возвращается не при всех путях выполнения
+         E:\dev\cpp\WinAPI Branch\Lava\src\Headers\RigidBody.h(60): warning C4715: Lava::RigidBody::LoadVertices: значение возвращается не при всех путях выполнения
+
+
+       "E:\dev\cpp\WinAPI Branch\Lava\Lava.vcxproj" (целевой объект Build ) (1) ->
+       (Целевой объект Link) -> 
+         LINK : warning LNK4075: не учитывается "/INCREMENTAL" из-за спецификации "/FORCE"
+         LINK : warning LNK4098: библиотека по умолчанию "MSVCRT" конфликтует с использованием других библиотек; используйте /NODEFAULTLIB:library
+
+    Предупреждений: 19
+    Ошибок: 0
+
+Прошло времени 00:00:08.25

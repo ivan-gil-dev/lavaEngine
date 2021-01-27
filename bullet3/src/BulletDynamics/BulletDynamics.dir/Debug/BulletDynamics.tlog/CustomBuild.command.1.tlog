@@ -1,0 +1,10 @@
+^C:\USERS\IVAN\DOWNLOADS\BULLET3-MASTER(1)\BULLET3-MASTER\SRC\BULLETDYNAMICS\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/ivan/Downloads/bullet3-master(1)/bullet3-master -BC:/Users/ivan/Downloads/bullet3-master(1)/bullet3-master/MahBuild --check-stamp-file C:/Users/ivan/Downloads/bullet3-master(1)/bullet3-master/MahBuild/src/BulletDynamics/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

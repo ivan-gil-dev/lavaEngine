@@ -1,0 +1,5 @@
+﻿  Building Custom Rule C:/Users/ivan/Downloads/bullet3-master(1)/bullet3-master/src/Bullet3Geometry/CMakeLists.txt
+  b3ConvexHullComputer.cpp
+  b3GeometryUtil.cpp
+  Создание кода...
+  Bullet3Geometry.vcxproj -> C:\Users\ivan\Downloads\bullet3-master(1)\bullet3-master\MahBuild\lib\Debug\Bullet3Geometry_Debug.lib
