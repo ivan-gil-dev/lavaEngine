@@ -1,0 +1,120 @@
+#ifndef buffers_h
+#define buffers_h
+
+
+#include "../../vendor/volk.h"
+#include "CommandBuffer.h"
+#include <iostream>
+
+namespace Engine{
+	namespace VulkanBuffers{
+		
+		//_Выбор на основе флагов подходящего типа памяти
+		inline uint32_t Buf_Func_FindSuitableMemoryType(VkPhysicalDevice device, uint32_t memoryTypeBits, VkMemoryPropertyFlags flags) {
+
+			VkPhysicalDeviceMemoryProperties memProperties;
+			vkGetPhysicalDeviceMemoryProperties(device, &memProperties);
+
+			for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+				if ((memoryTypeBits & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & flags) == flags) {
+					return i;
+				}
+			}
+
+			throw std::runtime_error("Unable to find suitable memory type");
+		}
+
+		//_Буфер на базе Vulkan API
+		inline void Buf_Func_CreateBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize size,
+			VkBuffer& buffer, VkDeviceMemory& deviceMemory, VkBufferUsageFlags usage, VkMemoryPropertyFlags propertyFlags) {
+
+			VkBufferCreateInfo bufferCreateInfo{};
+			
+			{
+				bufferCreateInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+				bufferCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+				bufferCreateInfo.size = size;
+				bufferCreateInfo.usage = usage;
+			}
+
+			if (vkCreateBuffer(device, &bufferCreateInfo, nullptr, &buffer) != VK_SUCCESS) {
+				throw std::runtime_error("Failed to create vertex buffer");
+			}
+
+			//_Получить требования для выделения памяти
+			VkMemoryRequirements memRequirements;
+			vkGetBufferMemoryRequirements(device, buffer, &memRequirements);
+
+			VkMemoryAllocateInfo memAllocInfo{};
+			{
+				memAllocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+				memAllocInfo.allocationSize = memRequirements.size;
+				memAllocInfo.memoryTypeIndex = Buf_Func_FindSuitableMemoryType(physicalDevice, memRequirements.memoryTypeBits, propertyFlags);
+			}
+
+			if (vkAllocateMemory(device, &memAllocInfo, nullptr, &deviceMemory) != VK_SUCCESS) {
+				throw std::runtime_error("Failed to allocate memory");
+			}
+
+			vkBindBufferMemory(device, buffer, deviceMemory, 0);
+		}
+
+		//_Скопировать из буфера в буфер
+		inline void Buf_Func_CopyBuffer(VkDevice device, VkCommandPool commandPool, VkQueue copyBufferQueue,
+			VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize srcOffset, VkDeviceSize dstOffset, VkDeviceSize size) {
+			CommandBuffer commandBuffer;
+			{
+				commandBuffer.AllocateCommandBuffer(device, commandPool);
+				commandBuffer.BeginCommandBuffer();
+			}
+
+			//_Область копирования данных
+			VkBufferCopy bufferRegion{};
+			{
+				bufferRegion.srcOffset = srcOffset;
+				bufferRegion.dstOffset = dstOffset;
+				bufferRegion.size = size;
+			}
+
+			//_Копирование буфера
+			vkCmdCopyBuffer(commandBuffer.Get(), srcBuffer, dstBuffer, 1, &bufferRegion);
+
+			{
+				commandBuffer.EndCommandBuffer();
+				commandBuffer.SubmitCommandBuffer(copyBufferQueue);
+				commandBuffer.FreeCommandBuffer(device, commandPool);
+			}
+		}
+
+		class Buffer {
+		protected:
+			VkBuffer	    mBuffer;
+			VkDeviceMemory  Memory;
+		public:
+			VkBuffer Get();
+
+			VkDeviceMemory GetDeviceMemory();
+
+			void Destroy(VkDevice device);
+		};
+
+		class VertexBuffer : public Buffer {
+		public:
+			void CreateVertexBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkQueue copyBufferQueue,
+				VkCommandPool commandPool, void* bufferData, size_t sizeOfData);
+		};
+
+		class IndexBuffer : public Buffer {
+		public:
+			void CreateIndexBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkQueue copyBufferQueue,
+				VkCommandPool commandPool, void* bufferData, size_t sizeOfData);
+		};
+
+		class UniformBuffer : public Buffer {
+		public:
+			void CreateUniformBuffer(VkPhysicalDevice physicalDevice, VkDevice device, size_t size);
+		};
+	}
+}
+
+#endif // 
