@@ -1,5 +1,5 @@
-#include <Application.h>
-
+#include <../EngineProject/src/Headers/Application.h>
+#include "FloorScript.h"
 extern Application app;
 void Engine::Scene::Demo(){
 	InitBullet();
@@ -117,7 +117,7 @@ void Engine::Scene::Demo(){
 	box3->ApplyEntityTransformToRigidbody();
 	entities.push_back(box3);
 
-	GameObject* gameObject2 = new GameObject;
+	GameObject* gameObject2 = new Floor;
 	gameObject2->pMesh = new Mesh;
 	gameObject2->pRigidBody = new RigidBody;
 
@@ -136,6 +136,16 @@ void Engine::Scene::Demo(){
 	gameObject2->Transform.Scale(glm::vec3(4.0f, 4.0f, 4.0f));
 	gameObject2->ApplyEntityTransformToRigidbody();
 	entities.push_back(gameObject2);
+
+
+	//GameObject* gameObject3 = new GameObject;
+	//gameObject3->pMesh = new Mesh;
+
+	//gameObject3->pMesh->CreateMesh("CoreAssets/City.obj");
+	//gameObject3->SetID((int)entities.size());
+	//gameObject3->SetName("City");
+	//
+	//entities.push_back(gameObject3);
 
 	//GameObject* gameObject5 = new GameObject;
 	//gameObject5->pMesh = new Mesh;

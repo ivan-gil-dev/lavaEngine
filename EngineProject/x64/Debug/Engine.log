@@ -1,0 +1,4 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(519,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (Lava.vcxproj).  Это может привести к ошибкам очистки и перестроения.
+  Mesh.cpp
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Mesh.cpp(89,33): warning C4834: отмена возвращаемого значения функции с атрибутом "nodiscard"
+  Engine.vcxproj -> G:\dev\cpp\WinAPI Branch\x64\Debug\Engine.lib

@@ -144,9 +144,15 @@
     <ClCompile Include="File.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EngineProject\Engine.vcxproj">
+      <Project>{d528d22e-a511-4c52-bbde-356e9903675b}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Engine\Lava.vcxproj">
       <Project>{d528d22e-a511-4c52-bbde-356e9903675b}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FloorScript.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

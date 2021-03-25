@@ -1,7 +1,0 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(519,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (Lava.vcxproj).  Это может привести к ошибкам очистки и перестроения.
-  EntryPoint.cpp
-  Application.cpp
-  Globals.cpp
-  Mesh.cpp
-  Создание кода...
-  Lava.vcxproj -> G:\dev\cpp\WinAPI Branch\x64\Debug\Engine.lib
