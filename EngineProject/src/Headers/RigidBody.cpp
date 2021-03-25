@@ -44,7 +44,6 @@ void Engine::RigidBody::CreateShape(RigidBodyShapeType shapeType) {
 	if (shapeType == RIGIDBODY_SHAPE_TYPE_MESH) {
 		if (ENABLE_RIGIDBODY_MESH) {
 			DebugMesh.CreateMesh("CoreAssets/cube.obj", glm::vec3(1.0f, 0.0f, 0.0f));
-			//<Физическая модель в форме куба с графическим объектом>
 			pShape = new btConvexHullShape;
 			for (size_t i = 0; i < DebugMesh.GetVertices().size(); i++) {
 				((btConvexHullShape*)pShape)->addPoint(btVector3(
@@ -57,7 +56,6 @@ void Engine::RigidBody::CreateShape(RigidBodyShapeType shapeType) {
 		}
 
 		else {
-			//<Физическая модель в форме куба без графического объекта>
 			pShape = new btConvexHullShape;
 			std::vector<glm::vec3>* vertices = LoadVertices("CoreAssets/cube.obj");
 			for (size_t i = 0; i < vertices->size(); i++) {

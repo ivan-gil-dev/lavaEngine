@@ -58,7 +58,8 @@ namespace Engine{
 		std::vector<VkFramebuffer> framebuffers;
 		framebuffers.resize(swapchainImageViews.size());
 		for (size_t i = 0; i < swapchainImageViews.size(); i++) {
-			//	Изображение во фреймбуфере
+
+			//	Набор изображений для вывода во фреймбуфер
 			VkImageView attachments[] = {
 			//  msaa
 				multisamplingImageView,
@@ -89,7 +90,7 @@ namespace Engine{
 		return framebuffers;
 	}
 
-//  Буфер с коммандами для отрисовки примитивов
+//  Буфер с коммандами для отрисовки сцены
 	static CommandBuffer drawCommandBuffer;
 
 		//  Инициализация объектов Vulkan

@@ -8,7 +8,7 @@
 
 namespace Engine{
 
-	//<Пул дескрипторов задает максимальное доступное количество дескрипторов>
+	//Пул дескрипторов задает максимально доступное количество дескрипторов в каждом наборе
 	
 	class DescriptorPool {
 		protected:
@@ -30,7 +30,7 @@ namespace Engine{
 		void CreateDescriptorPool(VkDevice device, std::vector<VkImageView> imageViews){
 			std::vector<VkDescriptorPoolSize> poolSizes;
 			VkDescriptorPoolSize mvpPoolSize{};
-			//<Model View Projection>
+			//Model View Projection Matrix
 			{
 				mvpPoolSize.descriptorCount = (uint32_t)imageViews.size() * 1000;
 				mvpPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -39,7 +39,7 @@ namespace Engine{
 			
 
 			VkDescriptorPoolSize textureSamplerPoolSize{};
-			//<Текстура>
+			//Текстура
 			{
 				textureSamplerPoolSize.descriptorCount = (uint32_t)imageViews.size() * 1000;
 				textureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
@@ -48,7 +48,7 @@ namespace Engine{
 			
 
 			VkDescriptorPoolSize pointLightAttributesPoolSize{};
-			//<Аттрибуты точечного источника света>
+			//Аттрибуты источника света
 			{
 				pointLightAttributesPoolSize.descriptorCount = (uint32_t)imageViews.size() * 1000 * MAX_SPOTLIGHTS;
 				pointLightAttributesPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -66,7 +66,7 @@ namespace Engine{
 			
 
 			VkDescriptorPoolSize materialPoolSize{};
-			//<Материал>
+			//Материал 
 			{
 				materialPoolSize.descriptorCount = (uint32_t)imageViews.size() * 1000;
 				materialPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -98,7 +98,7 @@ namespace Engine{
 			std::vector<VkDescriptorPoolSize> poolSizes;
 
 			VkDescriptorPoolSize mvpPoolSize{};
-			//<Model View Projection>
+			//Model View Projection
 			{
 				mvpPoolSize.descriptorCount = (uint32_t)imageViews.size() * 1000;
 				mvpPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -138,7 +138,7 @@ namespace Engine{
 			
 
 			VkDescriptorPoolSize textureSamplerPoolSize{};
-			//<Текстура skybox'а>
+			//Текстура skybox'а
 			{
 				textureSamplerPoolSize.descriptorCount = (uint32_t)imageViews.size() * 1000;
 				textureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;

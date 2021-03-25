@@ -19,7 +19,7 @@ namespace Engine{
 			VkImageUsageFlags usage, VkSampleCountFlagBits samples, uint32_t arrayLayers,
 			VkImageCreateFlags flags);
 	
-	//Pipeline Barrier (указать на какой стадии конвеера будет перемещено изображение)
+	//Pipeline Barrier (указать на какой этап конвеера будет перемещено изображение)
 	void Img_Func_TransitionImageLayout(VkDevice device, VkQueue pipelineBarrierQueue, VkCommandPool commandPool,
 			VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout,
 			VkImageSubresourceRange subresourceRange);

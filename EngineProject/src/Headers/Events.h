@@ -39,7 +39,7 @@ namespace Engine{
 		KEY_CONTROL = VK_CONTROL
 	};
 
-	//<Обработчик нажатия клавиши>
+	//Обработчик нажатия клавиши
 	class KeyPressedEventHandler{
 
 		std::vector<ENGINE_KEYS> pressedKeys;
@@ -74,7 +74,7 @@ namespace Engine{
 	
 	};
 
-	//<Обработчик движения мышью>
+	//Обработчик движения мышью
 	class MouseMoveEventHandler{
 	glm::vec2 cursorPos;
 	public:
@@ -89,7 +89,7 @@ namespace Engine{
 
 	};
 
-	//<Обработчик вывода курсора>
+	//Обработчик вывода курсора
 	class ShowCursorEventHandler {
 		bool IsShowing = true;
 	public:

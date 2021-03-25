@@ -10,8 +10,6 @@ namespace Engine{
 	class Surface {
 		VkSurfaceKHR vSurface;
 		public:
-
-		// В качестве поверхности для отрисовки используется окно Win32
 	
 		void CreateSurface(HWND hwnd, HINSTANCE hInstance, VkInstance instance) {
 			VkWin32SurfaceCreateInfoKHR surfaceCreateInfo = {};

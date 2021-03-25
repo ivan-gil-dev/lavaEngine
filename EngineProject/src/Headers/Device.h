@@ -23,7 +23,7 @@ namespace Engine{
 
 			VkDeviceQueueCreateInfo queueInfo{};
 			queueInfo.queueCount = 1;
-			queueInfo.queueFamilyIndex = indices.graphicsQueueIndex; //<Индекс очереди, поддерживающий команды отрисовки>
+			queueInfo.queueFamilyIndex = indices.graphicsQueueIndex; //Индекс очереди, поддерживающий команды отрисовки
 			queueInfo.pQueuePriorities = &priority;
 			queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
 			queueCreateInfos.push_back(queueInfo);

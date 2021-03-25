@@ -214,32 +214,32 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>& Enti
 			
 
 
-			//<TODO: добавление объекта>
-			if (ImGui::Button(u8"Add+")) {
+			//TODO: добавление объекта
+			//if (ImGui::Button(u8"Add+")) {
 
-				//<>
-				{
-					Engine::GameObject* newObject = new Engine::GameObject;
-					newObject->pMesh->CreateMesh("assets/cube.obj");
-					newObject->SetID((int)Entities.size());
-					std::string nameString = "GameObject";
-					newObject->SetName(nameString);
-					newObject->Transform.Translate(glm::vec3(0.0f, 0.0f, 0.0f));
-					newObject->Transform.Scale(glm::vec3(1.f, 1.f, 1.f));
-					newObject->Transform.Rotate(glm::vec3(0.f, 0.f, 0.f));
-					newObject->pRigidBody->CreateRigidBody(
-						Engine::RIGIDBODY_SHAPE_TYPE_CUBE,
-						1.1f,
-						0.2f,
-						1.9f,
-						Engine::Globals::gDynamicsWorld,
-						newObject->GetID()
-					);
-					newObject->ApplyEntityTransformToRigidbody();
-					//	*GameObjects.push_back(newObject);
-				}
+			//	//<>
+			//	{
+			//		Engine::GameObject* newObject = new Engine::GameObject;
+			//		newObject->pMesh->CreateMesh("assets/cube.obj");
+			//		newObject->SetID((int)Entities.size());
+			//		std::string nameString = "GameObject";
+			//		newObject->SetName(nameString);
+			//		newObject->Transform.Translate(glm::vec3(0.0f, 0.0f, 0.0f));
+			//		newObject->Transform.Scale(glm::vec3(1.f, 1.f, 1.f));
+			//		newObject->Transform.Rotate(glm::vec3(0.f, 0.f, 0.f));
+			//		newObject->pRigidBody->CreateRigidBody(
+			//			Engine::RIGIDBODY_SHAPE_TYPE_CUBE,
+			//			1.1f,
+			//			0.2f,
+			//			1.9f,
+			//			Engine::Globals::gDynamicsWorld,
+			//			newObject->GetID()
+			//		);
+			//		newObject->ApplyEntityTransformToRigidbody();
+			//		//	*GameObjects.push_back(newObject);
+			//	}
 
-			}
+			//}
 
 			if (!opened) {
 				ShowHierarchyPanel = false;
@@ -248,25 +248,25 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>& Enti
 			ImGui::End();
 		}
 		else {
-			//<Растяжение 3D вьюпорта если панель иерархии не отображена>
+			//Растяжение 3D вьюпорта если панель иерархии не отображена
 			Engine::Globals::gEditor3DView.x = 0;
 			Engine::Globals::gEditor3DView.width = static_cast<float>(Engine::Globals::gSwapchain.GetInfo().imageExtent.width);
 		}
 		//<Конец панели иерархии>
 
 
-		//<Панель свойств>
+		//Панель свойств
 		if (ShowPropertiesPanel) {
 			bool opened = true;
 
 			switch (Entities[SelectedItem_ID]->GetEntityType()) {
 
-			//<Панель свойств для объекта>
+			//Панель свойств для объекта
 			case Engine::ENTITY_TYPE_GAME_OBJECT:
 
 				ImGui::Begin(u8"Properties", &opened, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 
-				//<Расположение 3D вьюпорта слева от панели свойств>
+				//Расположение 3D вьюпорта слева от панели свойств
 				{
 					Engine::Globals::gEditor3DView.width -= Engine::Globals::gSwapchain.GetInfo().imageExtent.width - ImGui::GetWindowPos().x;
 
@@ -278,7 +278,7 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>& Enti
 					);
 				}
 
-				//<Выставление свойств слайдерами>
+				//Выставление свойств слайдерами
 				{
 					glm::vec3 objectPos = Entities[SelectedItem_ID]->Transform.GetPosition();
 					glm::vec3 objectRotation = Entities[SelectedItem_ID]->Transform.GetEulerAngles();
@@ -291,7 +291,7 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>& Enti
 						ImGui::DragFloat3("Rigidbody Scale", (float*)&objectRigidbodyScale, 1.0f, 0.f, 300.0f);
 					}
 
-					//<Если сцена не проигрывается, то применить новые свойства>
+					//Если сцена не проигрывается, то применить новые свойства
 					if (!Engine::Globals::gIsScenePlaying) {
 						Entities[SelectedItem_ID]->Transform.Translate(objectPos);
 						Entities[SelectedItem_ID]->Transform.Rotate(objectRotation);
@@ -305,11 +305,11 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>& Enti
 				ImGui::End();
 				break;
 
-			//<Панель свойств для точечного источника света>
+			//Панель свойств для точечного источника света
 			case Engine::ENTITY_TYPE_SPOTLIGHT_OBJECT:
 				ImGui::Begin("Properties", &opened, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 
-				//<Расположение 3D вьюпорта слева от панели свойств>
+				//Расположение 3D вьюпорта слева от панели свойств
 				{
 					Engine::Globals::gEditor3DView.width -= Engine::Globals::gSwapchain.GetInfo().imageExtent.width - ImGui::GetWindowPos().x;
 
@@ -325,7 +325,7 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>& Enti
 					glm::vec3 objectPos = Entities[SelectedItem_ID]->Transform.GetPosition();
 					ImGui::DragFloat3("Position", (float*)&objectPos, 1.0f, -100.f, 100.f);
 
-					//<Если сцена не проигрывается, то применить новые свойства>
+					//Если сцена не проигрывается, то применить новые свойства
 					if (!Engine::Globals::gIsScenePlaying) {
 						Entities[SelectedItem_ID]->Transform.Translate(objectPos);
 					}
@@ -341,7 +341,7 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>& Enti
 				ShowPropertiesPanel = false;
 			}
 		}
-		//<Конец панели свойств>
+		//Конец панели свойств
 
 	}
 	else {
@@ -349,7 +349,7 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>& Enti
 	}
 }
 
-//<Первоначальная настройка приложения>
+//Первоначальная настройка приложения
 void Application::Init() {
 	WindowWidth = 1366;
 	WindowHeight = 768;
@@ -374,7 +374,7 @@ void Application::Init() {
 	}
 	::RegisterClassEx(&wc);
 
-	//<Полный экран>
+	//Полный экран
 	if (Engine::Globals::gToggleFullscreen) {
 		hwnd = CreateWindowEx(
 			0,
@@ -417,12 +417,12 @@ void Application::Init() {
 
 
 
-	//<Первоначальная настройка компонентов Vulkan>
+	//Первоначальная настройка компонентов Vulkan
 	Engine::initVulkan(hwnd, hInstance);
 
 	
 	Engine::Globals::gScene = new Engine::Scene;
-	//<Имплементация Demo() вне библиотеки>
+	//Имплементация Demo() вне библиотеки
 	Engine::Globals::gScene->Demo();
 	
 	if (ENABLE_IMGUI) {
@@ -437,18 +437,18 @@ void Application::Init() {
 	Engine::Globals::DeltaTime = 0;
 }
 
-//<Главный цикл>
+//Главный цикл
 void Application::Execute() {
 	MSG msg = { };
 	while (msg.message != WM_QUIT) {
-		//<Обработка событий>
+		//Обработка событий
 		if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE)) {
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 			continue;
 		}
 
-		//<Расчет времени итерации цикла>
+		//Расчет времени итерации цикла
 		{
 			Time = GetTickCount();
 			Engine::Globals::DeltaTime = Time - LastFrameTime;
@@ -462,7 +462,7 @@ void Application::Execute() {
 		if (Engine::Globals::gIsScenePlaying) {
 			for (size_t i = 0; i < Engine::Globals::gScene->GetVectorOfEntities().size(); i++) {
 
-				//<Применение физической модели к графической>
+				//Применение физической модели к графической
 				if (Engine::Globals::gScene->GetVectorOfEntities()[i]->GetEntityType() == Engine::ENTITY_TYPE_GAME_OBJECT) {
 					((Engine::GameObject*)Engine::Globals::gScene->GetVectorOfEntities()[i])->ApplyPhysicsToEntity();
 				}
@@ -475,7 +475,7 @@ void Application::Execute() {
 
 		if (ENABLE_IMGUI) {
 
-			//<Формирование данных ImGUI для передачи в GPU>
+			//Формирование данных ImGUI для передачи в GPU
 			{
 				ImGui_ImplVulkan_NewFrame();
 				ImGui_ImplWin32_NewFrame();
@@ -490,7 +490,7 @@ void Application::Execute() {
 
 		}
 
-		//<Вывод сцены и редактора (Или вывод без редактора)>
+		//Вывод сцены и редактора (Или вывод без редактора)
 		Engine::DrawScene(
 			ImguiDrawData,
 			Engine::Globals::gScene

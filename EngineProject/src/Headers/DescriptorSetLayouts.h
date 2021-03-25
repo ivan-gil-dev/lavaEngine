@@ -6,7 +6,7 @@
 #include	<vector>
 namespace Engine{
 	
-	//VkDescriptorSetLayout задает индексы дескрипторам в наборе
+	//VkDescriptorSetLayout задает параметры дескрипторов в наборе
 	
 
 	class DescriptorSetLayout {

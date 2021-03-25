@@ -4,7 +4,7 @@
 #include	"../../vendor/volk.h"
 #include	<iostream>
 namespace Engine{
-	//<Буфер для записи команд>
+	//Буфер для хранения команд
 	class CommandBuffer{
 		VkCommandBuffer CommandBuffer;
 		public:
@@ -17,12 +17,12 @@ namespace Engine{
 				allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 			}
 
-			//<Выделить командный буфер из пула>
+			//Выделить командный буфер из пула
 			vkAllocateCommandBuffers(device, &allocInfo, &CommandBuffer);
 			
 		}
 
-		//<Начать запись команд>
+		//Начать запись команд
 		void BeginCommandBuffer() { 
 			
 			VkCommandBufferBeginInfo beginInfo = {};
@@ -36,7 +36,7 @@ namespace Engine{
 			}
 		}
 
-		//<Отправить буфер в очередь>
+		//Отправить буфер в очередь
 		void SubmitCommandBuffer(VkQueue queue){ 
 			VkCommandBuffer pCommandBuffers[] = { CommandBuffer };
 			VkSubmitInfo submitInfo{};
@@ -46,7 +46,7 @@ namespace Engine{
 				submitInfo.commandBufferCount = 1;
 			}
 
-			//<Отправить буфер в очередь>
+			//Отправить буфер в очередь
 			vkQueueSubmit(queue, 1, &submitInfo, nullptr);
 			vkQueueWaitIdle(queue);
 		}

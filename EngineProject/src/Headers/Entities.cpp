@@ -96,11 +96,11 @@ void Engine::GameObject::ApplyPhysicsToEntity() {
 	if (pRigidBody != 0) {
 		if (pRigidBody->GetBulletRigidBody()->getMass() != 0) {
 
-			//<Получение трансформаций из физической модели>
+			//Получение трансформаций из физической модели
 			btTransform worldTransform;
 			worldTransform = pRigidBody->GetBulletRigidBody()->getCenterOfMassTransform();
 
-			//<Применить трансформации к графической модели>
+			//Применить трансформации к графической модели
 			glm::vec3 position = glm::vec3(worldTransform.getOrigin().getX(),
 				worldTransform.getOrigin().getY(),
 				worldTransform.getOrigin().getZ());

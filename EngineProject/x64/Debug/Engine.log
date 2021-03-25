@@ -1,4 +1,28 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(519,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (Lava.vcxproj).  Это может привести к ошибкам очистки и перестроения.
+  EntryPoint.cpp
+  Application.cpp
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(191,58): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+  Buffers.cpp
+  Entities.cpp
+  Globals.cpp
+  Images.cpp
+  GLM: GLM_GTX_hash extension included
   Mesh.cpp
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Mesh.cpp(89,33): warning C4834: отмена возвращаемого значения функции с атрибутом "nodiscard"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Mesh.cpp(88,33): warning C4834: отмена возвращаемого значения функции с атрибутом "nodiscard"
+  RigidBody.cpp
+  GLM: GLM_GTX_hash extension included
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\exponential.hpp(21,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\detail\func_geometric.inl(1,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\geometric.hpp(116,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\detail\func_matrix.inl(1,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\matrix.hpp(161,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\detail\type_mat4x4.inl(1,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\detail\type_mat4x4.hpp(188,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\ext\matrix_double4x4.hpp(5,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\mat4x4.hpp(5,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\gtc\matrix_transform.hpp(24,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\gtc\quaternion.hpp(18,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\gtx\hash.hpp(30,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Globals.h(7,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+  Создание кода...
   Engine.vcxproj -> G:\dev\cpp\WinAPI Branch\x64\Debug\Engine.lib

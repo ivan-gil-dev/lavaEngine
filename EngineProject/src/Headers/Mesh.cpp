@@ -299,7 +299,7 @@ void Engine::Mesh::CreateMesh(std::string modelPath) {
 		Globals::gDevice.GetGraphicsQueue(),
 		Globals::gCommandPool.Get(), "");
 
-	//<Создание буферов>
+	//Создание буферов
 	{
 		VertexBuffer.CreateVertexBuffer(Globals::gPhysicalDevice.Get(),
 			Globals::gDevice.Get(),

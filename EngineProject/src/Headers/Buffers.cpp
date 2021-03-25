@@ -13,7 +13,7 @@ void Engine::VulkanBuffers::Buffer::Destroy(VkDevice device) {
 	vkDestroyBuffer(device, mBuffer, nullptr);
 }
 
-//<Вершинный буфер>
+//Вершинный буфер
 void Engine::VulkanBuffers::VertexBuffer::CreateVertexBuffer(VkPhysicalDevice physicalDevice, VkDevice device, 
 	VkQueue copyBufferQueue, VkCommandPool commandPool, void* bufferData, size_t sizeOfData) {
 
@@ -22,8 +22,8 @@ void Engine::VulkanBuffers::VertexBuffer::CreateVertexBuffer(VkPhysicalDevice ph
 	VkBuffer stagingBuffer;
 	VkDeviceMemory stagingMemory;
 
-	//<Создание буфера в памяти хоста>
-	//<Буфер доступен для записи>
+	//Создание буфера в памяти хоста
+	//Буфер доступен для записи
 	Buf_Func_CreateBuffer(
 		physicalDevice,
 		device,
@@ -34,13 +34,13 @@ void Engine::VulkanBuffers::VertexBuffer::CreateVertexBuffer(VkPhysicalDevice ph
 		VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT
 	);
 
-	//<Запись данных в буфер>
+	//Запись данных в буфер
 	void* data;
 	vkMapMemory(device, stagingMemory, 0, bufferSize, 0, &data);
 	memcpy(data, bufferData, bufferSize);
 	vkUnmapMemory(device, stagingMemory);
 
-	//<Создание буфера в памяти GPU недоступного для записи напрямую>
+	//Создание буфера в памяти GPU недоступного для записи напрямую
 	Buf_Func_CreateBuffer(
 		physicalDevice,
 		device,
@@ -51,8 +51,8 @@ void Engine::VulkanBuffers::VertexBuffer::CreateVertexBuffer(VkPhysicalDevice ph
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
 	);
 
-	//<Перемещение данных из буфера в памяти хоста>
-	//<в буфер в памяти GPU>
+	//Перемещение данных из буфера в памяти хоста
+	//в буфер в памяти GPU
 	Buf_Func_CopyBuffer(
 		device,
 		commandPool,
@@ -68,7 +68,7 @@ void Engine::VulkanBuffers::VertexBuffer::CreateVertexBuffer(VkPhysicalDevice ph
 	vkFreeMemory(device, stagingMemory, nullptr);
 }
 
-//<Буфер с индексами>
+//Буфер с индексами
 void Engine::VulkanBuffers::IndexBuffer::CreateIndexBuffer(VkPhysicalDevice physicalDevice, VkDevice device, 
 	VkQueue copyBufferQueue, VkCommandPool commandPool, void* bufferData, size_t sizeOfData) {
 
@@ -116,11 +116,11 @@ void Engine::VulkanBuffers::IndexBuffer::CreateIndexBuffer(VkPhysicalDevice phys
 	vkFreeMemory(device, stagingMemory, nullptr);
 }
 
-//<Буфер с данными для передачи в пискельный шейдер>
+//Буфер с данными для передачи в пискельный шейдер
 void Engine::VulkanBuffers::UniformBuffer::CreateUniformBuffer(VkPhysicalDevice physicalDevice, VkDevice device, size_t size) {
 	VkDeviceSize uniformBufferSize = size;
 	
-	//<Буфер для пиксельного шейдера создается в памяти хоста>
+	//Буфер для пиксельного шейдера создается в памяти хоста
 	Buf_Func_CreateBuffer(
 		physicalDevice,
 		device,

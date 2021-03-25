@@ -9,7 +9,7 @@
 namespace Engine{
 	namespace VulkanBuffers{
 		
-		//<Выбор на основе доступа подходящего типа памяти>
+		//Выбор подходящего (по доступу) типа памяти
 		inline uint32_t Buf_Func_FindSuitableMemoryType(VkPhysicalDevice device, uint32_t memoryTypeBits, VkMemoryPropertyFlags flags) {
 
 			VkPhysicalDeviceMemoryProperties memProperties;
@@ -24,7 +24,7 @@ namespace Engine{
 			throw std::runtime_error("Unable to find suitable memory type");
 		}
 
-		//<Создание буфера>
+		//Создание буфера
 		inline void Buf_Func_CreateBuffer(VkPhysicalDevice physicalDevice, VkDevice device, VkDeviceSize size,
 			VkBuffer& buffer, VkDeviceMemory& deviceMemory, VkBufferUsageFlags usage, VkMemoryPropertyFlags propertyFlags) {
 
@@ -59,7 +59,7 @@ namespace Engine{
 			vkBindBufferMemory(device, buffer, deviceMemory, 0);
 		}
 
-		//<Скопировать из буфера в буфер>
+		//Скопировать из буфера в буфер
 		inline void Buf_Func_CopyBuffer(VkDevice device, VkCommandPool commandPool, VkQueue copyBufferQueue,
 			VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize srcOffset, VkDeviceSize dstOffset, VkDeviceSize size) {
 			CommandBuffer commandBuffer;
@@ -68,7 +68,7 @@ namespace Engine{
 				commandBuffer.BeginCommandBuffer();
 			}
 
-			//<Область копирования данных>
+			//Область копирования данных
 			VkBufferCopy bufferRegion{};
 			{
 				bufferRegion.srcOffset = srcOffset;
@@ -76,7 +76,7 @@ namespace Engine{
 				bufferRegion.size = size;
 			}
 
-			//_Копирование буфера
+			//Копирование буфера
 			vkCmdCopyBuffer(commandBuffer.Get(), srcBuffer, dstBuffer, 1, &bufferRegion);
 
 			{

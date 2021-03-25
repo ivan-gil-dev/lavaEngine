@@ -49,31 +49,38 @@ void Engine::Scene::Demo(){
 	gameObject1->ApplyEntityTransformToRigidbody();
 	entities.push_back(gameObject1);
 
-	GameObject* box = new GameObject;
-	box->pMesh = new Mesh;
-	box->pRigidBody = new RigidBody;
+	
+
+	for (size_t i = 1; i < 40; i++)
+	{
+		GameObject* box = new GameObject;
+		box->pMesh = new Mesh;
+		box->pRigidBody = new RigidBody;
 
 
-	box->pMesh->CreateMesh("CoreAssets/AtlasCube.obj");
-	box->Transform.Translate(glm::vec3(-15.0f, 5.0f, 0.0f));
-	box->Transform.Rotate(glm::vec3(0.1f, 90.1f, 15.1f));
-	box->pMesh->SetBaseColorTexture("CoreAssets/AtlasCube.png");
+		box->pMesh->CreateMesh("CoreAssets/AtlasCube.obj");
+		box->Transform.Translate(glm::vec3(i*3, i*3, i*3));
+		box->Transform.Rotate(glm::vec3(0.1f, 90.1f, 15.1f));
+		box->pMesh->SetBaseColorTexture("CoreAssets/AtlasCube.png");
 
-	box->SetID((int)entities.size());
-	box->SetName("box1");
-	box->pRigidBody->CreateRigidBody(
-		RIGIDBODY_SHAPE_TYPE_CUBE,
-		1.1f,
-		-1.0f,
-		2.0f,
-		Globals::gDynamicsWorld,
-		box->GetID()
-	);
-	box->Transform.Scale(glm::vec3(1.5f, 1.5f, 1.5f));
-	box->ApplyEntityTransformToRigidbody();
-	entities.push_back(box);
+		box->SetID((int)entities.size());
+		box->SetName("box1");
+		box->pRigidBody->CreateRigidBody(
+			RIGIDBODY_SHAPE_TYPE_CUBE,
+			1.1f,
+			3.0f,
+			2.0f,
+			Globals::gDynamicsWorld,
+			box->GetID()
+		);
+		box->Transform.Scale(glm::vec3(1.5f, 1.5f, 1.5f));
+		box->pRigidBody->SetRigidbodyScale(glm::vec3(1.5f, 1.5f, 1.5f));
+		box->ApplyEntityTransformToRigidbody();
+		entities.push_back(box);
+	}
+	
 
-	GameObject* box2 = new GameObject;
+	/*GameObject* box2 = new GameObject;
 	box2->pMesh = new Mesh;
 	box2->pRigidBody = new RigidBody;
 
@@ -84,6 +91,8 @@ void Engine::Scene::Demo(){
 	box2->Transform.Translate(glm::vec3(+-10.0f, 4.0f, 1.0f));
 	box2->Transform.Scale(glm::vec3(3.5f, 1.5f, 1.5f));
 	box2->Transform.Rotate(glm::vec3(0.1f, 90.1f, 15.1f));
+	box2->pRigidBody->SetRigidbodyScale(glm::vec3(3.5, 1.5, 1.5));
+
 	box2->pRigidBody->CreateRigidBody(
 		RIGIDBODY_SHAPE_TYPE_CUBE,
 		1.1f,
@@ -115,7 +124,7 @@ void Engine::Scene::Demo(){
 		box3->GetID()
 	);
 	box3->ApplyEntityTransformToRigidbody();
-	entities.push_back(box3);
+	entities.push_back(box3);*/
 
 	GameObject* gameObject2 = new Floor;
 	gameObject2->pMesh = new Mesh;
@@ -133,7 +142,8 @@ void Engine::Scene::Demo(){
 		Globals::gDynamicsWorld,
 		gameObject2->GetID()
 	);
-	gameObject2->Transform.Scale(glm::vec3(4.0f, 4.0f, 4.0f));
+	gameObject2->Transform.Scale(glm::vec3(70.0f, 70.0f, 70.0f));
+	gameObject2->pRigidBody->SetRigidbodyScale(gameObject2->Transform.GetScaleValue());
 	gameObject2->ApplyEntityTransformToRigidbody();
 	entities.push_back(gameObject2);
 
@@ -159,22 +169,22 @@ void Engine::Scene::Demo(){
 	//entities.push_back(gameObject5);
 
 	SpotlightObject* spotlight = new SpotlightObject;
-	spotlight->Transform.Translate(glm::vec3(-30.0f, 3.0f, 2.0f));
+	spotlight->Transform.Translate(glm::vec3(-50.0f, 3.0f, 2.0f));
 	spotlight->SetID((int)entities.size());
 	entities.push_back(spotlight);
 
 	SpotlightObject* spotlight2 = new SpotlightObject;
-	spotlight2->Transform.Translate(glm::vec3(33.0f, 7.0f, 13.0f));
+	spotlight2->Transform.Translate(glm::vec3(25.0f, 3.0f, 13.0f));
 	spotlight2->SetID((int)entities.size());
 	entities.push_back(spotlight2);
 
 	SpotlightObject* spotlight3 = new SpotlightObject;
-	spotlight3->Transform.Translate(glm::vec3(0.0f, 7.0f, 13.0f));
+	spotlight3->Transform.Translate(glm::vec3(50.0f, 3.0f, 13.0f));
 	spotlight3->SetID((int)entities.size());
 	entities.push_back(spotlight3);
 
 	SpotlightObject* spotlight4 = new SpotlightObject;
-	spotlight4->Transform.Translate(glm::vec3(10.0f, 7.0f, 13.0f));
+	spotlight4->Transform.Translate(glm::vec3(70.0f, 3.0f, 13.0f));
 	spotlight4->SetID((int)entities.size());
 	entities.push_back(spotlight4);
 
