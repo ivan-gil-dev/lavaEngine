@@ -11,6 +11,7 @@
 #include "Scene.h"
 #include "Surface.h"
 #include "SyncObjects.h"
+#include <spdlog/sinks/basic_file_sink.h>
 namespace Engine {
 	namespace Globals {
 		DebugCamera debugCamera = {};
@@ -32,6 +33,9 @@ namespace Engine {
 		bool  gShowSkybox = true;
 		int   gHeight = 1366,
 			  gWidth = 768;
+
+		std::shared_ptr<spdlog::logger> gLogger = spdlog::basic_logger_mt("file", "logs/log.txt");
+
 		bool  gIsScenePlaying = false;
 		const int gmax_frames = 2;
 		VkSampleCountFlagBits gMSAAsamples = VK_SAMPLE_COUNT_4_BIT;

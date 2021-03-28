@@ -12,6 +12,7 @@
 #include <iostream>
 #include <windows.h>
 
+
 #ifdef _DEBUG
 static bool ENABLE_DYNAMIC_VIEWPORT = true;
 static bool ENABLE_IMGUI = true;
@@ -34,6 +35,8 @@ namespace Engine{
 		extern bool  gIsScenePlaying;
 		extern const int gmax_frames;
 		extern VkSampleCountFlagBits gMSAAsamples;
+
+		extern std::shared_ptr<spdlog::logger> gLogger;
 
 		extern btBroadphaseInterface* gBroadphase;
 		extern btDefaultCollisionConfiguration* gCollisionConfiguration;

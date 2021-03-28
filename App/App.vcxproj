@@ -71,7 +71,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Engine\src\Headers;$(SolutionDir)Engine\vendor\;C:\VulkanSDK\1.2.170.0\Include;$(SolutionDir)/spdlog/;$(SolutionDir)/bullet3/src;$(SolutionDir)/glfw/include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Engine\src\Headers;$(SolutionDir)Engine\vendor\;$(VULKAN_SDK)/include;$(SolutionDir)/spdlog/;$(SolutionDir)/bullet3/src;$(SolutionDir)/glfw/include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\bullet3\lib\debug;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

@@ -21,7 +21,8 @@ void SceneEditor::InitEditor(HWND hwnd) {
 
 	//Конфигурация ImGui под WinAPI
 	if (ImGui_ImplWin32_Init(hwnd) != true) {
-		throw std::runtime_error("Failed to init imguiWin32 for vulkan");
+		std::string error = "Failed to init imgui for win32";
+		throw std::runtime_error(error);
 	}
 
 	//Передача хэндлов Vulkan в ImGui
@@ -41,7 +42,11 @@ void SceneEditor::InitEditor(HWND hwnd) {
 	}
 
 	//Конфигурация ImGui под Vulkan
-	ImGui_ImplVulkan_Init(&init_info, Engine::Globals::gRenderPass.GetRenderPass());
+	if (!ImGui_ImplVulkan_Init(&init_info, Engine::Globals::gRenderPass.GetRenderPass())){
+		std::string error = "Failed to init imgui for Vulkan";
+		throw std::runtime_error(error);
+	}
+	
 
 	Engine::CommandBuffer oneTimeSubmitCommandBuffer;
 
@@ -53,9 +58,11 @@ void SceneEditor::InitEditor(HWND hwnd) {
 	}
 
 	//Загрузка шрифтов в ImGui
-	ImGui_ImplVulkan_CreateFontsTexture(
-		oneTimeSubmitCommandBuffer.Get()
-	);
+	if (!ImGui_ImplVulkan_CreateFontsTexture(oneTimeSubmitCommandBuffer.Get())) {
+		std::string error = "Failed to load fonts to Imgui";
+		throw std::runtime_error(error);
+	}
+	
 
 	//Конец записи команд
 	{
@@ -105,11 +112,11 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>& Enti
 						Engine::Globals::gIsScenePlaying = true; //Начало сцены
 						ResetPhysics = true; //Физика будет сброшена после остановки симуляции
 						
-						Engine::Globals::gEditor3DView.x = 0;
+						/*Engine::Globals::gEditor3DView.x = 0;
 						Engine::Globals::gEditor3DView.y = 0;
 						Engine::Globals::gEditor3DView.height = static_cast<float>(Engine::Globals::gSwapchain.GetInfo().imageExtent.height - MenubarHeight);
 						Engine::Globals::gEditor3DView.width = static_cast<float>(Engine::Globals::gSwapchain.GetInfo().imageExtent.width);
-						Engine::Globals::gEditor3DScissors.extent = Engine::Globals::gSwapchain.GetInfo().imageExtent;
+						Engine::Globals::gEditor3DScissors.extent = Engine::Globals::gSwapchain.GetInfo().imageExtent;*/
 						
 					}
 					else {
@@ -267,24 +274,26 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>& Enti
 				ImGui::Begin(u8"Properties", &opened, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 
 				//Расположение 3D вьюпорта слева от панели свойств
-				{
-					Engine::Globals::gEditor3DView.width -= Engine::Globals::gSwapchain.GetInfo().imageExtent.width - ImGui::GetWindowPos().x;
+				Engine::Globals::gEditor3DView.width -= Engine::Globals::gSwapchain.GetInfo().imageExtent.width - ImGui::GetWindowPos().x;
 
-		
-					ImGui::SetWindowPos(ImVec2(ImGui::GetWindowPos().x, MenubarHeight));
-					ImGui::SetWindowSize(
-						ImVec2(Engine::Globals::gSwapchain.GetInfo().imageExtent.width - ImGui::GetWindowPos().x,
-							   Engine::Globals::gSwapchain.GetInfo().imageExtent.height - MenubarHeight)
-					);
-				}
 
-				//Выставление свойств слайдерами
+				ImGui::SetWindowPos(ImVec2(ImGui::GetWindowPos().x, MenubarHeight));
+				ImGui::SetWindowSize(
+					ImVec2(Engine::Globals::gSwapchain.GetInfo().imageExtent.width - ImGui::GetWindowPos().x,
+						Engine::Globals::gSwapchain.GetInfo().imageExtent.height - MenubarHeight)
+				);
+				
+
 				{
+					//Выставление свойств слайдерами
 					glm::vec3 objectPos = Entities[SelectedItem_ID]->Transform.GetPosition();
 					glm::vec3 objectRotation = Entities[SelectedItem_ID]->Transform.GetEulerAngles();
+					glm::vec3 objectScale = Entities[SelectedItem_ID]->Transform.GetScaleValue();
 					glm::vec3 objectRigidbodyScale;
+
 					ImGui::DragFloat3("Position", (float*)&objectPos, 1.0f, -100.f, 100.f);
 					ImGui::DragFloat3("Rotation", (float*)&objectRotation, 1.0f, 0.f, 360.0f);
+					ImGui::DragFloat3("Scale", (float*)&objectScale, 1.0f, 0.f, 100.0f);
 
 					if (((Engine::GameObject*)Entities[SelectedItem_ID])->pRigidBody != nullptr) {
 						objectRigidbodyScale = ((Engine::GameObject*)Entities[SelectedItem_ID])->pRigidBody->pGetDebugMesh()->Transform.GetScaleValue();
@@ -295,12 +304,15 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>& Enti
 					if (!Engine::Globals::gIsScenePlaying) {
 						Entities[SelectedItem_ID]->Transform.Translate(objectPos);
 						Entities[SelectedItem_ID]->Transform.Rotate(objectRotation);
+						Entities[SelectedItem_ID]->Transform.Scale(objectScale);
 						if (((Engine::GameObject*)Entities[SelectedItem_ID])->pRigidBody != nullptr) {
 							((Engine::GameObject*)Entities[SelectedItem_ID])->pRigidBody->SetRigidbodyScale(objectRigidbodyScale);
 							((Engine::GameObject*)Entities[SelectedItem_ID])->ApplyEntityTransformToRigidbody();
 						}
 					}
 				}
+				
+				
 
 				ImGui::End();
 				break;
@@ -310,17 +322,14 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>& Enti
 				ImGui::Begin("Properties", &opened, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 
 				//Расположение 3D вьюпорта слева от панели свойств
-				{
-					Engine::Globals::gEditor3DView.width -= Engine::Globals::gSwapchain.GetInfo().imageExtent.width - ImGui::GetWindowPos().x;
+				Engine::Globals::gEditor3DView.width -= Engine::Globals::gSwapchain.GetInfo().imageExtent.width - ImGui::GetWindowPos().x;
 
-					ImGui::SetWindowPos(ImVec2(ImGui::GetWindowPos().x, MenubarHeight));
-					ImGui::SetWindowSize(
-						ImVec2(Engine::Globals::gSwapchain.GetInfo().imageExtent.width - ImGui::GetWindowPos().x,
-							Engine::Globals::gSwapchain.GetInfo().imageExtent.height - MenubarHeight)
-					);
-				}
-
-			
+				ImGui::SetWindowPos(ImVec2(ImGui::GetWindowPos().x, MenubarHeight));
+				ImGui::SetWindowSize(
+					ImVec2(Engine::Globals::gSwapchain.GetInfo().imageExtent.width - ImGui::GetWindowPos().x,
+						Engine::Globals::gSwapchain.GetInfo().imageExtent.height - MenubarHeight)
+				);
+				
 				{
 					glm::vec3 objectPos = Entities[SelectedItem_ID]->Transform.GetPosition();
 					ImGui::DragFloat3("Position", (float*)&objectPos, 1.0f, -100.f, 100.f);
@@ -330,6 +339,8 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>& Enti
 						Entities[SelectedItem_ID]->Transform.Translate(objectPos);
 					}
 				}
+				
+				
 
 				ImGui::End();
 				break;

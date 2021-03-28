@@ -2,6 +2,7 @@
 #define instance_h
 
 #include	"../../vendor/volk.h"
+#include	"Globals.h"
 #include	"DataTypes.h"
 #include	<spdlog/spdlog.h>
 #include	<vector>
@@ -21,9 +22,11 @@ namespace Engine{
 			const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
 		if (messageType == VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT){
 			spdlog::info(pCallbackData->pMessage);
+			Globals::gLogger->info(pCallbackData->pMessage);
 		}
 		else {
 			spdlog::warn(pCallbackData->pMessage);
+			Globals::gLogger->warn(pCallbackData->pMessage);
 		}
 		
 		return VK_FALSE;

@@ -11,14 +11,18 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 
 	if (!reader.ParseFromFile(modelPath, reader_config)) {
 		if (!reader.Error().empty()) {
-			std::cerr << "TinyObjReader: " << reader.Error();
+
+			std::string error = "TinyObjReader: " ;
+			error.append(reader.Error());
+
+			throw std::runtime_error(error);
 		}
 		exit(1);
 	}
 
-	if (!reader.Warning().empty()) {
+	/*if (!reader.Warning().empty()) {
 		std::cout << "TinyObjReader: " << reader.Warning();
-	}
+	}*/
 
 	auto& attrib = reader.GetAttrib();
 	auto& shapes = reader.GetShapes();

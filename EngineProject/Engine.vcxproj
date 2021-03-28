@@ -75,7 +75,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)/glfw/include;$(SolutionDir)/Lava/vendor;C:\VulkanSDK\1.2.170.0\Include;$(SolutionDir)/spdlog/;$(SolutionDir)/bullet3/src;$(UniversalCRT_IncludePath);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)/glfw/include;$(SolutionDir)/Lava/vendor;$(VULKAN_SDK)\Include;$(SolutionDir)/spdlog/;$(SolutionDir)/bullet3/src;$(UniversalCRT_IncludePath);$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\bullet3\lib\debug;$(SolutionDir)\glfw\lib-vc2019;$(LibraryPath)</LibraryPath>
     <TargetName>Engine</TargetName>
   </PropertyGroup>
