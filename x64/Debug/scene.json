@@ -36,7 +36,7 @@
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/chair.obj",
-    "TexturePath": "CoreAssets/chair.png"
+    "AlbedoTexturePath": "CoreAssets/chair.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -46,7 +46,8 @@
      "X": 1.0,
      "Y": 1.0,
      "Z": 1.0
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -68,37 +69,11 @@
   },
   {
    "Id": 2,
-   "Name": "Table",
-   "Type": "GameObject",
-   "Mesh": {
-    "Path": "CoreAssets/table.obj",
-    "TexturePath": "CoreAssets/table.jpg"
-   },
-   "Transform": {
-    "Position": {
-     "X": 6.0,
-     "Y": 0.20000000298023224,
-     "Z": 5.0
-    },
-    "Scale": {
-     "X": 1.0,
-     "Y": 1.0,
-     "Z": 1.0
-    },
-    "Rotation": {
-     "X": 0.0,
-     "Y": 0.0,
-     "Z": 0.0
-    }
-   }
-  },
-  {
-   "Id": 3,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -108,7 +83,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -129,12 +105,12 @@
    }
   },
   {
-   "Id": 4,
+   "Id": 3,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -144,7 +120,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -165,12 +142,12 @@
    }
   },
   {
-   "Id": 5,
+   "Id": 4,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -180,7 +157,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -201,12 +179,12 @@
    }
   },
   {
-   "Id": 6,
+   "Id": 5,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -216,7 +194,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -237,12 +216,12 @@
    }
   },
   {
-   "Id": 7,
+   "Id": 6,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -252,7 +231,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -273,12 +253,12 @@
    }
   },
   {
-   "Id": 8,
+   "Id": 7,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -288,7 +268,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -309,12 +290,12 @@
    }
   },
   {
-   "Id": 9,
+   "Id": 8,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -324,7 +305,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -345,12 +327,12 @@
    }
   },
   {
-   "Id": 10,
+   "Id": 9,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -360,7 +342,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -381,12 +364,12 @@
    }
   },
   {
-   "Id": 11,
+   "Id": 10,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -396,7 +379,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -417,12 +401,12 @@
    }
   },
   {
-   "Id": 12,
+   "Id": 11,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -432,7 +416,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -453,12 +438,12 @@
    }
   },
   {
-   "Id": 13,
+   "Id": 12,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -468,7 +453,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -489,12 +475,12 @@
    }
   },
   {
-   "Id": 14,
+   "Id": 13,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -504,7 +490,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -525,12 +512,12 @@
    }
   },
   {
-   "Id": 15,
+   "Id": 14,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -540,7 +527,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -561,12 +549,12 @@
    }
   },
   {
-   "Id": 16,
+   "Id": 15,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -576,7 +564,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -597,12 +586,12 @@
    }
   },
   {
-   "Id": 17,
+   "Id": 16,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -612,7 +601,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -633,12 +623,12 @@
    }
   },
   {
-   "Id": 18,
+   "Id": 17,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -648,7 +638,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -669,12 +660,12 @@
    }
   },
   {
-   "Id": 19,
+   "Id": 18,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -684,7 +675,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -705,12 +697,12 @@
    }
   },
   {
-   "Id": 20,
+   "Id": 19,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -720,7 +712,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -741,12 +734,12 @@
    }
   },
   {
-   "Id": 21,
+   "Id": 20,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -756,7 +749,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -777,12 +771,12 @@
    }
   },
   {
-   "Id": 22,
+   "Id": 21,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -792,7 +786,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -813,12 +808,12 @@
    }
   },
   {
-   "Id": 23,
+   "Id": 22,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -828,7 +823,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -849,12 +845,12 @@
    }
   },
   {
-   "Id": 24,
+   "Id": 23,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -864,7 +860,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -885,12 +882,12 @@
    }
   },
   {
-   "Id": 25,
+   "Id": 24,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -900,7 +897,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -921,12 +919,12 @@
    }
   },
   {
-   "Id": 26,
+   "Id": 25,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -936,7 +934,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -957,12 +956,12 @@
    }
   },
   {
-   "Id": 27,
+   "Id": 26,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -972,7 +971,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -993,12 +993,12 @@
    }
   },
   {
-   "Id": 28,
+   "Id": 27,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1008,7 +1008,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -1029,12 +1030,12 @@
    }
   },
   {
-   "Id": 29,
+   "Id": 28,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1044,7 +1045,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -1065,12 +1067,12 @@
    }
   },
   {
-   "Id": 30,
+   "Id": 29,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1080,7 +1082,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -1101,12 +1104,12 @@
    }
   },
   {
-   "Id": 31,
+   "Id": 30,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1116,7 +1119,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -1137,12 +1141,12 @@
    }
   },
   {
-   "Id": 32,
+   "Id": 31,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1152,7 +1156,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -1173,12 +1178,12 @@
    }
   },
   {
-   "Id": 33,
+   "Id": 32,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1188,7 +1193,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -1209,12 +1215,12 @@
    }
   },
   {
-   "Id": 34,
+   "Id": 33,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1224,7 +1230,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -1245,12 +1252,12 @@
    }
   },
   {
-   "Id": 35,
+   "Id": 34,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1260,7 +1267,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -1281,12 +1289,12 @@
    }
   },
   {
-   "Id": 36,
+   "Id": 35,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1296,7 +1304,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -1317,12 +1326,12 @@
    }
   },
   {
-   "Id": 37,
+   "Id": 36,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1332,7 +1341,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -1353,12 +1363,12 @@
    }
   },
   {
-   "Id": 38,
+   "Id": 37,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1368,7 +1378,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -1389,12 +1400,12 @@
    }
   },
   {
-   "Id": 39,
+   "Id": 38,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1404,7 +1415,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -1425,12 +1437,12 @@
    }
   },
   {
-   "Id": 40,
+   "Id": 39,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1440,7 +1452,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -1461,12 +1474,12 @@
    }
   },
   {
-   "Id": 41,
+   "Id": 40,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/AtlasCube.obj",
-    "TexturePath": "CoreAssets/AtlasCube.png"
+    "AlbedoTexturePath": "CoreAssets/AtlasCube.png"
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1476,7 +1489,8 @@
      "X": 1.5,
      "Y": 1.5,
      "Z": 1.5
-    }
+    },
+    "ShapeType": "Cube"
    },
    "Transform": {
     "Position": {
@@ -1497,12 +1511,12 @@
    }
   },
   {
-   "Id": 42,
+   "Id": 41,
    "Name": "Arena",
    "Type": "GameObject",
    "Mesh": {
     "Path": "CoreAssets/plane.obj",
-    "TexturePath": "CoreAssets/ceramic2.jpg"
+    "AlbedoTexturePath": "CoreAssets/ceramic2.jpg"
    },
    "Rigidbody": {
     "Mass": 0.0,
@@ -1512,7 +1526,8 @@
      "X": 70.0,
      "Y": 70.0,
      "Z": 70.0
-    }
+    },
+    "ShapeType": "Plane"
    },
    "Transform": {
     "Position": {
@@ -1533,7 +1548,71 @@
    }
   },
   {
+   "Id": 42,
+   "Name": "Directional Light",
+   "Type": "DirectionalLight",
+   "Direction": {
+    "X": 1.0,
+    "Y": -1.0,
+    "Z": 1.0
+   },
+   "Color": {
+    "R": 1.0,
+    "G": 1.0,
+    "B": 1.0
+   },
+   "Transform": {
+    "Position": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
    "Id": 43,
+   "Name": "Directional Light",
+   "Type": "DirectionalLight",
+   "Direction": {
+    "X": 0.25,
+    "Y": -1.0,
+    "Z": 0.25
+   },
+   "Color": {
+    "R": 0.20000000298023224,
+    "G": 0.20000000298023224,
+    "B": 0.20000000298023224
+   },
+   "Transform": {
+    "Position": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Id": 44,
    "Name": "PointLight",
    "Type": "PointLight",
    "LightPosition": {
@@ -1568,7 +1647,7 @@
    }
   },
   {
-   "Id": 44,
+   "Id": 45,
    "Name": "PointLight",
    "Type": "PointLight",
    "LightPosition": {
@@ -1603,7 +1682,7 @@
    }
   },
   {
-   "Id": 45,
+   "Id": 46,
    "Name": "PointLight",
    "Type": "PointLight",
    "LightPosition": {
@@ -1638,7 +1717,7 @@
    }
   },
   {
-   "Id": 46,
+   "Id": 47,
    "Name": "PointLight",
    "Type": "PointLight",
    "LightPosition": {
@@ -1659,70 +1738,6 @@
      "X": 70.0,
      "Y": 3.0,
      "Z": 13.0
-    },
-    "Scale": {
-     "X": 1.0,
-     "Y": 1.0,
-     "Z": 1.0
-    },
-    "Rotation": {
-     "X": 0.0,
-     "Y": 0.0,
-     "Z": 0.0
-    }
-   }
-  },
-  {
-   "Id": 47,
-   "Name": "Directional Light",
-   "Type": "DirectionalLight",
-   "Direction": {
-    "X": 1.0,
-    "Y": -1.0,
-    "Z": 1.0
-   },
-   "Color": {
-    "R": 1.0,
-    "G": 1.0,
-    "B": 1.0
-   },
-   "Transform": {
-    "Position": {
-     "X": 0.0,
-     "Y": 0.0,
-     "Z": 0.0
-    },
-    "Scale": {
-     "X": 1.0,
-     "Y": 1.0,
-     "Z": 1.0
-    },
-    "Rotation": {
-     "X": 0.0,
-     "Y": 0.0,
-     "Z": 0.0
-    }
-   }
-  },
-  {
-   "Id": 48,
-   "Name": "Directional Light",
-   "Type": "DirectionalLight",
-   "Direction": {
-    "X": 0.25,
-    "Y": -1.0,
-    "Z": 0.25
-   },
-   "Color": {
-    "R": 0.20000000298023224,
-    "G": 0.20000000298023224,
-    "B": 0.20000000298023224
-   },
-   "Transform": {
-    "Position": {
-     "X": 0.0,
-     "Y": 0.0,
-     "Z": 0.0
     },
     "Scale": {
      "X": 1.0,
