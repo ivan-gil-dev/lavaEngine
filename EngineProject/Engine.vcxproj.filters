@@ -42,10 +42,10 @@
     <ClCompile Include="src\EntryPoint.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Headers\Buffers.cpp">
+    <ClCompile Include="src\Headers\Renderer\Buffers.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Headers\Images.cpp">
+    <ClCompile Include="src\Headers\Renderer\Images.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\Headers\Mesh.cpp">
@@ -63,7 +63,13 @@
     <ClCompile Include="src\Headers\Entities.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Headers\Swapchain.cpp">
+    <ClCompile Include="src\Headers\Renderer\Swapchain.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Headers\Renderer\Renderer.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Headers\Scene.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
@@ -101,28 +107,25 @@
     <ClInclude Include="src\Headers\Application.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Headers\Buffers.h">
+    <ClInclude Include="src\Headers\Renderer\Buffers.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Headers\Camera.h">
+    <ClInclude Include="src\Headers\Renderer\CommandBuffer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Headers\CommandBuffer.h">
+    <ClInclude Include="src\Headers\Renderer\CommandPool.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Headers\CommandPool.h">
+    <ClInclude Include="src\Headers\Renderer\DataTypes.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Headers\DataTypes.h">
+    <ClInclude Include="src\Headers\Renderer\DescriptorPools.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Headers\DescriptorPools.h">
+    <ClInclude Include="src\Headers\Renderer\DescriptorSetLayouts.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Headers\DescriptorSetLayouts.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Headers\Device.h">
+    <ClInclude Include="src\Headers\Renderer\Device.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Headers\Entities.h">
@@ -134,10 +137,10 @@
     <ClInclude Include="src\Headers\Globals.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Headers\Images.h">
+    <ClInclude Include="src\Headers\Renderer\Images.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Headers\Instance.h">
+    <ClInclude Include="src\Headers\Renderer\VkInstance.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Headers\MainVulkan.h">
@@ -146,22 +149,22 @@
     <ClInclude Include="src\Headers\Mesh.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Headers\PhysicalDevice.h">
+    <ClInclude Include="src\Headers\Renderer\PhysicalDevice.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Headers\Pipelines.h">
+    <ClInclude Include="src\Headers\Renderer\Pipelines.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Headers\RigidBody.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Headers\Surface.h">
+    <ClInclude Include="src\Headers\Renderer\Surface.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Headers\Swapchain.h">
+    <ClInclude Include="src\Headers\Renderer\Swapchain.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\Headers\SyncObjects.h">
+    <ClInclude Include="src\Headers\Renderer\SyncObjects.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\Headers\Transform.h">
@@ -171,6 +174,9 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="vendor\tiny_obj_loader.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Headers\Renderer\Renderer.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

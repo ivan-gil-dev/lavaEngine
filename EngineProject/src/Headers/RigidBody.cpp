@@ -40,30 +40,28 @@ std::vector<glm::vec3>* Engine::RigidBody::LoadVertices(std::string modelPath) {
 
 void Engine::RigidBody::CreateShape(RigidBodyShapeType shapeType) {
 	ShapeType = shapeType;
-
 	if (shapeType == RIGIDBODY_SHAPE_TYPE_MESH) {
 		if (ENABLE_RIGIDBODY_MESH) {
 			DebugMesh.CreateMesh("CoreAssets/cube.obj", glm::vec3(1.0f, 0.0f, 0.0f));
 			pShape = new btConvexHullShape;
 			for (size_t i = 0; i < DebugMesh.GetVertices().size(); i++) {
-				((btConvexHullShape*)pShape)->addPoint(btVector3(
-					DebugMesh.GetVertices().at(i).pos.x,
-					DebugMesh.GetVertices().at(i).pos.y,
-					DebugMesh.GetVertices().at(i).pos.z),
-					true);
+                btVector3 vec = btVector3(
+                    DebugMesh.GetVertices().at(i).pos.x,
+                    DebugMesh.GetVertices().at(i).pos.y,
+                    DebugMesh.GetVertices().at(i).pos.z);
+
+                ((btConvexHullShape*)pShape)->addPoint(vec, true);
 			}
-
-		}
-
-		else {
+		}else {
 			pShape = new btConvexHullShape;
 			std::vector<glm::vec3>* vertices = LoadVertices("CoreAssets/cube.obj");
 			for (size_t i = 0; i < vertices->size(); i++) {
-				((btConvexHullShape*)pShape)->addPoint(btVector3(
-					vertices->at(i).x,
-					vertices->at(i).y,
-					vertices->at(i).z),
-					true);
+                btVector3 vec = btVector3(
+                    vertices->at(i).x,
+                    vertices->at(i).y,
+                    vertices->at(i).z);
+
+                ((btConvexHullShape*)pShape)->addPoint(vec, true);
 			}
 			delete vertices;
 
@@ -75,26 +73,27 @@ void Engine::RigidBody::CreateShape(RigidBodyShapeType shapeType) {
 	case RIGIDBODY_SHAPE_TYPE_CUBE:
 	{
 		if (ENABLE_RIGIDBODY_MESH) {
-			DebugMesh.CreateMesh("CoreAssets/cube.obj", glm::vec3(1.0f, 0.0f, 0.0f));
+			DebugMesh.CreateMesh("CoreAssets/cube.obj", glm::vec3(0.0f, 1.0f, 0.0f));
 			pShape = new btConvexHullShape;
 			for (size_t i = 0; i < DebugMesh.GetVertices().size(); i++) {
-				((btConvexHullShape*)pShape)->addPoint(btVector3(
+				btVector3 vec = btVector3(
 					DebugMesh.GetVertices().at(i).pos.x,
 					DebugMesh.GetVertices().at(i).pos.y,
-					DebugMesh.GetVertices().at(i).pos.z),
-					true);
-			}
-		}
+					DebugMesh.GetVertices().at(i).pos.z);
 
-		else {
+				((btConvexHullShape*)pShape)->addPoint(vec, true);
+			}
+		}else {
 			pShape = new btConvexHullShape;
 			std::vector<glm::vec3>* vertices = LoadVertices("CoreAssets/cube.obj");
 			for (size_t i = 0; i < vertices->size(); i++) {
-				((btConvexHullShape*)pShape)->addPoint(btVector3(
-					vertices->at(i).x,
-					vertices->at(i).y,
-					vertices->at(i).z),
-					true);
+                btVector3 vec = btVector3(
+                    vertices->at(i).x,
+                    vertices->at(i).y,
+                    vertices->at(i).z);
+
+                ((btConvexHullShape*)pShape)->addPoint(vec, true);
+
 			}
 			delete vertices;
 		}
@@ -107,23 +106,23 @@ void Engine::RigidBody::CreateShape(RigidBodyShapeType shapeType) {
 			DebugMesh.CreateMesh("CoreAssets/plane.obj", glm::vec3(1.0f, 0.0f, 0.0f));
 			pShape = new btConvexHullShape;
 			for (size_t i = 0; i < DebugMesh.GetVertices().size(); i++) {
-				((btConvexHullShape*)pShape)->addPoint(btVector3(
-					DebugMesh.GetVertices().at(i).pos.x,
-					DebugMesh.GetVertices().at(i).pos.y,
-					DebugMesh.GetVertices().at(i).pos.z),
-					true);
-			}
-		}
+                btVector3 vec = btVector3(
+                    DebugMesh.GetVertices().at(i).pos.x,
+                    DebugMesh.GetVertices().at(i).pos.y,
+                    DebugMesh.GetVertices().at(i).pos.z);
 
-		else {
+                ((btConvexHullShape*)pShape)->addPoint(vec, true);
+			}
+		}else {
 			pShape = new btConvexHullShape;
 			std::vector<glm::vec3>* vertices = LoadVertices("CoreAssets/plane.obj");
 			for (size_t i = 0; i < vertices->size(); i++) {
-				((btConvexHullShape*)pShape)->addPoint(btVector3(
-					vertices->at(i).x,
-					vertices->at(i).y,
-					vertices->at(i).z),
-					true);
+                btVector3 vec = btVector3(
+                    vertices->at(i).x,
+                    vertices->at(i).y,
+                    vertices->at(i).z);
+
+                ((btConvexHullShape*)pShape)->addPoint(vec, true);
 			}
 			delete vertices;
 		}
@@ -136,6 +135,7 @@ void Engine::RigidBody::CreateShape(RigidBodyShapeType shapeType) {
 
 void Engine::RigidBody::CreateShape(Mesh* mesh) {
 	ShapeType = RIGIDBODY_SHAPE_TYPE_MESH;
+
 	if (ENABLE_RIGIDBODY_MESH) {
 		DebugMesh.CreateMesh(mesh->pGetMeshPath(), glm::vec3(0.0f, 1.0f, 0.0f));
 	}
@@ -153,18 +153,15 @@ void Engine::RigidBody::CreateShape(Mesh* mesh) {
 	((btConvexHullShape*)pShape)->recalcLocalAabb();
 }
 
-void Engine::RigidBody::CreateBodyWithMass(btScalar mass, float friction, float restitution, btDynamicsWorld* dynamicsWorld, int userIndex) {
+void Engine::RigidBody::CreateBodyWithMass(btDynamicsWorld* dynamicsWorld, int userIndex) {
 	btTransform transform;
 	transform.setIdentity();
 	transform.setOrigin(btVector3(0, 0, 0));
 
 	btVector3 bodyInertia;
-	btScalar bodyMass = mass;
+	btScalar bodyMass = GetMass();
 
-	if (bodyMass == 0) {
-		pMotionState = 0;
-		pShape->calculateLocalInertia(bodyMass, bodyInertia);
-	}
+	if (bodyMass == 0) pMotionState = 0;
 	else {
 		pMotionState = new btDefaultMotionState(transform);
 		pShape->calculateLocalInertia(bodyMass, bodyInertia);
@@ -177,15 +174,22 @@ void Engine::RigidBody::CreateBodyWithMass(btScalar mass, float friction, float 
 		bodyInertia
 	);
 
-	constructionInfo.m_restitution = restitution;
-	constructionInfo.m_friction = friction;
+	constructionInfo.m_restitution = GetRestitution();
+	constructionInfo.m_friction = GetFriction();
 
 	pRigidBody = new btRigidBody(constructionInfo);
-	pRigidBody->setActivationState(DISABLE_DEACTIVATION);
+	//pRigidBody->setActivationState(DISABLE_DEACTIVATION);
 	pRigidBody->setUserPointer(this);
 	pRigidBody->setUserIndex(userIndex);
 
 	dynamicsWorld->addRigidBody(pRigidBody);
+}
+
+Engine::RigidBody::RigidBody(){
+	SetMass(1.0f);
+	SetRestitution(0.5f);
+	SetFriction(0.5f);
+	rigidbodyScale = glm::vec3(1, 1, 1);
 }
 
 void Engine::RigidBody::SetRigidBodyTransform(Transform& transform) {
@@ -211,6 +215,7 @@ void Engine::RigidBody::SetRigidBodyTransform(Transform& transform) {
 }
 
 void Engine::RigidBody::SetRigidbodyScale(glm::vec3 scaleVal) {
+	rigidbodyScale = scaleVal;
 	pShape->setLocalScaling(btVector3(
 		scaleVal.x,
 		scaleVal.y,
@@ -218,6 +223,11 @@ void Engine::RigidBody::SetRigidbodyScale(glm::vec3 scaleVal) {
 	));
 	pShape->recalcLocalAabb();
 	DebugMesh.Transform.Scale(scaleVal);
+	
+}
+
+glm::vec3 Engine::RigidBody::GetRigidbodyScale(){
+	return rigidbodyScale;
 }
 
 Engine::WireframeMesh* Engine::RigidBody::pGetDebugMesh() {
@@ -232,30 +242,14 @@ btCollisionShape* Engine::RigidBody::GetBulletShape() {
 	return pShape;
 }
 
-void Engine::RigidBody::CreateRigidBody(RigidBodyShapeType shapeType, float mass, 
-	float restitution, float friction, btDynamicsWorld* dynamicsWorld, int id) {
+void Engine::RigidBody::CreateRigidBody(RigidBodyShapeType shapeType, btDynamicsWorld* dynamicsWorld, int id) {
 	CreateShape(shapeType);
-
-	CreateBodyWithMass(
-		mass,
-		friction,
-		restitution,
-		dynamicsWorld,
-		id
-	);
+	CreateBodyWithMass(dynamicsWorld,id);
 }
 
-void Engine::RigidBody::CreateRigidBody(Mesh* mesh, float mass, 
-	float restitution, float friction, btDynamicsWorld* dynamicsWorld, int id) {
+void Engine::RigidBody::CreateRigidBody(Mesh* mesh, btDynamicsWorld* dynamicsWorld, int id) {
 	CreateShape(mesh);
-
-	CreateBodyWithMass(
-		mass,
-		friction,
-		restitution,
-		dynamicsWorld,
-		id
-	);
+	CreateBodyWithMass(dynamicsWorld,id);
 }
 
 void Engine::RigidBody::Destroy(btDynamicsWorld* dynamicsWorld) {
@@ -266,4 +260,46 @@ void Engine::RigidBody::Destroy(btDynamicsWorld* dynamicsWorld) {
 		delete pShape;
 		delete pRigidBody;
 	}
+}
+
+Engine::RigidBodyShapeType Engine::RigidBody::GetShapeType(){
+	return ShapeType;
+}
+
+void Engine::RigidBody::SetMass(float val){
+    mass = val;
+	if (pShape != nullptr){
+        btVector3 bodyInertia;
+        btScalar bodyMass = mass;
+        pShape->calculateLocalInertia(bodyMass, bodyInertia);
+        pRigidBody->setMassProps(bodyMass, bodyInertia);
+	}
+    
+}
+
+float Engine::RigidBody::GetMass() const{
+    return mass;
+}
+
+float Engine::RigidBody::GetRestitution() const{
+    return restitution;
+}
+
+void Engine::RigidBody::SetRestitution(float val){
+    restitution = val;
+	if (pRigidBody != 0) {
+		pRigidBody->setRestitution(btScalar(restitution));
+	}
+}
+
+float Engine::RigidBody::GetFriction() const{
+    return friction;
+}
+
+void Engine::RigidBody::SetFriction(float val){
+    friction = val;
+    if (pRigidBody != 0) {
+		pRigidBody->setFriction(btScalar(friction));
+    }
+	
 }

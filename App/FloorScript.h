@@ -6,7 +6,7 @@ public:
 
 	}
 	void Update() {
-		Transform.Rotate(glm::vec3(0.0f, Transform.GetEulerAngles().y + 10.0f * Engine::Globals::DeltaTime, 0.0f));
+		Transform.Rotate(glm::vec3(0.0f, Transform.GetEulerAngles().y + 2.0f * Engine::Globals::DeltaTime, 0.0f));
 		ApplyEntityTransformToRigidbody();
 	}
 

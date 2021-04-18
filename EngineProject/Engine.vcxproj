@@ -75,7 +75,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)/glfw/include;$(SolutionDir)/Lava/vendor;$(VULKAN_SDK)\Include;$(SolutionDir)/spdlog/;$(SolutionDir)/bullet3/src;$(UniversalCRT_IncludePath);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)/glfw/include;$(SolutionDir)/Lava/vendor;$(VULKAN_SDK)\Include;$(SolutionDir)/spdlog/;$(SolutionDir)/bullet3/src;$(UniversalCRT_IncludePath);$(SolutionDir)/include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\bullet3\lib\debug;$(SolutionDir)\glfw\lib-vc2019;$(LibraryPath)</LibraryPath>
     <TargetName>Engine</TargetName>
   </PropertyGroup>
@@ -103,6 +103,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BT_USE_DOUBLE_PRECISION;_DEBUG;_CONSOLE;VK_USE_PLATFORM_WIN32_KHR;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <ShowIncludes>false</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -144,15 +145,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Headers\Renderer\Renderer.cpp" />
     <ClCompile Include="src\EntryPoint.cpp" />
     <ClCompile Include="src\Headers\Application.cpp" />
-    <ClCompile Include="src\Headers\Buffers.cpp" />
+    <ClCompile Include="src\Headers\Renderer\Buffers.cpp" />
     <ClCompile Include="src\Headers\Entities.cpp" />
     <ClCompile Include="src\Headers\Globals.cpp" />
-    <ClCompile Include="src\Headers\Images.cpp" />
+    <ClCompile Include="src\Headers\Renderer\Images.cpp" />
     <ClCompile Include="src\Headers\Mesh.cpp" />
     <ClCompile Include="src\Headers\RigidBody.cpp" />
-    <ClCompile Include="src\Headers\Swapchain.cpp" />
+    <ClCompile Include="src\Headers\Renderer\Swapchain.cpp" />
+    <ClCompile Include="src\Headers\Scene.cpp" />
     <ClCompile Include="vendor\imgui.cpp" />
     <ClCompile Include="vendor\imgui_demo.cpp" />
     <ClCompile Include="vendor\imgui_draw.cpp" />
@@ -163,28 +166,28 @@
     <ClCompile Include="vendor\volk.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Headers\Buffers.h" />
-    <ClInclude Include="src\Headers\Camera.h" />
-    <ClInclude Include="src\Headers\CommandBuffer.h" />
-    <ClInclude Include="src\Headers\CommandPool.h" />
-    <ClInclude Include="src\Headers\DataTypes.h" />
-    <ClInclude Include="src\Headers\DescriptorPools.h" />
-    <ClInclude Include="src\Headers\DescriptorSetLayouts.h" />
-    <ClInclude Include="src\Headers\Device.h" />
+    <ClInclude Include="src\Headers\Renderer\Renderer.h" />
+    <ClInclude Include="src\Headers\Renderer\Buffers.h" />
+    <ClInclude Include="src\Headers\Renderer\CommandBuffer.h" />
+    <ClInclude Include="src\Headers\Renderer\CommandPool.h" />
+    <ClInclude Include="src\Headers\Renderer\DataTypes.h" />
+    <ClInclude Include="src\Headers\Renderer\DescriptorPools.h" />
+    <ClInclude Include="src\Headers\Renderer\DescriptorSetLayouts.h" />
+    <ClInclude Include="src\Headers\Renderer\Device.h" />
     <ClInclude Include="src\Headers\Events.h" />
     <ClInclude Include="src\Headers\Globals.h" />
-    <ClInclude Include="src\Headers\Instance.h" />
+    <ClInclude Include="src\Headers\Renderer\VkInstance.h" />
     <ClInclude Include="src\Headers\MainVulkan.h" />
     <ClInclude Include="src\Headers\Mesh.h" />
     <ClInclude Include="src\Headers\Entities.h" />
-    <ClInclude Include="src\Headers\PhysicalDevice.h" />
-    <ClInclude Include="src\Headers\Pipelines.h" />
+    <ClInclude Include="src\Headers\Renderer\PhysicalDevice.h" />
+    <ClInclude Include="src\Headers\Renderer\Pipelines.h" />
     <ClInclude Include="src\Headers\RigidBody.h" />
     <ClInclude Include="src\Headers\Scene.h" />
-    <ClInclude Include="src\Headers\Surface.h" />
-    <ClInclude Include="src\Headers\Swapchain.h" />
-    <ClInclude Include="src\Headers\SyncObjects.h" />
-    <ClInclude Include="src\Headers\Images.h" />
+    <ClInclude Include="src\Headers\Renderer\Surface.h" />
+    <ClInclude Include="src\Headers\Renderer\Swapchain.h" />
+    <ClInclude Include="src\Headers\Renderer\SyncObjects.h" />
+    <ClInclude Include="src\Headers\Renderer\Images.h" />
     <ClInclude Include="src\Headers\Transform.h" />
     <ClInclude Include="src\Headers\Application.h" />
     <ClInclude Include="vendor\imconfig.h" />

@@ -1,8 +1,11 @@
 #ifndef application_h
 #define application_h
+#include <windows.h>
+
 
 #include "MainVulkan.h"
 #include <iostream>
+#include "Renderer/Renderer.h"
 
 //Редактор сцены
 class SceneEditor{
@@ -16,7 +19,8 @@ public:
 		 CloseWindow         = false; //Закрыть окно
 
 public:
-	int   SelectedItem_ID  = 1;  //Текущий выбранный элемент
+	Engine::EditorCamera editorCamera{};
+	int   SelectedItem_ID  = -1;  //Текущий выбранный элемент
 	float MenubarHeight = 0;    //Высота менюбара (для вычисления отступов)
 public:
 
@@ -24,11 +28,9 @@ public:
 	void InitEditor(HWND hwnd);
 
 	//Обработка интерфейса в главном цикле
-	void DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>& Entities);
+	void DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Entities);
 	
 };
-
-static SceneEditor sceneEditor;
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -50,7 +52,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 				m.hwnd = hwnd;
 				m.message = msg;
 
-				PeekMessage(&m, NULL, 0U, 0U, PM_REMOVE);
+				PeekMessage(&m, NULL, WM_SYSCHAR, WM_SYSCHAR, PM_REMOVE);
 
 				return ::DefWindowProc(hwnd, msg, wparam, lparam);
 				break;
@@ -82,8 +84,8 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 			case WM_SIZE:
 				//std::cout << "CALL TO WM_SIZE" << wparam << std::endl;
 
-				if (Engine::Globals::gDevice.Get() != VK_NULL_HANDLE){
-					Engine::recreateSwapchain();
+				if (Engine::renderer.device.Get() != VK_NULL_HANDLE){
+					Engine::renderer.recreateSwapchain();
 				}
 
 				return true;
@@ -107,14 +109,23 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 
 class Application {
 public:
-	HWND		hwnd;
+	SceneEditor sceneEditor;
+
+	HWND	    hwnd;
 	HINSTANCE   hInstance;
 	WNDCLASSEX	wc;
+
+	
+
 	ImDrawData* ImguiDrawData;
+
 	int			WindowWidth, 
 				WindowHeight;
-	double		Time,  
+
+    double		Time,  
 				LastFrameTime;
+	
+	//json		settingsJson;
 public:
 	//Подготовка приложения
 	void Init();

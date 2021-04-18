@@ -1,0 +1,277 @@
+#include "Scene.h"
+
+void Engine::Scene::Load(std::string path)
+{
+    sceneJson.clear();
+
+    std::ifstream inputJson(path);
+
+    if (!inputJson.is_open()) {
+        spdlog::warn("Warning! Scene file is not found!");
+        return;
+    }
+
+    inputJson >> sceneJson;
+
+    inputJson.close();
+
+    std::cout << sceneJson.dump() << std::endl;
+
+    for (auto entityJson : sceneJson["Entities"]) {
+
+        Entity* entity;
+        if (entityJson["Type"] == "GameObject") {
+            std::cout << entityJson["Type"] << std::endl;
+            entity = new GameObject;
+
+            if (entityJson.count("Mesh") !=0 ){
+                ((GameObject*)entity)->AddComponent<Mesh>();
+                Mesh* mesh = ((GameObject*)entity)->pGetComponent<Mesh*>();
+                mesh->CreateMesh(entityJson["Mesh"]["Path"]);
+                mesh->SetAlbedoTexture(entityJson["Mesh"]["AlbedoTexturePath"]);
+            }
+
+            if (entityJson.count("Rigidbody") != 0) {
+                ((GameObject*)entity)->AddComponent<RigidBody>();
+                RigidBody* rigidbody = ((GameObject*)entity)->pGetComponent<RigidBody*>();
+
+                std::string shapeType = entityJson["Rigidbody"]["ShapeType"];
+
+                if (shapeType == "Plane"){
+                    rigidbody->CreateRigidBody(
+                        RIGIDBODY_SHAPE_TYPE_PLANE,
+                        Globals::gDynamicsWorld,
+                        entityJson["Id"]);
+                }
+
+                if (shapeType == "Cube") {
+                    rigidbody->CreateRigidBody(
+                        RIGIDBODY_SHAPE_TYPE_CUBE,
+                        Globals::gDynamicsWorld,
+                        entityJson["Id"]);
+                }
+                
+
+                rigidbody->SetMass(entityJson["Rigidbody"]["Mass"]);
+                rigidbody->SetFriction(entityJson["Rigidbody"]["Friction"]);
+                rigidbody->SetRestitution(entityJson["Rigidbody"]["Restitution"]);
+                 
+                rigidbody->SetRigidbodyScale(glm::vec3(
+                    entityJson["Rigidbody"]["Scale"]["X"],
+                    entityJson["Rigidbody"]["Scale"]["Y"],
+                    entityJson["Rigidbody"]["Scale"]["Z"]
+                ));
+            }
+
+        }
+
+        else if (entityJson["Type"] == "PointLight") {
+            std::cout << entityJson["Type"] << std::endl;
+            entity = new PointLightObject;
+            DataTypes::PointLightAttributes_t* attrib = ((PointLightObject*)entity)->pGetPointLightUniformData();
+
+            attrib->constant = entityJson["Constant"];
+            attrib->linear = entityJson["Linear"];
+            attrib->quadrantic = entityJson["Quadrantic"];
+
+            attrib->lightPosition = glm::vec3(
+                entityJson["LightPosition"]["X"],
+                entityJson["LightPosition"]["Y"],
+                entityJson["LightPosition"]["Z"] 
+            );
+                
+            attrib->lightColor = glm::vec3(
+                entityJson["LightColor"]["R"],
+                entityJson["LightColor"]["G"],
+                entityJson["LightColor"]["B"]
+            );
+
+            pointLightAttributes.push_back(attrib);
+        }
+
+        else if (entityJson["Type"] == "DirectionalLight") {
+            std::cout << entityJson["Type"] << std::endl;
+            entity = new DirectionalLightObject;
+            DataTypes::DirectionalLightAttributes_t* attrib = ((DirectionalLightObject*)entity)->pGetDirectionalLightUniformData();
+
+            attrib->lightDirection.x = entityJson["Direction"]["X"];
+            attrib->lightDirection.y = entityJson["Direction"]["Y"];
+            attrib->lightDirection.z = entityJson["Direction"]["Z"];
+
+            attrib->lightColor.r = entityJson["Color"]["R"];
+            attrib->lightColor.g = entityJson["Color"]["G"];
+            attrib->lightColor.b = entityJson["Color"]["B"];
+          
+            directionalLightAttributes.push_back(attrib);
+        }
+
+        else if (entityJson["Type"] == "Cubemap") {
+            std::cout << entityJson["Type"] << std::endl;
+            std::vector<std::string> cubemapPaths;
+
+            for (auto cubemapPath : entityJson["CubemapPaths"]){
+                cubemapPaths.push_back(cubemapPath);
+            }
+
+            entity = new CubemapObject(cubemapPaths);
+        }
+        else {
+            spdlog::warn("Warning! Wrong entity type in the file!");
+            break;
+        }
+
+        entity->SetID(entityJson["Id"]);
+        entity->SetName(entityJson["Name"]);
+
+        glm::vec3 Position;
+        Position.x = entityJson["Transform"]["Position"]["X"];
+        Position.y = entityJson["Transform"]["Position"]["Y"];
+        Position.z = entityJson["Transform"]["Position"]["Z"];
+
+        glm::vec3 Rotation;
+        Rotation.x = entityJson["Transform"]["Rotation"]["X"];
+        Rotation.y = entityJson["Transform"]["Rotation"]["Y"];
+        Rotation.z = entityJson["Transform"]["Rotation"]["Z"];
+
+        glm::vec3 Scale;
+        Scale.x = entityJson["Transform"]["Scale"]["X"];
+        Scale.y = entityJson["Transform"]["Scale"]["Y"];
+        Scale.z = entityJson["Transform"]["Scale"]["Z"];
+
+        entity->Transform.Translate(Position);
+        entity->Transform.Rotate(Rotation);
+        entity->Transform.Scale(Scale);
+
+        if (entityJson["Type"] == "GameObject") {
+            std::cout << "Brr" << std::endl;
+            ((GameObject*)entity)->ApplyEntityTransformToRigidbody();
+        }
+
+        entities.push_back(entity);
+    }
+
+}
+
+void Engine::Scene::Save(std::string path)
+{
+    std::ofstream outputJson(path);
+    sceneJson.clear();
+    for (int i = 0; i < entities.size(); i++) {
+
+        sceneJson["Entities"][i]["Id"] = entities[i]->GetID();
+        sceneJson["Entities"][i]["Name"] = entities[i]->GetName();
+
+        EntityType entityType = EntityType(entities[i]->GetEntityType());
+        if (entityType == ENTITY_TYPE_GAME_OBJECT) {
+            sceneJson["Entities"][i]["Type"] = "GameObject";
+            Mesh* mesh = ((GameObject*)entities[i])->pGetComponent<Mesh*>();
+            if (mesh != nullptr) {
+                sceneJson["Entities"][i]["Mesh"]["Path"] = mesh->pGetMeshPath();
+                sceneJson["Entities"][i]["Mesh"]["AlbedoTexturePath"] = mesh->GetAlbedoTexture().GetTexturePath();
+            }
+            RigidBody* rigidBody = ((GameObject*)entities[i])->pGetComponent<RigidBody*>();
+            if (rigidBody != nullptr) {
+                sceneJson["Entities"][i]["Rigidbody"]["Mass"] = rigidBody->GetBulletRigidBody()->getMass();
+                sceneJson["Entities"][i]["Rigidbody"]["Restitution"] = rigidBody->GetBulletRigidBody()->getRestitution();
+                sceneJson["Entities"][i]["Rigidbody"]["Friction"] = rigidBody->GetBulletRigidBody()->getFriction();
+                sceneJson["Entities"][i]["Rigidbody"]["Scale"]["X"] = rigidBody->GetRigidbodyScale().x;
+                sceneJson["Entities"][i]["Rigidbody"]["Scale"]["Y"] = rigidBody->GetRigidbodyScale().y;
+                sceneJson["Entities"][i]["Rigidbody"]["Scale"]["Z"] = rigidBody->GetRigidbodyScale().z;
+
+                if (rigidBody->GetShapeType() == RIGIDBODY_SHAPE_TYPE_CUBE){
+                    sceneJson["Entities"][i]["Rigidbody"]["ShapeType"] = "Cube";
+                }
+
+                if (rigidBody->GetShapeType() == RIGIDBODY_SHAPE_TYPE_PLANE) {
+                    sceneJson["Entities"][i]["Rigidbody"]["ShapeType"] = "Plane";
+                }
+            }
+        }
+        if (entityType == ENTITY_TYPE_POINTLIGHT_OBJECT) {
+            sceneJson["Entities"][i]["Type"] = "PointLight";
+            DataTypes::PointLightAttributes_t attributes = *((PointLightObject*)entities[i])->pGetPointLightUniformData();
+
+            sceneJson["Entities"][i]["LightPosition"]["X"] = attributes.lightPosition.x;
+            sceneJson["Entities"][i]["LightPosition"]["Y"] = attributes.lightPosition.y;
+            sceneJson["Entities"][i]["LightPosition"]["Z"] = attributes.lightPosition.z;
+
+            sceneJson["Entities"][i]["LightColor"]["R"] = attributes.lightColor.x;
+            sceneJson["Entities"][i]["LightColor"]["G"] = attributes.lightColor.y;
+            sceneJson["Entities"][i]["LightColor"]["B"] = attributes.lightColor.z;
+
+            sceneJson["Entities"][i]["Constant"] = attributes.constant;
+            sceneJson["Entities"][i]["Linear"] = attributes.linear;
+            sceneJson["Entities"][i]["Quadrantic"] = attributes.quadrantic;
+        }
+        if (entityType == ENTITY_TYPE_DIRECTIONAL_LIGHT_OBJECT) {
+            sceneJson["Entities"][i]["Type"] = "DirectionalLight";
+            DataTypes::DirectionalLightAttributes_t attributes = *((DirectionalLightObject*)entities[i])->pGetDirectionalLightUniformData();
+
+            sceneJson["Entities"][i]["Direction"]["X"] = attributes.lightDirection.x;
+            sceneJson["Entities"][i]["Direction"]["Y"] = attributes.lightDirection.y;
+            sceneJson["Entities"][i]["Direction"]["Z"] = attributes.lightDirection.z;
+
+            sceneJson["Entities"][i]["Color"]["R"] = attributes.lightColor.r;
+            sceneJson["Entities"][i]["Color"]["G"] = attributes.lightColor.g;
+            sceneJson["Entities"][i]["Color"]["B"] = attributes.lightColor.b;
+        }
+        if (entityType == ENTITY_TYPE_CUBEMAP_OBJECT) {
+            sceneJson["Entities"][i]["Type"] = "Cubemap";
+            for (size_t j = 0; j < ((CubemapObject*)entities[i])->GetCubemapPaths().size(); j++) {
+                sceneJson["Entities"][i]["CubemapPaths"][j] = ((CubemapObject*)entities[i])->GetCubemapPaths()[j];
+            }
+        }
+
+        sceneJson["Entities"][i]["Transform"]["Position"]["X"] = entities[i]->Transform.Position.x;
+        sceneJson["Entities"][i]["Transform"]["Position"]["Y"] = entities[i]->Transform.Position.y;
+        sceneJson["Entities"][i]["Transform"]["Position"]["Z"] = entities[i]->Transform.Position.z;
+        sceneJson["Entities"][i]["Transform"]["Scale"]["X"] = entities[i]->Transform.ScaleValue.x;
+        sceneJson["Entities"][i]["Transform"]["Scale"]["Y"] = entities[i]->Transform.ScaleValue.y;
+        sceneJson["Entities"][i]["Transform"]["Scale"]["Z"] = entities[i]->Transform.ScaleValue.z;
+        sceneJson["Entities"][i]["Transform"]["Rotation"]["X"] = entities[i]->Transform.EulerAngles.x;
+        sceneJson["Entities"][i]["Transform"]["Rotation"]["Y"] = entities[i]->Transform.EulerAngles.y;
+        sceneJson["Entities"][i]["Transform"]["Rotation"]["Z"] = entities[i]->Transform.EulerAngles.z;
+
+
+
+        
+
+    }
+
+    std::cout << sceneJson.dump(1) << std::endl;
+    outputJson << sceneJson.dump(1);
+    outputJson.close();
+}
+
+std::vector<Engine::Entity*>* Engine::Scene::pGetVectorOfEntities()
+{
+    return &entities;
+}
+
+Engine::Scene::Scene()
+{
+    InitBullet();
+    Load("scene.json");
+}
+
+std::vector<Engine::DataTypes::DirectionalLightAttributes_t*> Engine::Scene::GetVectorOfDirectionalLightAttributes()
+{
+    return directionalLightAttributes;
+}
+
+std::vector<Engine::DataTypes::PointLightAttributes_t*> Engine::Scene::GetVectorOfSpotlightAttributes()
+{
+    return pointLightAttributes;
+}
+
+void Engine::Scene::CleanScene()
+{
+    //Save("scene.json");
+
+
+    for (size_t i = 0; i < entities.size(); i++) {
+        delete entities[i];
+    }
+
+    CleanBullet();
+}

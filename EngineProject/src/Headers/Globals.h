@@ -25,7 +25,11 @@ static bool ENABLE_RIGIDBODY_MESH = false;
 
 namespace Engine{
 	namespace Globals{
+
 		#define MAX_SPOTLIGHTS 10
+		#define MAX_DLIGHTS 5
+		#define MAX_FRAMES 2
+
 		extern bool  gToggleFullscreen;
 		extern bool  gShowMeshes;
 		extern bool  gShowRigidbodyMeshes;
@@ -44,8 +48,8 @@ namespace Engine{
 		extern btSequentialImpulseConstraintSolver* gSolver;
 		extern btDynamicsWorld* gDynamicsWorld;
 
-		extern VkRect2D   gEditor3DScissors;
-		extern VkViewport gEditor3DView;
+		//extern VkRect2D   gEditor3DScissors;
+		//extern VkViewport gEditor3DView;
 		extern double DeltaTime;
 	}
 }

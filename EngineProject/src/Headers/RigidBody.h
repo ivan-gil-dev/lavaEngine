@@ -1,7 +1,7 @@
 #ifndef rigidbody_h
 #define rigidbody_h
 
-#include	"DataTypes.h"
+#include	"Renderer/DataTypes.h"
 #include	"Mesh.h"
 #include	"../../vendor/glm/gtc/quaternion.hpp"
 #include	"../../vendor/glm/gtx/quaternion.hpp"
@@ -18,11 +18,17 @@ namespace Engine{
 		RigidBodyShapeType    ShapeType;
 		btConvexHullShape *   pShape;
 		btRigidBody *		  pRigidBody;
-		glm::vec3			  PosOffset;
-		glm::vec3			  RotationOffset;
+		
 		btDefaultMotionState* pMotionState;
 		WireframeMesh		  DebugMesh;
 
+		float				  mass,
+							  restitution,
+							  friction;
+		
+        glm::vec3			  rigidbodyPosition;
+        glm::vec3			  rigidbodyRotation;
+		glm::vec3			  rigidbodyScale;
 		private:
 		std::vector<glm::vec3> *LoadVertices(std::string modelPath);
 
@@ -31,13 +37,16 @@ namespace Engine{
 		void CreateShape(RigidBodyShapeType shapeType);
 
 		//Создание твердого тела
-		void CreateBodyWithMass(btScalar mass, float friction, float restitution,
-			btDynamicsWorld* dynamicsWorld, int userIndex);
+		void CreateBodyWithMass(btDynamicsWorld* dynamicsWorld, int userIndex);
 
 		public:
+			RigidBody();
+
 		void SetRigidBodyTransform(Transform &transform);
 		
 		void SetRigidbodyScale(glm::vec3 scaleVal);
+
+		glm::vec3 GetRigidbodyScale();
 
 		WireframeMesh* pGetDebugMesh();
 
@@ -45,14 +54,20 @@ namespace Engine{
 
 		btCollisionShape* GetBulletShape();
 
-		void CreateRigidBody(Mesh *mesh, float mass, float restitution, 
-			float friction, btDynamicsWorld* dynamicsWorld, int id);
+		void CreateRigidBody(Mesh *mesh, btDynamicsWorld* dynamicsWorld, int id);
 
-		void CreateRigidBody(RigidBodyShapeType shapeType, float mass, float restitution,
-			float friction, btDynamicsWorld* dynamicsWorld, int id);
+		void CreateRigidBody(RigidBodyShapeType shapeType, btDynamicsWorld* dynamicsWorld, int id);
 		
 		void Destroy(btDynamicsWorld *dynamicsWorld);
 		
+		RigidBodyShapeType GetShapeType();
+
+		float GetMass() const;
+		void SetMass(float val);
+        float GetRestitution() const;
+        void SetRestitution(float val);
+        float GetFriction() const;
+        void SetFriction(float val);
 	};
 }
 

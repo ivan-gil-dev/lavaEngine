@@ -1,4 +1,5 @@
 #include "Mesh.h"
+#include "Renderer/Renderer.h"
 #define TINYOBJLOADER_STATIC
 #include    "../../vendor/tiny_obj_loader.h"
 
@@ -27,6 +28,7 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 	auto& attrib = reader.GetAttrib();
 	auto& shapes = reader.GetShapes();
 	auto& materials = reader.GetMaterials();
+	
 	// Loop over shapes
 	for (size_t s = 0; s < shapes.size(); s++) {
 		// Loop over faces(polygon)
@@ -94,12 +96,12 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 	}
 }
 
-void Engine::Mesh::CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout descriptorSetLayoutForGameObjects, 
+void Engine::Mesh::CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout descriptorSetLayoutForMesh, 
 	VkDescriptorPool descriptorPoolForGameObjects, std::vector<VkImageView> swapchainImageViews) {
-	std::vector<VkDescriptorSetLayout> layouts(swapchainImageViews.size(), descriptorSetLayoutForGameObjects);
+
+	std::vector<VkDescriptorSetLayout> layouts(swapchainImageViews.size(), descriptorSetLayoutForMesh);
 
 	VkDescriptorSetAllocateInfo allocateInfo{};
-	//
 	{
 		allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 		allocateInfo.descriptorPool = descriptorPoolForGameObjects;
@@ -116,113 +118,97 @@ void Engine::Mesh::CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout d
 
 	std::vector<VkWriteDescriptorSet> writeDescriptorSets;
 	for (size_t i = 0; i < DescriptorSets.size(); i++) {
+
 		VkDescriptorBufferInfo bufferInfo{};
-		//
-		{
-			bufferInfo.buffer = UniformBuffersMVP[i].Get();
-			bufferInfo.offset = 0;
-			bufferInfo.range = sizeof(DataTypes::MVP_t);
-		}
-
+        bufferInfo.buffer = UniformBuffersMVP_b0[i].Get();
+        bufferInfo.offset = 0;
+        bufferInfo.range = sizeof(DataTypes::MVP_t);
+		
 		VkWriteDescriptorSet mvpWriteDescriptorSet{};
-		//
-		{
-			mvpWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			mvpWriteDescriptorSet.descriptorCount = 1;
-			mvpWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			mvpWriteDescriptorSet.dstSet = DescriptorSets[i];
-			mvpWriteDescriptorSet.dstBinding = 0;
-			mvpWriteDescriptorSet.dstArrayElement = 0;
-			mvpWriteDescriptorSet.pBufferInfo = &bufferInfo;
-			writeDescriptorSets.push_back(mvpWriteDescriptorSet);
-		}
-
+        mvpWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        mvpWriteDescriptorSet.descriptorCount = 1;
+        mvpWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        mvpWriteDescriptorSet.dstSet = DescriptorSets[i];
+        mvpWriteDescriptorSet.dstBinding = 0;
+        mvpWriteDescriptorSet.dstArrayElement = 0;
+        mvpWriteDescriptorSet.pBufferInfo = &bufferInfo;
+        writeDescriptorSets.push_back(mvpWriteDescriptorSet);
+		
 		VkDescriptorImageInfo textureInfo{};
-		//
-		{
-			textureInfo.imageView = mTexture.GetImageView();
-			textureInfo.sampler = mTexture.GetImageSampler();
-			textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-		}
+        textureInfo.imageView = AlbedoTexture_b1.GetImageView();
+        textureInfo.sampler = AlbedoTexture_b1.GetImageSampler();
+        textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 		VkWriteDescriptorSet textureWriteDescriptorSet{};
-		//
-		{
-			textureWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			textureWriteDescriptorSet.descriptorCount = 1;
-			textureWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-			textureWriteDescriptorSet.dstSet = DescriptorSets[i];
-			textureWriteDescriptorSet.dstBinding = 1;
-			textureWriteDescriptorSet.dstArrayElement = 0;
-			textureWriteDescriptorSet.pImageInfo = &textureInfo;
-			writeDescriptorSets.push_back(textureWriteDescriptorSet);
-		}
-
-
+        textureWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        textureWriteDescriptorSet.descriptorCount = 1;
+        textureWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        textureWriteDescriptorSet.dstSet = DescriptorSets[i];
+        textureWriteDescriptorSet.dstBinding = 1;
+        textureWriteDescriptorSet.dstArrayElement = 0;
+        textureWriteDescriptorSet.pImageInfo = &textureInfo;
+        writeDescriptorSets.push_back(textureWriteDescriptorSet);
+		
 		VkDescriptorBufferInfo bufferInfo2{};
-		//
-		{
-			bufferInfo2.buffer = UniformBuffersSpotLightAttributes[i].Get();
-			bufferInfo2.offset = 0;
-			bufferInfo2.range = sizeof(DataTypes::SpotlightAttributes_t) * MAX_SPOTLIGHTS;
-		}
-
+        bufferInfo2.buffer = UniformBuffersSpotLightAttributes_b2[i].Get();
+        bufferInfo2.offset = 0;
+        bufferInfo2.range = sizeof(DataTypes::PointLightAttributes_t) * MAX_SPOTLIGHTS;
+		
 		VkWriteDescriptorSet spotLightAttributesWriteDescriptorSet{};
-		//
-		{
-			spotLightAttributesWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			spotLightAttributesWriteDescriptorSet.descriptorCount = 1;
-			spotLightAttributesWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			spotLightAttributesWriteDescriptorSet.dstSet = DescriptorSets[i];
-			spotLightAttributesWriteDescriptorSet.dstBinding = 2;
-			spotLightAttributesWriteDescriptorSet.dstArrayElement = 0;
-			spotLightAttributesWriteDescriptorSet.pBufferInfo = &bufferInfo2;
-			writeDescriptorSets.push_back(spotLightAttributesWriteDescriptorSet);
-		}
-
-
+        spotLightAttributesWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        spotLightAttributesWriteDescriptorSet.descriptorCount = 1;
+        spotLightAttributesWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        spotLightAttributesWriteDescriptorSet.dstSet = DescriptorSets[i];
+        spotLightAttributesWriteDescriptorSet.dstBinding = 2;
+        spotLightAttributesWriteDescriptorSet.dstArrayElement = 0;
+        spotLightAttributesWriteDescriptorSet.pBufferInfo = &bufferInfo2;
+        writeDescriptorSets.push_back(spotLightAttributesWriteDescriptorSet);
+		
 		VkDescriptorBufferInfo bufferInfo3{};
-		//
-		{
-			bufferInfo3.buffer = UniformBuffersDebugCameraPos[i].Get();
-			bufferInfo3.offset = 0;
-			bufferInfo3.range = sizeof(DataTypes::CameraPos_t);
-		}
-
+        bufferInfo3.buffer = UniformBuffersDebugCameraPos_b3[i].Get();
+        bufferInfo3.offset = 0;
+        bufferInfo3.range = sizeof(DataTypes::CameraPos_t);
+		
 		VkWriteDescriptorSet debugCameraPosWriteDescriptorSet{};
-		//
-		{
-			debugCameraPosWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			debugCameraPosWriteDescriptorSet.descriptorCount = 1;
-			debugCameraPosWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			debugCameraPosWriteDescriptorSet.dstSet = DescriptorSets[i];
-			debugCameraPosWriteDescriptorSet.dstBinding = 3;
-			debugCameraPosWriteDescriptorSet.dstArrayElement = 0;
-			debugCameraPosWriteDescriptorSet.pBufferInfo = &bufferInfo3;
-			writeDescriptorSets.push_back(debugCameraPosWriteDescriptorSet);
-		}
-
+        debugCameraPosWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        debugCameraPosWriteDescriptorSet.descriptorCount = 1;
+        debugCameraPosWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        debugCameraPosWriteDescriptorSet.dstSet = DescriptorSets[i];
+        debugCameraPosWriteDescriptorSet.dstBinding = 3;
+        debugCameraPosWriteDescriptorSet.dstArrayElement = 0;
+        debugCameraPosWriteDescriptorSet.pBufferInfo = &bufferInfo3;
+        writeDescriptorSets.push_back(debugCameraPosWriteDescriptorSet);
+		
 		VkDescriptorBufferInfo bufferInfo4{};
-		//
-		{
-			bufferInfo4.buffer = UniformBuffersMaterial[i].Get();
-			bufferInfo4.offset = 0;
-			bufferInfo4.range = sizeof(DataTypes::Material_t);
-		}
-
+        bufferInfo4.buffer = UniformBuffersMaterial_b4[i].Get();
+        bufferInfo4.offset = 0;
+        bufferInfo4.range = sizeof(DataTypes::Material_t);
+		
 		VkWriteDescriptorSet materialWriteDescriptorSet{};
-		//
-		{
-			materialWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			materialWriteDescriptorSet.descriptorCount = 1;
-			materialWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			materialWriteDescriptorSet.dstSet = DescriptorSets[i];
-			materialWriteDescriptorSet.dstBinding = 4;
-			materialWriteDescriptorSet.dstArrayElement = 0;
-			materialWriteDescriptorSet.pBufferInfo = &bufferInfo4;
-			writeDescriptorSets.push_back(materialWriteDescriptorSet);
-		}
+		materialWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		materialWriteDescriptorSet.descriptorCount = 1;
+		materialWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		materialWriteDescriptorSet.dstSet = DescriptorSets[i];
+		materialWriteDescriptorSet.dstBinding = 4;
+		materialWriteDescriptorSet.dstArrayElement = 0;
+		materialWriteDescriptorSet.pBufferInfo = &bufferInfo4;
+		writeDescriptorSets.push_back(materialWriteDescriptorSet);
 
+        VkDescriptorBufferInfo bufferInfo5{};
+		bufferInfo5.buffer = UniformBuffersDirectionalLightAttributes_b5[i].Get();
+		bufferInfo5.offset = 0;
+		bufferInfo5.range = sizeof(DataTypes::DirectionalLightAttributes_t) * MAX_DLIGHTS;
+
+        VkWriteDescriptorSet DirectionalLightWriteDescriptorSet{};
+		DirectionalLightWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		DirectionalLightWriteDescriptorSet.descriptorCount = 1;
+		DirectionalLightWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		DirectionalLightWriteDescriptorSet.dstSet = DescriptorSets[i];
+		DirectionalLightWriteDescriptorSet.dstBinding = 5;
+		DirectionalLightWriteDescriptorSet.dstArrayElement = 0;
+		DirectionalLightWriteDescriptorSet.pBufferInfo = &bufferInfo5;
+        writeDescriptorSets.push_back(DirectionalLightWriteDescriptorSet);
+		
 		vkUpdateDescriptorSets(device, (uint32_t)writeDescriptorSets.size(), writeDescriptorSets.data(), 0, nullptr);
 		writeDescriptorSets.resize(0);
 	}
@@ -252,15 +238,19 @@ Engine::DataTypes::Material_t Engine::Mesh::GetMaterial() {
 	return Material;
 }
 
-void Engine::Mesh::SetBaseColorTexture(std::string path) {
-	mTexture.DestroyTexture(Globals::gDevice.Get());
-	vkFreeDescriptorSets(Globals::gDevice.Get(), Globals::gDescriptorPoolForMesh.Get(),
+void Engine::Mesh::SetAlbedoTexture(std::string path) {
+	AlbedoTexture_b1.DestroyTexture(renderer.device.Get());
+	vkFreeDescriptorSets(renderer.device.Get(), renderer.descriptorPoolForMesh.Get(),
 		(uint32_t)DescriptorSets.size(), DescriptorSets.data());
-	mTexture.CreateTexture(
-		Globals::gPhysicalDevice.Get(), Globals::gDevice.Get(), Globals::gDevice.GetGraphicsQueue(), Globals::gCommandPool.Get(), path
+	AlbedoTexture_b1.CreateTexture(
+		renderer.physicalDevice.Get(), renderer.device.Get(), renderer.device.GetGraphicsQueue(), renderer.commandPool.Get(), path
 	);
-	CreateDescriptorSets(Globals::gDevice.Get(), Globals::gSetLayoutForMesh.Get(),
-		Globals::gDescriptorPoolForMesh.Get(), *Globals::gSwapchain.PGetImageViews());
+	CreateDescriptorSets(renderer.device.Get(), renderer.setLayoutForMesh.Get(),
+		renderer.descriptorPoolForMesh.Get(), *renderer.swapchain.PGetImageViews());
+}
+
+Engine::Texture Engine::Mesh::GetAlbedoTexture(){
+	return AlbedoTexture_b1;
 }
 
 void Engine::Mesh::SetMaterial(DataTypes::Material_t mat) {
@@ -271,12 +261,12 @@ void Engine::Mesh::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
 	vkCmdBindPipeline(
 		commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
-		Globals::gGraphicsPipelineForMesh.Get()
+		renderer.graphicsPipelineForMesh.Get()
 	);
 
 	if (ENABLE_DYNAMIC_VIEWPORT) {
-		vkCmdSetViewport(commandBuffer, 0, 1, &Globals::gEditor3DView);
-		vkCmdSetScissor(commandBuffer, 0, 1, &Globals::gEditor3DScissors);
+		vkCmdSetViewport(commandBuffer, 0, 1, &renderer.rendererViewport);
+		vkCmdSetScissor(commandBuffer, 0, 1, &renderer.rendererScissors);
 	}
 
 	VkBuffer buffers[] = { VertexBuffer.Get() };
@@ -284,7 +274,7 @@ void Engine::Mesh::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
 
 
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
-	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, Globals::gGraphicsPipelineForMesh.GetPipelineLayout(),
+	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, renderer.graphicsPipelineForMesh.GetPipelineLayout(),
 		0, 1, &DescriptorSets[imageIndex], 0, nullptr);
 
 	vkCmdBindIndexBuffer(commandBuffer, IndexBuffer.Get(), 0, VK_INDEX_TYPE_UINT32);
@@ -297,67 +287,70 @@ void Engine::Mesh::CreateMesh(std::string modelPath) {
 
 	LoadModel(modelPath);
 
-	//<1x1 текстура (0,0,0,255)> 
-	mTexture.CreateTexture(Globals::gPhysicalDevice.Get(),
-		Globals::gDevice.Get(),
-		Globals::gDevice.GetGraphicsQueue(),
-		Globals::gCommandPool.Get(), "");
-
-	//Создание буферов
-	{
-		VertexBuffer.CreateVertexBuffer(Globals::gPhysicalDevice.Get(),
-			Globals::gDevice.Get(),
-			Globals::gDevice.GetGraphicsQueue(),
-			Globals::gCommandPool.Get(),
+	{//Создание буферов
+		VertexBuffer.CreateVertexBuffer(renderer.physicalDevice.Get(),
+			renderer.device.Get(),
+			renderer.device.GetGraphicsQueue(),
+			renderer.commandPool.Get(),
 			Vertices.data(),
 			sizeof(Vertices[0]) * Vertices.size());
 
-		IndexBuffer.CreateIndexBuffer(Globals::gPhysicalDevice.Get(),
-			Globals::gDevice.Get(),
-			Globals::gDevice.GetGraphicsQueue(),
-			Globals::gCommandPool.Get(),
+		IndexBuffer.CreateIndexBuffer(renderer.physicalDevice.Get(),
+			renderer.device.Get(),
+			renderer.device.GetGraphicsQueue(),
+			renderer.commandPool.Get(),
 			Indexes.data(), sizeof(Indexes[0]) * Indexes.size());
 
-		UniformBuffersMVP.resize(Globals::gSwapchain.PGetImageViews()->size());
-		UniformBuffersSpotLightAttributes.resize(Globals::gSwapchain.PGetImageViews()->size());
-		UniformBuffersDebugCameraPos.resize(Globals::gSwapchain.PGetImageViews()->size());
-		UniformBuffersMaterial.resize(Globals::gSwapchain.PGetImageViews()->size());
 
-		for (size_t i = 0; i < Globals::gSwapchain.PGetImageViews()->size(); i++) {
-			UniformBuffersMVP[i].CreateUniformBuffer(Globals::gPhysicalDevice.Get(), Globals::gDevice.Get(), sizeof(DataTypes::MVP_t));
-			UniformBuffersDebugCameraPos[i].CreateUniformBuffer(Globals::gPhysicalDevice.Get(), Globals::gDevice.Get(), sizeof(DataTypes::CameraPos_t));
-			UniformBuffersMaterial[i].CreateUniformBuffer(Globals::gPhysicalDevice.Get(), Globals::gDevice.Get(), sizeof(DataTypes::Material_t));
-			UniformBuffersSpotLightAttributes[i].CreateUniformBuffer(Globals::gPhysicalDevice.Get(), Globals::gDevice.Get(),
-				sizeof(DataTypes::SpotlightAttributes_t) * MAX_SPOTLIGHTS);
+        //<1x1 текстура (0,0,0,255)> 
+        AlbedoTexture_b1.CreateTexture(renderer.physicalDevice.Get(),
+            renderer.device.Get(),
+            renderer.device.GetGraphicsQueue(),
+            renderer.commandPool.Get(), "");
+
+		UniformBuffersMVP_b0.resize(renderer.swapchain.PGetImageViews()->size());
+		UniformBuffersSpotLightAttributes_b2.resize(renderer.swapchain.PGetImageViews()->size());
+		UniformBuffersDebugCameraPos_b3.resize(renderer.swapchain.PGetImageViews()->size());
+		UniformBuffersMaterial_b4.resize(renderer.swapchain.PGetImageViews()->size());
+		UniformBuffersDirectionalLightAttributes_b5.resize(renderer.swapchain.PGetImageViews()->size());
+
+		for (size_t i = 0; i < renderer.swapchain.PGetImageViews()->size(); i++) {
+			UniformBuffersMVP_b0[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::MVP_t));
+			UniformBuffersDebugCameraPos_b3[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::CameraPos_t));
+			UniformBuffersMaterial_b4[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::Material_t));
+			UniformBuffersSpotLightAttributes_b2[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(),
+				sizeof(DataTypes::PointLightAttributes_t) * MAX_SPOTLIGHTS);
+			UniformBuffersDirectionalLightAttributes_b5[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), 
+				sizeof(DataTypes::DirectionalLightAttributes_t)*MAX_DLIGHTS);
 		}
 	}
 
 	CreateDescriptorSets(
-		Globals::gDevice.Get(), Globals::gSetLayoutForMesh.Get(),
-		Globals::gDescriptorPoolForMesh.Get(), *Globals::gSwapchain.PGetImageViews()
+		renderer.device.Get(), renderer.setLayoutForMesh.Get(),
+		renderer.descriptorPoolForMesh.Get(), *renderer.swapchain.PGetImageViews()
 	);
 }
 
-void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, 
-	glm::mat4 TransformMatrixProduct, std::vector<DataTypes::SpotlightAttributes_t*> spotlightAttributes) {
-
+void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec3 cameraPosition, 
+	DataTypes::ViewProjection_t viewProjection, glm::mat4 TransformMatrixProduct, std::vector<DataTypes::PointLightAttributes_t*> spotlightAttributes, 
+	std::vector <DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes) {
+	
 	MVP.model = TransformMatrixProduct;
-	MVP.view = Globals::debugCamera.GetView();
-	MVP.proj = Globals::debugCamera.GetProjectionMatrix();
+	MVP.view = viewProjection.view;
+	MVP.proj = viewProjection.projection;
 
 	MVP.proj[1][1] *= -1;
 
 	void* data;
-	vkMapMemory(device, UniformBuffersMVP[imageIndex].GetDeviceMemory(), 0, sizeof(MVP), 0, &data);
+	vkMapMemory(device, UniformBuffersMVP_b0[imageIndex].GetDeviceMemory(), 0, sizeof(MVP), 0, &data);
 	memcpy(data, &MVP, sizeof(MVP));
-	vkUnmapMemory(device, UniformBuffersMVP[imageIndex].GetDeviceMemory());
+	vkUnmapMemory(device, UniformBuffersMVP_b0[imageIndex].GetDeviceMemory());
 
-
-	vkMapMemory(device, UniformBuffersMaterial[imageIndex].GetDeviceMemory(), 0, sizeof(DataTypes::Material_t), 0, &data);
+	vkMapMemory(device, UniformBuffersMaterial_b4[imageIndex].GetDeviceMemory(), 0, sizeof(DataTypes::Material_t), 0, &data);
 	memcpy(data, &Material, sizeof(DataTypes::Material_t));
-	vkUnmapMemory(device, UniformBuffersMaterial[imageIndex].GetDeviceMemory());
+	vkUnmapMemory(device, UniformBuffersMaterial_b4[imageIndex].GetDeviceMemory());
 
-	std::vector<DataTypes::SpotlightAttributes_t> buffer_SpotlightAttributes(MAX_SPOTLIGHTS);
+	std::vector<DataTypes::PointLightAttributes_t> buffer_SpotlightAttributes(MAX_SPOTLIGHTS);
 
 	for (size_t i = 0; i < buffer_SpotlightAttributes.size(); i++) {
 		if (i < spotlightAttributes.size()){
@@ -367,35 +360,61 @@ void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device,
 		else {
 			buffer_SpotlightAttributes[i].lightColor = glm::vec3(0, 0, 0);
 			buffer_SpotlightAttributes[i].lightPosition = glm::vec3(0, 0, 0);
+			buffer_SpotlightAttributes[i].constant = 0.0f;
+			buffer_SpotlightAttributes[i].linear = 0.0f;
+			buffer_SpotlightAttributes[i].quadrantic = 0.0f;
 		}
 	}
 
-	vkMapMemory(device, UniformBuffersSpotLightAttributes[imageIndex].GetDeviceMemory(), 0,
-		sizeof(DataTypes::SpotlightAttributes_t) * buffer_SpotlightAttributes.size(), 0, &data);
-	memcpy(data, buffer_SpotlightAttributes.data(), sizeof(DataTypes::SpotlightAttributes_t) * buffer_SpotlightAttributes.size());
-	vkUnmapMemory(device, UniformBuffersSpotLightAttributes[imageIndex].GetDeviceMemory());
+	vkMapMemory(device, UniformBuffersSpotLightAttributes_b2[imageIndex].GetDeviceMemory(), 0,
+		sizeof(DataTypes::PointLightAttributes_t) * buffer_SpotlightAttributes.size(), 0, &data);
+	memcpy(data, buffer_SpotlightAttributes.data(), sizeof(DataTypes::PointLightAttributes_t) * buffer_SpotlightAttributes.size());
+	vkUnmapMemory(device, UniformBuffersSpotLightAttributes_b2[imageIndex].GetDeviceMemory());
 
-	DataTypes::CameraPos_t debugCameraPos;
-	debugCameraPos.pos = Globals::debugCamera.GetPosition();
+	buffer_SpotlightAttributes.clear();
 
-	vkMapMemory(device, UniformBuffersDebugCameraPos[imageIndex].GetDeviceMemory(), 0, sizeof(DataTypes::CameraPos_t), 0, &data);
-	memcpy(data, &debugCameraPos, sizeof(DataTypes::CameraPos_t));
-	vkUnmapMemory(device, UniformBuffersDebugCameraPos[imageIndex].GetDeviceMemory());
+
+	DataTypes::CameraPos_t cameraPos;
+	cameraPos.pos = cameraPosition;
+
+	vkMapMemory(device, UniformBuffersDebugCameraPos_b3[imageIndex].GetDeviceMemory(), 0, sizeof(DataTypes::CameraPos_t), 0, &data);
+	memcpy(data, &cameraPos, sizeof(DataTypes::CameraPos_t));
+    vkUnmapMemory(device, UniformBuffersDebugCameraPos_b3[imageIndex].GetDeviceMemory());
+
+	std::vector<DataTypes::DirectionalLightAttributes_t> buffer_DirectionalLightAttributes(MAX_DLIGHTS);
+    for (size_t i = 0; i < buffer_DirectionalLightAttributes.size(); i++) {
+        if (i < directionalLightAttributes.size()) {
+			buffer_DirectionalLightAttributes[i] = *directionalLightAttributes[i];
+        }
+
+        else {
+			buffer_DirectionalLightAttributes[i].lightColor = glm::vec3(0, 0, 0);
+			buffer_DirectionalLightAttributes[i].lightDirection = glm::vec3(0, 0, 0);
+        }
+    }
+	//spdlog::info("Debug 1: {:6.2f}", buffer_DirectionalLightAttributes[0].lightColor.r);
+	vkMapMemory(device, UniformBuffersDirectionalLightAttributes_b5[imageIndex].GetDeviceMemory(), 0, 
+		buffer_DirectionalLightAttributes.size()*sizeof(DataTypes::DirectionalLightAttributes_t) , 0, &data);
+    memcpy(data, buffer_DirectionalLightAttributes.data(), buffer_DirectionalLightAttributes.size() * sizeof(DataTypes::DirectionalLightAttributes_t));
+    vkUnmapMemory(device, UniformBuffersDirectionalLightAttributes_b5[imageIndex].GetDeviceMemory());
+
+	buffer_DirectionalLightAttributes.clear();
 }
 
 void Engine::Mesh::Destroy() {
-	mTexture.DestroyTexture(Globals::gDevice.Get());
-	vkFreeDescriptorSets(Globals::gDevice.Get(), Globals::gDescriptorPoolForMesh.Get(),
+	AlbedoTexture_b1.DestroyTexture(renderer.device.Get());
+	vkFreeDescriptorSets(renderer.device.Get(), renderer.descriptorPoolForMesh.Get(),
 		(uint32_t)DescriptorSets.size(), DescriptorSets.data());
-	for (size_t i = 0; i < UniformBuffersMVP.size(); i++) {
-		UniformBuffersMVP[i].Destroy(Globals::gDevice.Get());
-		UniformBuffersDebugCameraPos[i].Destroy(Globals::gDevice.Get());
-		UniformBuffersMaterial[i].Destroy(Globals::gDevice.Get());
-		UniformBuffersSpotLightAttributes[i].Destroy(Globals::gDevice.Get());
+	for (size_t i = 0; i < UniformBuffersMVP_b0.size(); i++) {
+		UniformBuffersMVP_b0[i].Destroy(renderer.device.Get());
+		UniformBuffersDebugCameraPos_b3[i].Destroy(renderer.device.Get());
+		UniformBuffersMaterial_b4[i].Destroy(renderer.device.Get());
+		UniformBuffersDirectionalLightAttributes_b5[i].Destroy(renderer.device.Get());
+		UniformBuffersSpotLightAttributes_b2[i].Destroy(renderer.device.Get());
 
 	}
-	VertexBuffer.Destroy(Globals::gDevice.Get());
-	IndexBuffer.Destroy(Globals::gDevice.Get());
+	VertexBuffer.Destroy(renderer.device.Get());
+	IndexBuffer.Destroy(renderer.device.Get());
 }
 
 void Engine::WireframeMesh::LoadModel(std::string modelPath, glm::vec3 color) {
@@ -453,25 +472,23 @@ void Engine::WireframeMesh::CreateDescriptorSets(VkDevice device, VkDescriptorSe
 
 	std::vector<VkWriteDescriptorSet> writeDescriptorSets;
 	for (size_t i = 0; i < DescriptorSets.size(); i++) {
+
 		VkDescriptorBufferInfo bufferInfo{};
+
 		VkWriteDescriptorSet mvpWriteDescriptorSet{};
-		{
-			bufferInfo.buffer = UniformBuffersMVP[i].Get();
-			bufferInfo.offset = 0;
-			bufferInfo.range = sizeof(DataTypes::MVP_t);
+        bufferInfo.buffer = UniformBuffersMVP[i].Get();
+        bufferInfo.offset = 0;
+        bufferInfo.range = sizeof(DataTypes::MVP_t);
 
 
-			mvpWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			mvpWriteDescriptorSet.descriptorCount = 1;
-			mvpWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			mvpWriteDescriptorSet.dstSet = DescriptorSets[i];
-			mvpWriteDescriptorSet.dstBinding = 0;
-			mvpWriteDescriptorSet.dstArrayElement = 0;
-			mvpWriteDescriptorSet.pBufferInfo = &bufferInfo;
-			writeDescriptorSets.push_back(mvpWriteDescriptorSet);
-
-		}
-
+        mvpWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        mvpWriteDescriptorSet.descriptorCount = 1;
+        mvpWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        mvpWriteDescriptorSet.dstSet = DescriptorSets[i];
+        mvpWriteDescriptorSet.dstBinding = 0;
+        mvpWriteDescriptorSet.dstArrayElement = 0;
+        mvpWriteDescriptorSet.pBufferInfo = &bufferInfo;
+        writeDescriptorSets.push_back(mvpWriteDescriptorSet);
 
 		vkUpdateDescriptorSets(device, (uint32_t)writeDescriptorSets.size(), writeDescriptorSets.data(), 0, nullptr);
 		writeDescriptorSets.resize(0);
@@ -486,7 +503,7 @@ void Engine::WireframeMesh::Draw(VkCommandBuffer commandBuffer, int imageIndex) 
 	vkCmdBindPipeline(
 		commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
-		Globals::gGraphicsPipelineForRigidBodyMesh.Get()
+		renderer.gGraphicsPipelineForRigidBodyMesh.Get()
 	);
 
 	VkBuffer buffers[] = { VertexBuffer.Get() };
@@ -494,13 +511,13 @@ void Engine::WireframeMesh::Draw(VkCommandBuffer commandBuffer, int imageIndex) 
 	VkDeviceSize offsets[] = { 0 };
 
 	if (ENABLE_DYNAMIC_VIEWPORT) {
-		vkCmdSetViewport(commandBuffer, 0, 1, &Globals::gEditor3DView);
-		vkCmdSetScissor(commandBuffer, 0, 1, &Globals::gEditor3DScissors);
+		vkCmdSetViewport(commandBuffer, 0, 1, &renderer.rendererViewport);
+		vkCmdSetScissor(commandBuffer, 0, 1, &renderer.rendererScissors);
 	}
 
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 
-	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, Globals::gGraphicsPipelineForRigidBodyMesh.GetPipelineLayout(),
+	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, renderer.gGraphicsPipelineForRigidBodyMesh.GetPipelineLayout(),
 		0, 1, &DescriptorSets[imageIndex], 0, nullptr);
 
 	vkCmdBindIndexBuffer(commandBuffer, IndexBuffer.Get(), 0, VK_INDEX_TYPE_UINT32);
@@ -527,29 +544,29 @@ std::vector<glm::uint32_t> Engine::WireframeMesh::GetIndexes() {
 void Engine::WireframeMesh::CreateMesh(std::string modelPath, glm::vec3 color) {
 	LoadModel(modelPath, color);
 
-	VertexBuffer.CreateVertexBuffer(Globals::gPhysicalDevice.Get(), Globals::gDevice.Get(),
-		Globals::gDevice.GetGraphicsQueue(), Globals::gCommandPool.Get(),
+	VertexBuffer.CreateVertexBuffer(renderer.physicalDevice.Get(), renderer.device.Get(),
+		renderer.device.GetGraphicsQueue(), renderer.commandPool.Get(),
 		Vertices.data(), sizeof(Vertices[0]) * Vertices.size());
 
-	IndexBuffer.CreateIndexBuffer(Globals::gPhysicalDevice.Get(), Globals::gDevice.Get(),
-		Globals::gDevice.GetGraphicsQueue(), Globals::gCommandPool.Get(),
+	IndexBuffer.CreateIndexBuffer(renderer.physicalDevice.Get(), renderer.device.Get(),
+		renderer.device.GetGraphicsQueue(), renderer.commandPool.Get(),
 		Indexes.data(), sizeof(Indexes[0]) * Indexes.size());
 
-	UniformBuffersMVP.resize(Globals::gSwapchain.PGetImageViews()->size());
+	UniformBuffersMVP.resize(renderer.swapchain.PGetImageViews()->size());
 
-	for (size_t i = 0; i < Globals::gSwapchain.PGetImageViews()->size(); i++) {
-		UniformBuffersMVP[i].CreateUniformBuffer(Globals::gPhysicalDevice.Get(), Globals::gDevice.Get(), sizeof(DataTypes::MVP_t));
+	for (size_t i = 0; i < renderer.swapchain.PGetImageViews()->size(); i++) {
+		UniformBuffersMVP[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::MVP_t));
 	}
 
-	CreateDescriptorSets(Globals::gDevice.Get(), Globals::gSetLayoutForRigidBodyMesh.Get(),
-		Globals::gDescriptorPoolForMesh.Get(), *Globals::gSwapchain.PGetImageViews());
+	CreateDescriptorSets(renderer.device.Get(), renderer.setLayoutForRigidBodyMesh.Get(),
+		renderer.descriptorPoolForMesh.Get(), *renderer.swapchain.PGetImageViews());
 }
 
-void Engine::WireframeMesh::UpdateUniforms(uint32_t imageIndex, VkDevice device) {
+void Engine::WireframeMesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, DataTypes::ViewProjection_t viewProjection) {
 
 	MVP.model = Transform.GetMatrixProduct();
-	MVP.view = Globals::debugCamera.GetView();
-	MVP.proj = Globals::debugCamera.GetProjectionMatrix();
+	MVP.view = viewProjection.view;
+	MVP.proj = viewProjection.projection;
 
 	MVP.proj[1][1] *= -1;
 	void* data;
@@ -559,13 +576,13 @@ void Engine::WireframeMesh::UpdateUniforms(uint32_t imageIndex, VkDevice device)
 }
 
 void Engine::WireframeMesh::Destroy() {
-	vkFreeDescriptorSets(Globals::gDevice.Get(), Globals::gDescriptorPoolForMesh.Get(), 
+	vkFreeDescriptorSets(renderer.device.Get(), renderer.descriptorPoolForMesh.Get(), 
 		(uint32_t)DescriptorSets.size(), DescriptorSets.data());
 	for (size_t i = 0; i < UniformBuffersMVP.size(); i++) {
-		UniformBuffersMVP[i].Destroy(Globals::gDevice.Get());
+		UniformBuffersMVP[i].Destroy(renderer.device.Get());
 	}
-	VertexBuffer.Destroy(Globals::gDevice.Get());
-	IndexBuffer.Destroy(Globals::gDevice.Get());
+	VertexBuffer.Destroy(renderer.device.Get());
+	IndexBuffer.Destroy(renderer.device.Get());
 }
 
 void Engine::CubemapMesh::CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout descriptorSetLayoutForCubemap, 
@@ -592,7 +609,7 @@ void Engine::CubemapMesh::CreateDescriptorSets(VkDevice device, VkDescriptorSetL
 		VkDescriptorBufferInfo bufferInfo{};
 		bufferInfo.buffer = UniformBuffersVP[i].Get();
 		bufferInfo.offset = 0;
-		bufferInfo.range = sizeof(DataTypes::CubemapVP_t);
+		bufferInfo.range = sizeof(DataTypes::ViewProjection_t);
 
 		VkWriteDescriptorSet mvpWriteDescriptorSet{};
 		mvpWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -693,43 +710,43 @@ void Engine::CubemapMesh::CreateCubemapMesh(std::vector<std::string> paths) {
 	}
 
 	mCubemapTexture.CreateCubemapTexture(
-		Globals::gDevice.Get(),
-		Globals::gPhysicalDevice.Get(),
-		Globals::gCommandPool.Get(),
-		Globals::gDevice.GetGraphicsQueue(),
+		renderer.device.Get(),
+		renderer.physicalDevice.Get(),
+		renderer.commandPool.Get(),
+		renderer.device.GetGraphicsQueue(),
 		paths
 	);
 
-	UniformBuffersVP.resize(Globals::gSwapchain.PGetImageViews()->size());
+	UniformBuffersVP.resize(renderer.swapchain.PGetImageViews()->size());
 
-	for (size_t i = 0; i < Globals::gSwapchain.PGetImageViews()->size(); i++) {
+	for (size_t i = 0; i < renderer.swapchain.PGetImageViews()->size(); i++) {
 		UniformBuffersVP[i].CreateUniformBuffer(
-			Globals::gPhysicalDevice.Get(),
-			Globals::gDevice.Get(),
-			sizeof(DataTypes::CubemapVP_t)
+			renderer.physicalDevice.Get(),
+			renderer.device.Get(),
+			sizeof(DataTypes::ViewProjection_t)
 		);
 	}
 
 	CreateDescriptorSets(
-		Globals::gDevice.Get(),
-		Globals::gSetLayoutForCubemapObjects.Get(),
-		Globals::gDescriptorPoolForCubemapObjects.Get(),
-		*Globals::gSwapchain.PGetImageViews()
+		renderer.device.Get(),
+		renderer.setLayoutForCubemapObjects.Get(),
+		renderer.descriptorPoolForCubemapObjects.Get(),
+		*renderer.swapchain.PGetImageViews()
 	);
 
 	mVertexBuffer.CreateVertexBuffer(
-		Globals::gPhysicalDevice.Get(),
-		Globals::gDevice.Get(),
-		Globals::gDevice.GetGraphicsQueue(),
-		Globals::gCommandPool.Get(),
+		renderer.physicalDevice.Get(),
+		renderer.device.Get(),
+		renderer.device.GetGraphicsQueue(),
+		renderer.commandPool.Get(),
 		CubeMapVertices.data(),
 		sizeof(CubeMapVertices[0]) * CubeMapVertices.size());
 
 	mIndexBuffer.CreateIndexBuffer(
-		Globals::gPhysicalDevice.Get(),
-		Globals::gDevice.Get(),
-		Globals::gDevice.GetGraphicsQueue(),
-		Globals::gCommandPool.Get(),
+		renderer.physicalDevice.Get(),
+		renderer.device.Get(),
+		renderer.device.GetGraphicsQueue(),
+		renderer.commandPool.Get(),
 		Indexes.data(),
 		sizeof(Indexes[0]) * Indexes.size());
 }
@@ -738,28 +755,28 @@ void Engine::CubemapMesh::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
 	vkCmdBindPipeline(
 		commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
-		Globals::gGraphicsPipelineForCubemapObjects.Get()
+		renderer.graphicsPipelineForCubemapObjects.Get()
 	);
 
 	if (ENABLE_DYNAMIC_VIEWPORT) {
-		vkCmdSetViewport(commandBuffer, 0, 1, &Globals::gEditor3DView);
-		vkCmdSetScissor(commandBuffer, 0, 1, &Globals::gEditor3DScissors);
+		vkCmdSetViewport(commandBuffer, 0, 1, &renderer.rendererViewport);
+		vkCmdSetScissor(commandBuffer, 0, 1, &renderer.rendererScissors);
 	}
 
 	VkBuffer buffers[] = { mVertexBuffer.Get() };
 	VkDeviceSize offsets[] = { 0 };
 
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
-	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, Globals::gGraphicsPipelineForCubemapObjects.GetPipelineLayout(),
+	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, renderer.graphicsPipelineForCubemapObjects.GetPipelineLayout(),
 		0, 1, &DescriptorSets[imageIndex], 0, nullptr);
 	vkCmdBindIndexBuffer(commandBuffer, mIndexBuffer.Get(), 0, VK_INDEX_TYPE_UINT32);
 	vkCmdDrawIndexed(commandBuffer, (uint32_t)Indexes.size(), 1, 0, 0, 0);
 }
 
-void Engine::CubemapMesh::UpdateUniforms(uint32_t imageIndex, VkDevice device) {
-	DataTypes::CubemapVP_t cubemapMp;
-	cubemapMp.view = Globals::debugCamera.GetCubemapViewForVulkan();
-	cubemapMp.projection = Globals::debugCamera.GetProjectionMatrix();
+void Engine::CubemapMesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, DataTypes::ViewProjection_t viewProjection) {
+	DataTypes::ViewProjection_t cubemapMp;
+	cubemapMp.view = viewProjection.view;
+	cubemapMp.projection = viewProjection.projection;
 	cubemapMp.view[3] = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	void* data;
@@ -769,16 +786,16 @@ void Engine::CubemapMesh::UpdateUniforms(uint32_t imageIndex, VkDevice device) {
 }
 
 void Engine::CubemapMesh::Destroy() {
-	mCubemapTexture.DestroyTexture(Globals::gDevice.Get());
-	vkFreeDescriptorSets(Globals::gDevice.Get(),
-		Globals::gDescriptorPoolForCubemapObjects.Get(),
+	mCubemapTexture.DestroyTexture(renderer.device.Get());
+	vkFreeDescriptorSets(renderer.device.Get(),
+		renderer.descriptorPoolForCubemapObjects.Get(),
 		(uint32_t)DescriptorSets.size(),
 		DescriptorSets.data());
 
 	for (size_t i = 0; i < UniformBuffersVP.size(); i++) {
-		UniformBuffersVP[i].Destroy(Globals::gDevice.Get());
+		UniformBuffersVP[i].Destroy(renderer.device.Get());
 	}
 
-	mVertexBuffer.Destroy(Globals::gDevice.Get());
-	mIndexBuffer.Destroy(Globals::gDevice.Get());
+	mVertexBuffer.Destroy(renderer.device.Get());
+	mIndexBuffer.Destroy(renderer.device.Get());
 }

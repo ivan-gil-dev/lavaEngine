@@ -48,7 +48,7 @@
 
 #include "imgui.h"
 #include "imgui_impl_vulkan.h"
-#include "../src/Headers/DataTypes.h"
+#include "../src/Headers/Renderer/DataTypes.h"
 #include <stdio.h>
 
 // Reusable buffers used for rendering 1 current in-flight frame, for ImGui_ImplVulkan_RenderDrawData()

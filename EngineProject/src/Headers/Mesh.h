@@ -2,19 +2,12 @@
 #define mesh_h
 
 #include "Transform.h"
-#include "Pipelines.h"
-#include "Device.h"
-#include "PhysicalDevice.h"
-#include "DescriptorPools.h"
-#include "Swapchain.h"
-#include "DescriptorSetLayouts.h"
 #include "../../vendor/volk.h"
 #include <vector>
-#include "DataTypes.h"
-#include "Buffers.h"
-#include "Camera.h"
-#include "CommandPool.h"
-#include "Images.h"
+#include "Renderer/DataTypes.h"
+#include "Renderer/Buffers.h"
+
+#include "Renderer/Images.h"
 #include "../../vendor/tiny_obj_loader.h"
 namespace Engine{
 	class Mesh {
@@ -23,16 +16,18 @@ namespace Engine{
 		std::vector<DataTypes::MeshVertex_t>			Vertices;
 		std::vector<uint32_t>						    Indexes;
 		std::unordered_map<DataTypes::MeshVertex_t, uint32_t> UniqueVertices{};
-		Texture											mTexture;
 		VulkanBuffers::VertexBuffer					    VertexBuffer;
 		VulkanBuffers::IndexBuffer						IndexBuffer;
 		DataTypes::MVP_t								MVP{};
 		DataTypes::Material_t							Material{};
 		std::vector<VkDescriptorSet>				    DescriptorSets;
-		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMVP;
-		std::vector<VulkanBuffers::UniformBuffer>   	UniformBuffersSpotLightAttributes;
-		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersDebugCameraPos;
-		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMaterial;
+	private:
+		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMVP_b0;
+		Texture											AlbedoTexture_b1;
+		std::vector<VulkanBuffers::UniformBuffer>   	UniformBuffersSpotLightAttributes_b2;
+		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersDebugCameraPos_b3;
+		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMaterial_b4;
+		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersDirectionalLightAttributes_b5;
 	
 		void LoadModel(std::string modelPath);
 
@@ -53,7 +48,9 @@ namespace Engine{
 
 		DataTypes::Material_t GetMaterial();
 
-		void SetBaseColorTexture(std::string path);
+		void SetAlbedoTexture(std::string path);
+
+		Texture GetAlbedoTexture();
 
 		void SetMaterial(DataTypes::Material_t mat);
 	
@@ -61,8 +58,8 @@ namespace Engine{
 
 		void CreateMesh(std::string modelPath);
 
-		void UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::mat4 TransformMatrixProduct, 
-			std::vector<DataTypes::SpotlightAttributes_t*> spotlightAttributes);
+		void UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec3 cameraPosition, DataTypes::ViewProjection_t viewProjection, glm::mat4 TransformMatrixProduct,
+			std::vector<DataTypes::PointLightAttributes_t*> spotlightAttributes, std::vector <DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes);
 
 		void Destroy();
 
@@ -106,7 +103,7 @@ namespace Engine{
 
 		void CreateMesh(std::string modelPath, glm::vec3 color);
 
-		void UpdateUniforms(uint32_t imageIndex, VkDevice device);
+		void UpdateUniforms(uint32_t imageIndex, VkDevice device, DataTypes::ViewProjection_t viewProjection);
 
 		void Destroy();
 
@@ -114,7 +111,7 @@ namespace Engine{
 
 	class CubemapMesh{
 	private:
-		std::vector<DataTypes::MeshVertex_t>  Vertices;
+		std::vector<DataTypes::MeshVertex_t>	  Vertices;
 		std::vector<uint32_t>					  Indexes;
 		std::vector<glm::vec3>					  CubeMapVertices;
 		VulkanBuffers::VertexBuffer				  mVertexBuffer;
@@ -137,7 +134,7 @@ namespace Engine{
 
 		void Draw(VkCommandBuffer commandBuffer, int imageIndex);
 
-		void UpdateUniforms(uint32_t imageIndex, VkDevice device);
+		void UpdateUniforms(uint32_t imageIndex, VkDevice device, DataTypes::ViewProjection_t viewProjection);
 
 		void Destroy();
 

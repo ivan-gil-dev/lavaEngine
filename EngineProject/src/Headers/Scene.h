@@ -2,12 +2,14 @@
 #define scene_h
 
 
-#include "Entities.h"
+
 #include "Globals.h"
-#include "DataTypes.h"
+#include "Renderer/DataTypes.h"
 #include <vector>
-
-
+#include <nlohmann/json.hpp>
+#include <string>
+#include <fstream>
+#include "Entities.h"
 namespace Engine{
 
 	static void InitBullet() {
@@ -31,34 +33,35 @@ namespace Engine{
 	}
 
 	class Scene {
-		std::vector<SpotlightObject*> spotlights;
-		std::vector<DataTypes::SpotlightAttributes_t*> spotlightAttributes;
+		std::vector<DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes;
+
+		std::vector<DataTypes::PointLightAttributes_t*> pointLightAttributes;
 		std::vector<Entity*> entities;
+
+		std::vector<DirectionalLightObject*> directionalLights;
+		std::vector<PointLightObject*> pointLights;
+
+		nlohmann::ordered_json sceneJson;
+
 	public:
 
-		std::vector<Entity*> GetVectorOfEntities(){
-			return entities;
-		}
+		void Load(std::string path);
 
-		Scene(){
-			
-		}
+		void Save(std::string path);
 
-		std::vector<DataTypes::SpotlightAttributes_t*> GetVectorOfSpotlightAttributes(){
-			return spotlightAttributes;
-		}
+		std::vector<Entity*>* pGetVectorOfEntities();
+
+		Scene();
+
+		std::vector<DataTypes::DirectionalLightAttributes_t*> GetVectorOfDirectionalLightAttributes();
+
+		std::vector<DataTypes::PointLightAttributes_t*> GetVectorOfSpotlightAttributes();
 
 		void Demo();
 
-		void CleanScene(){
+		void SetScrypts();
 
-			for (size_t i = 0; i < entities.size(); i++) {
-				entities[i]->Destroy();
-				delete entities[i];
-			}
-		
-			CleanBullet();
-		}
+		void CleanScene();
 	};
 
 	namespace Globals{
