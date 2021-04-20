@@ -490,6 +490,8 @@ void Application::Execute() {
 //<Освобождение ресурсов>
 void Application::Clear() {
 	//<Ожидание бездействия GPU>
+
+	vkQueueWaitIdle(Engine::renderer.device.GetGraphicsQueue());
 	vkDeviceWaitIdle(Engine::renderer.device.Get());
 
 	Engine::Globals::gScene->CleanScene();

@@ -178,7 +178,7 @@ void Engine::RigidBody::CreateBodyWithMass(btDynamicsWorld* dynamicsWorld, int u
 	constructionInfo.m_friction = GetFriction();
 
 	pRigidBody = new btRigidBody(constructionInfo);
-	//pRigidBody->setActivationState(DISABLE_DEACTIVATION);
+	pRigidBody->setActivationState(DISABLE_DEACTIVATION);
 	pRigidBody->setUserPointer(this);
 	pRigidBody->setUserIndex(userIndex);
 

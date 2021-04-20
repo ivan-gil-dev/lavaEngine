@@ -266,7 +266,7 @@ std::vector<Engine::DataTypes::PointLightAttributes_t*> Engine::Scene::GetVector
 
 void Engine::Scene::CleanScene()
 {
-    //Save("scene.json");
+    Save("scene.json");
 
 
     for (size_t i = 0; i < entities.size(); i++) {
