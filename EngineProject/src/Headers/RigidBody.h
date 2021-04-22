@@ -10,13 +10,13 @@ namespace Engine{
 	enum RigidBodyShapeType{
 		RIGIDBODY_SHAPE_TYPE_PLANE,
 		RIGIDBODY_SHAPE_TYPE_CUBE,
-		RIGIDBODY_SHAPE_TYPE_MESH
-	
+		RIGIDBODY_SHAPE_TYPE_MESH,
+		RIGIDBODY_SHAPE_TYPE_SPHERE
 	};
 
 	class RigidBody	{
 		RigidBodyShapeType    ShapeType;
-		btConvexHullShape *   pShape;
+		btConvexShape *   pShape;
 		btRigidBody *		  pRigidBody;
 		
 		btDefaultMotionState* pMotionState;

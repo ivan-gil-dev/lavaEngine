@@ -16,7 +16,8 @@ public:
 		 ShowPropertiesPanel = true,  //Показать панель свойств
 		 StartButtonActive,			  //Обработка нажатия кнопки старт
 		 ResetPhysics        = true,  //Сбросить физические параметры (Если симуляция не начата)
-		 CloseWindow         = false; //Закрыть окно
+		 CloseWindow         = false, //Закрыть окно
+		 OpenFileDialog		 = false;
 
 public:
 	Engine::EditorCamera editorCamera{};

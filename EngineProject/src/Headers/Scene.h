@@ -38,16 +38,22 @@ namespace Engine{
 		std::vector<DataTypes::PointLightAttributes_t*> pointLightAttributes;
 		std::vector<Entity*> entities;
 
-		std::vector<DirectionalLightObject*> directionalLights;
-		std::vector<PointLightObject*> pointLights;
+		//std::vector<DirectionalLightObject*> directionalLights;
+		//std::vector<PointLightObject*> pointLights;
 
 		nlohmann::ordered_json sceneJson;
 
+		std::string scenePath;
+
 	public:
+
+		std::string GetScenePath();
 
 		void Load(std::string path);
 
-		void Save(std::string path);
+		void Save();
+
+		void SaveAs(std::string path);
 
 		std::vector<Entity*>* pGetVectorOfEntities();
 

@@ -23,7 +23,7 @@ namespace Engine{
 		std::vector<VkDescriptorSet>				    DescriptorSets;
 	private:
 		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMVP_b0;
-		Texture											AlbedoTexture_b1;
+		Texture											DiffuseTexture_b1;
 		std::vector<VulkanBuffers::UniformBuffer>   	UniformBuffersSpotLightAttributes_b2;
 		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersDebugCameraPos_b3;
 		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMaterial_b4;
@@ -48,9 +48,9 @@ namespace Engine{
 
 		DataTypes::Material_t GetMaterial();
 
-		void SetAlbedoTexture(std::string path);
+		void SetDiffuseTexture(std::string path);
 
-		Texture GetAlbedoTexture();
+		Texture GetDiffuseTexture();
 
 		void SetMaterial(DataTypes::Material_t mat);
 	

@@ -51,10 +51,10 @@ namespace Engine {
                 VkImageView attachments[] = {
                     //  msaa
                         multisamplingImageView,
-                    //  Z-буфер
-                        depthImageView,
-                    //  Изображение из swapchain
-                        swapchainImageViews[i],
+                        //  Z-буфер
+                            depthImageView,
+                            //  Изображение из swapchain
+                                swapchainImageViews[i],
                 };
 
                 VkFramebufferCreateInfo framebufferCreateInfo{};
@@ -68,7 +68,7 @@ namespace Engine {
                 framebufferCreateInfo.pAttachments = attachments;
                 framebufferCreateInfo.attachmentCount = (uint32_t)3;
                 framebufferCreateInfo.layers = 1;
-                
+
 
                 if (vkCreateFramebuffer(device, &framebufferCreateInfo, nullptr, &framebuffers[i]) != VK_SUCCESS) {
                     throw std::runtime_error("Failed to create framebuffer");
@@ -105,7 +105,7 @@ namespace Engine {
         VkRect2D   rendererScissors;
         VkViewport rendererViewport;
 
-        #define MAX_FRAMES 2
+#define MAX_FRAMES 2
         //  Буфер с коммандами для отрисовки сцены
         CommandBuffer drawCommandBuffer;
 
@@ -132,12 +132,12 @@ namespace Engine {
             rendererViewport.minDepth = 0.0f;
             rendererViewport.maxDepth = 1.0f;
 
-           swapchain.CreateSwapchain(physicalDevice.Get(),
+            swapchain.CreateSwapchain(physicalDevice.Get(),
                 device.Get(),
                 surface.Get(),
                 physicalDevice.GetQueueIndices());
 
-           swapchain.CreateImageViews(device.Get());
+            swapchain.CreateImageViews(device.Get());
 
             commandPool.CreateCommandPool(physicalDevice.GetQueueIndices(),
                 device.Get());
@@ -265,10 +265,10 @@ namespace Engine {
                     swapchain.GetInfo().imageExtent
                 )
             );
-            
+
             rendererScissors.extent = swapchain.GetInfo().imageExtent;
 
-        }
+        }   
 
         void DrawScene(ImDrawData* drawData, Scene* scene, Camera camera){
             uint32_t imageIndex;

@@ -1,5 +1,5 @@
 #include "Application.h"
-
+#include <shobjidl.h> 
 //Подготовка ImGui
 void SceneEditor::InitEditor(HWND hwnd) {
 
@@ -82,7 +82,127 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 
 			//Меню: Файл
 			if (ImGui::BeginMenu(u8"File")) {
+				ImGui::MenuItem(u8"Open", "", &OpenFileDialog);
+				if (OpenFileDialog){
+
+                    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED |
+                        COINIT_DISABLE_OLE1DDE);
+
+                    if (SUCCEEDED(hr))
+                    {
+                        IFileOpenDialog* pFileOpen;
+
+                        // Create the FileOpenDialog object.
+                        hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
+                            IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+
+                        if (SUCCEEDED(hr))
+                        {
+                            // Show the Open dialog box.
+                            hr = pFileOpen->Show(NULL);
+
+                            // Get the file name from the dialog box.
+                            if (SUCCEEDED(hr))
+                            {
+                                IShellItem* pItem;
+                                hr = pFileOpen->GetResult(&pItem);
+                                if (SUCCEEDED(hr))
+                                {
+                                    PWSTR pszFilePath;
+                                    hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+                                    // Display the file name to the user.
+                                    if (SUCCEEDED(hr))
+                                    {
+										std::wstring str(pszFilePath);
+										std::string path(str.begin(), str.end());
+										spdlog::info("Loading...");
+										std::cout << path << std::endl;									
+										Engine::Globals::gScene->Load(path);
+										spdlog::info("Done!");
+                                        CoTaskMemFree(pszFilePath);
+                                    }
+                                    pItem->Release();
+                                }
+                            }
+                            pFileOpen->Release();
+                        }
+                        CoUninitialize();
+
+
+                    }
+					OpenFileDialog = false;
+				}
+
+				bool Save = false;
+				bool SaveAs = false;
+
+                ImGui::MenuItem("Save", "", &Save);
+                if (Save) {
+					if (Engine::Globals::gScene->GetScenePath() != "")
+					{
+						Engine::Globals::gScene->Save();
+					}
+					else {
+						SaveAs = true;
+					}
+                }
+
+				
+				ImGui::MenuItem("Save As", "", &SaveAs);
+				if (SaveAs){
+                    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED |
+                        COINIT_DISABLE_OLE1DDE);
+
+					if (SUCCEEDED(hr))
+					{
+						IFileSaveDialog* pFileSave;
+
+						// Create the FileOpenDialog object.
+						hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_ALL,
+							IID_IFileSaveDialog, reinterpret_cast<void**>(&pFileSave));
+
+						if (SUCCEEDED(hr))
+						{
+							// Show the Open dialog box.
+							hr = pFileSave->Show(NULL);
+
+							// Get the file name from the dialog box.
+							if (SUCCEEDED(hr))
+							{
+								IShellItem* pItem;
+								hr = pFileSave->GetResult(&pItem);
+								if (SUCCEEDED(hr))
+								{
+									PWSTR pszFilePath;
+									hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+									// Display the file name to the user.
+									if (SUCCEEDED(hr))
+									{
+										std::wstring str(pszFilePath);
+										std::string path(str.begin(), str.end());
+										spdlog::info("Saving...");
+										std::cout << path << std::endl;
+										Engine::Globals::gScene->SaveAs(path);
+										spdlog::info("Done!");
+										CoTaskMemFree(pszFilePath);
+									}
+									pItem->Release();
+								}
+							}
+							pFileSave->Release();
+						}
+						CoUninitialize();
+					}
+				}
+				
+
+
 				ImGui::MenuItem(u8"Exit", "ALT + F4", &CloseWindow);
+			
+				
+				
 				ImGui::EndMenu();
 				if (CloseWindow) {
 					SendMessage(hwnd, WM_CLOSE, 0, 0);
@@ -134,8 +254,6 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 				}
 				ImGui::EndMenu();//Конец меню
 			}
-		
-			
 		
 			if (ImGui::BeginMenu(u8"View")) { //Меню: "Вид"
 				ImGui::MenuItem(u8"Hierarchy Panel", "", &ShowHierarchyPanel);

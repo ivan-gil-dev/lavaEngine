@@ -128,6 +128,14 @@ void Engine::RigidBody::CreateShape(RigidBodyShapeType shapeType) {
 		}
 	}
 	break;
+	
+	case RIGIDBODY_SHAPE_TYPE_SPHERE:
+	{
+		pShape = new btSphereShape(0.5);
+		break;
+	}
+
+
 	default:
 		break;
 	}
@@ -221,7 +229,7 @@ void Engine::RigidBody::SetRigidbodyScale(glm::vec3 scaleVal) {
 		scaleVal.y,
 		scaleVal.z
 	));
-	pShape->recalcLocalAabb();
+	
 	DebugMesh.Transform.Scale(scaleVal);
 	
 }

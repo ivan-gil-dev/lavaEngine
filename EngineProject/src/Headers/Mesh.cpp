@@ -135,8 +135,8 @@ void Engine::Mesh::CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout d
         writeDescriptorSets.push_back(mvpWriteDescriptorSet);
 		
 		VkDescriptorImageInfo textureInfo{};
-        textureInfo.imageView = AlbedoTexture_b1.GetImageView();
-        textureInfo.sampler = AlbedoTexture_b1.GetImageSampler();
+        textureInfo.imageView = DiffuseTexture_b1.GetImageView();
+        textureInfo.sampler = DiffuseTexture_b1.GetImageSampler();
         textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
 		VkWriteDescriptorSet textureWriteDescriptorSet{};
@@ -238,19 +238,19 @@ Engine::DataTypes::Material_t Engine::Mesh::GetMaterial() {
 	return Material;
 }
 
-void Engine::Mesh::SetAlbedoTexture(std::string path) {
-	AlbedoTexture_b1.DestroyTexture(renderer.device.Get());
+void Engine::Mesh::SetDiffuseTexture(std::string path) {
+	DiffuseTexture_b1.DestroyTexture(renderer.device.Get());
 	vkFreeDescriptorSets(renderer.device.Get(), renderer.descriptorPoolForMesh.Get(),
 		(uint32_t)DescriptorSets.size(), DescriptorSets.data());
-	AlbedoTexture_b1.CreateTexture(
+	DiffuseTexture_b1.CreateTexture(
 		renderer.physicalDevice.Get(), renderer.device.Get(), renderer.device.GetGraphicsQueue(), renderer.commandPool.Get(), path
 	);
 	CreateDescriptorSets(renderer.device.Get(), renderer.setLayoutForMesh.Get(),
 		renderer.descriptorPoolForMesh.Get(), *renderer.swapchain.PGetImageViews());
 }
 
-Engine::Texture Engine::Mesh::GetAlbedoTexture(){
-	return AlbedoTexture_b1;
+Engine::Texture Engine::Mesh::GetDiffuseTexture(){
+	return DiffuseTexture_b1;
 }
 
 void Engine::Mesh::SetMaterial(DataTypes::Material_t mat) {
@@ -303,7 +303,7 @@ void Engine::Mesh::CreateMesh(std::string modelPath) {
 
 
         //<1x1 текстура (0,0,0,255)> 
-        AlbedoTexture_b1.CreateTexture(renderer.physicalDevice.Get(),
+        DiffuseTexture_b1.CreateTexture(renderer.physicalDevice.Get(),
             renderer.device.Get(),
             renderer.device.GetGraphicsQueue(),
             renderer.commandPool.Get(), "");
@@ -402,7 +402,7 @@ void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec
 }
 
 void Engine::Mesh::Destroy() {
-	AlbedoTexture_b1.DestroyTexture(renderer.device.Get());
+	DiffuseTexture_b1.DestroyTexture(renderer.device.Get());
 	vkFreeDescriptorSets(renderer.device.Get(), renderer.descriptorPoolForMesh.Get(),
 		(uint32_t)DescriptorSets.size(), DescriptorSets.data());
 	for (size_t i = 0; i < UniformBuffersMVP_b0.size(); i++) {
