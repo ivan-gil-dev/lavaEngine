@@ -31,15 +31,15 @@ void Engine::Scene::Demo(){
 
     gameObject->SetID((int)entities.size());
     gameObject->SetName("chair");
-    gameObject->Transform.Scale(glm::vec3(0.2f, 0.2f, 0.2f));
+    gameObject->Transform.Scale(glm::vec3(5.0f, 5.0f, 5.f));
     gameObject->Transform.Translate(glm::vec3(+8.0f, 10.0f, 5.0f));
 
     mesh = gameObject->pGetComponent<Mesh*>();
     rigidBody = gameObject->pGetComponent<RigidBody*>();
 
 
-    mesh->CreateMesh("CoreAssets/chair.obj");
-    mesh->SetDiffuseTexture("CoreAssets/chair.png");
+    mesh->CreateMesh("CoreAssets/sponza/sponza.obj");
+    //mesh->SetDiffuseTexture("CoreAssets/chair.png",0);
 
     rigidBody->CreateRigidBody(RIGIDBODY_SHAPE_TYPE_CUBE,
         Globals::gDynamicsWorld,
@@ -50,7 +50,7 @@ void Engine::Scene::Demo(){
     entities.push_back(gameObject);
 
 
-    for (size_t i = 1; i < 40; i++) {
+   /* for (size_t i = 1; i < 40; i++) {
         GameObject* box = new GameObject;
         box->AddComponent<Mesh>();
         box->AddComponent<RigidBody>();
@@ -59,7 +59,7 @@ void Engine::Scene::Demo(){
         rigidBody = box->pGetComponent<RigidBody*>();
 
         mesh->CreateMesh("CoreAssets/AtlasCube.obj");
-        mesh->SetDiffuseTexture("CoreAssets/AtlasCube.png");
+        mesh->SetDiffuseTexture("CoreAssets/AtlasCube.png",0);
 
         rigidBody->CreateRigidBody(
             RIGIDBODY_SHAPE_TYPE_CUBE,
@@ -90,7 +90,7 @@ void Engine::Scene::Demo(){
     rigidBody = gameObject2->pGetComponent<RigidBody*>();
 
     mesh->CreateMesh("CoreAssets/plane.obj");
-    mesh->SetDiffuseTexture("CoreAssets/ceramic2.jpg");
+    mesh->SetDiffuseTexture("CoreAssets/ceramic2.jpg",0);
     rigidBody->CreateRigidBody(RIGIDBODY_SHAPE_TYPE_PLANE,
         Globals::gDynamicsWorld,
         gameObject2->GetID()
@@ -108,7 +108,7 @@ void Engine::Scene::Demo(){
 
 
     gameObject2->ApplyEntityTransformToRigidbody();
-    entities.push_back(gameObject2);
+    entities.push_back(gameObject2);*/
 
     DirectionalLightObject* dlight = new DirectionalLightObject;
     dlight->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(1, -1, 1);

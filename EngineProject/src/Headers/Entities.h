@@ -138,26 +138,6 @@ namespace Engine{
 		GameObject();
 		~GameObject();
 
-		/*void AddComponent(ComponentType Type) {
-			if (Type == ComponentType::COMPONENT_TYPE_RIGIDBODY){
-				if (pRigidBody == nullptr) pRigidBody = new RigidBody;
-				else {
-					delete pRigidBody;
-					pRigidBody = new RigidBody;
-				}
-			}
-			if (Type == ComponentType::COMPONENT_TYPE_MESH){
-                if (pMesh == nullptr) pMesh = new Mesh;
-				else {
-                    delete pMesh;
-					pMesh = new Mesh;
-				}
-			}
-			else {
-				spdlog::warn("Invalid type!");
-			}
-		}*/
-
         template <typename T> void AddComponent() {
 
         }
@@ -189,20 +169,6 @@ namespace Engine{
         template <> Mesh* pGetComponent<Mesh*>() {
             return pMesh;
         }
-
-		/*void* GetComponent(ComponentType Type) {
-			if (Type == ComponentType::COMPONENT_TYPE_RIGIDBODY) {
-				return pRigidBody;
-			}
-			if (Type == ComponentType::COMPONENT_TYPE_MESH){
-				return pMesh;
-			}
-			else {
-				spdlog::warn("Invalid type!");
-				return 0;
-			}
-		}*/
-
 
 		void UpdateUniforms(uint32_t imageIndex, VkDevice device, Camera camera, std::vector<DataTypes::PointLightAttributes_t*> spotlightAttributes, std::vector<DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes);
 

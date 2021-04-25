@@ -10,20 +10,43 @@
 #include "Renderer/Images.h"
 #include "../../vendor/tiny_obj_loader.h"
 namespace Engine{
+	struct Face {
+		std::vector<uint32_t> indexes;
+		VulkanBuffers::IndexBuffer indexBuffer;
+		short MatID;
+		std::string diffuseMapPath;
+
+        bool operator < (const Face& face) const
+        {
+            return (MatID < face.MatID);
+        }
+
+	};
+
 	class Mesh {
 	private:
+		
 		std::string										MeshPath;
+
 		std::vector<DataTypes::MeshVertex_t>			Vertices;
-		std::vector<uint32_t>						    Indexes;
+		//std::vector<uint32_t>						    Indexes;
+		std::vector<Face>								Faces;
+
+
 		std::unordered_map<DataTypes::MeshVertex_t, uint32_t> UniqueVertices{};
+
 		VulkanBuffers::VertexBuffer					    VertexBuffer;
-		VulkanBuffers::IndexBuffer						IndexBuffer;
+		//VulkanBuffers::IndexBuffer					IndexBuffer;
+
+
 		DataTypes::MVP_t								MVP{};
 		DataTypes::Material_t							Material{};
 		std::vector<VkDescriptorSet>				    DescriptorSets;
 	private:
 		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMVP_b0;
-		Texture											DiffuseTexture_b1;
+
+		std::vector<Texture>							DiffuseTextures_b1;
+
 		std::vector<VulkanBuffers::UniformBuffer>   	UniformBuffersSpotLightAttributes_b2;
 		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersDebugCameraPos_b3;
 		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMaterial_b4;
@@ -36,21 +59,21 @@ namespace Engine{
 
 		public:
 
-		VkBuffer GetVertexBuffer();
+		/*VkBuffer GetVertexBuffer();
 
-		VkBuffer GetIndexBuffer();
+		VkBuffer GetIndexBuffer();*/
+
+		/*std::vector<uint32_t> GetIndexes();*/
 
 		std::string pGetMeshPath();
 
 		std::vector<DataTypes::MeshVertex_t>* GetVertices();
 
-		std::vector<uint32_t> GetIndexes();
-
 		DataTypes::Material_t GetMaterial();
 
-		void SetDiffuseTexture(std::string path);
+		void SetDiffuseTexture(std::string path, short id);
 
-		Texture GetDiffuseTexture();
+		Texture GetDiffuseTexture(short id);
 
 		void SetMaterial(DataTypes::Material_t mat);
 	

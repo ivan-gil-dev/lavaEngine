@@ -5,6 +5,7 @@
 #include	"../../vendor/volk.h"
 #include	<vector>
 #include	<iostream>
+#include	"Images.h"
 
 namespace Engine{
 
@@ -35,10 +36,10 @@ namespace Engine{
             mvpPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             poolSizes.push_back(mvpPoolSize);
 			
-			VkDescriptorPoolSize textureSamplerPoolSize{};
-            textureSamplerPoolSize.descriptorCount = (uint32_t)imageViews.size() * 1000;
-            textureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-            poolSizes.push_back(textureSamplerPoolSize);
+			VkDescriptorPoolSize diffuseTextureSamplerPoolSize{};
+            diffuseTextureSamplerPoolSize.descriptorCount = (uint32_t)imageViews.size() * 1000 * DiffuseMapsSize;
+            diffuseTextureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            poolSizes.push_back(diffuseTextureSamplerPoolSize);
 			
 			VkDescriptorPoolSize pointLightAttributesPoolSize{};
             pointLightAttributesPoolSize.descriptorCount = (uint32_t)imageViews.size() * 1000 * MAX_SPOTLIGHTS;

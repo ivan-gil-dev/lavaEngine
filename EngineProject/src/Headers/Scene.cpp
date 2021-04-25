@@ -44,7 +44,7 @@ void Engine::Scene::Load(std::string path)
                 ((GameObject*)entity)->AddComponent<Mesh>();
                 Mesh* mesh = ((GameObject*)entity)->pGetComponent<Mesh*>();
                 mesh->CreateMesh(entityJson["Mesh"]["Path"]);
-                mesh->SetDiffuseTexture(entityJson["Mesh"]["DiffuseTexturePath"]);
+                mesh->SetDiffuseTexture(entityJson["Mesh"]["DiffuseTexturePath"],0);
             }
 
             if (entityJson.count("Rigidbody") != 0) {
@@ -188,7 +188,7 @@ void Engine::Scene::SaveAs(std::string path)
             Mesh* mesh = ((GameObject*)entities[i])->pGetComponent<Mesh*>();
             if (mesh != nullptr) {
                 sceneJson["Entities"][i]["Mesh"]["Path"] = mesh->pGetMeshPath();
-                sceneJson["Entities"][i]["Mesh"]["DiffuseTexturePath"] = mesh->GetDiffuseTexture().GetTexturePath();
+                sceneJson["Entities"][i]["Mesh"]["DiffuseTexturePath"] = mesh->GetDiffuseTexture(0).GetTexturePath();
             }
             RigidBody* rigidBody = ((GameObject*)entities[i])->pGetComponent<RigidBody*>();
             if (rigidBody != nullptr) {

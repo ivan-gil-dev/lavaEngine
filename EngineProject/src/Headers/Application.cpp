@@ -407,13 +407,26 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 
                     glm::vec3 objectPos = Entities->at(SelectedItem_ID)->Transform.GetPosition();
 
+					Engine::DataTypes::PointLightAttributes_t pointLightAttributes = 
+						*((Engine::PointLightObject*)Entities->at(SelectedItem_ID))->pGetPointLightUniformData();
+
                     if (ImGui::CollapsingHeader(u8"Translation")) {
                         ImGui::DragFloat3("Position", (float*)&objectPos, 1.0f, -100.f, 100.f);
+
+                        ImGui::DragFloat("Ambient", &pointLightAttributes.ambient);
+                        ImGui::DragFloat("Diffuse", &pointLightAttributes.diffuse);
+                        ImGui::DragFloat("Specular", &pointLightAttributes.specular);
+
+                        ImGui::DragFloat("Constant", &pointLightAttributes.constant);
+                        ImGui::DragFloat("Linear", &pointLightAttributes.linear);
+                        ImGui::DragFloat("Quadrantic", &pointLightAttributes.quadrantic);
+
                     }
 
                     //Если сцена не проигрывается, то применить новые свойства
                     if (!Engine::Globals::gIsScenePlaying) {
 						Entities->at(SelectedItem_ID)->Transform.Translate(objectPos);
+						*((Engine::PointLightObject*)Entities->at(SelectedItem_ID))->pGetPointLightUniformData() = pointLightAttributes;
                     }
 
                     break;
@@ -423,6 +436,10 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 
                     ImGui::DragFloat3("Direction", (float*)&dirLightAttributes.lightDirection, 0.1f, -1.f, 1.f, "%.3f", 0.1f);
                     ImGui::DragFloat3("Color", (float*)&dirLightAttributes.lightColor, 0.1f, 0.f, 1.f, "%.3f", 0.1f);
+
+					ImGui::DragFloat("Ambient", &dirLightAttributes.ambient);
+					ImGui::DragFloat("Diffuse", &dirLightAttributes.diffuse);
+					ImGui::DragFloat("Specular", &dirLightAttributes.specular);
 
                     if (!Engine::Globals::gIsScenePlaying) {
                         *((Engine::DirectionalLightObject*)Entities->at(SelectedItem_ID))->pGetDirectionalLightUniformData() = dirLightAttributes;

@@ -12,6 +12,8 @@
 #include	"CommandBuffer.h"
 
 namespace Engine{
+	#define DiffuseMapsSize 32
+
 	//Создание изображения
 	void Img_Func_CreateImage(VkPhysicalDevice physicalDevice, VkDevice device, VkImage& image,
 			VkDeviceMemory& imageTextureMemory, uint32_t width, uint32_t height,

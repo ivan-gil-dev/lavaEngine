@@ -2,6 +2,7 @@
 #define descriptorsetlayouts_h
 
 #include	"../../vendor/volk.h"
+#include	"Images.h"
 #include	<iostream>
 #include	<vector>
 namespace Engine{
@@ -37,13 +38,13 @@ namespace Engine{
             mvpBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
             setLayoutBindings.push_back(mvpBinding);
 			
-			VkDescriptorSetLayoutBinding samplerBinding{};
-            samplerBinding.binding = 1;
-            samplerBinding.descriptorCount = 1;
-            samplerBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-            samplerBinding.pImmutableSamplers = nullptr;
-            samplerBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-            setLayoutBindings.push_back(samplerBinding);
+			VkDescriptorSetLayoutBinding diffuseTexturesBinding{};
+            diffuseTexturesBinding.binding = 1;
+            diffuseTexturesBinding.descriptorCount = DiffuseMapsSize;
+            diffuseTexturesBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            diffuseTexturesBinding.pImmutableSamplers = nullptr;
+            diffuseTexturesBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+            setLayoutBindings.push_back(diffuseTexturesBinding);
 			
 			VkDescriptorSetLayoutBinding spotlightBinding{};
 			spotlightBinding.binding = 2;

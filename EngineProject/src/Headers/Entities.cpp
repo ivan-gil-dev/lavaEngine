@@ -34,10 +34,10 @@ Engine::DataTypes::ViewProjection_t Engine::Camera::GetViewProjectionForEntity()
     DataTypes::ViewProjection_t viewProjection;
     viewProjection.view = glm::lookAt(CameraPos, CameraPos + CameraFront, CameraUp);
     if (ENABLE_DYNAMIC_VIEWPORT) {
-        viewProjection.projection = glm::perspective(glm::radians(FOV), ((float)renderer.rendererViewport.width / renderer.rendererViewport.height), 0.1f, 1000.0f);
+        viewProjection.projection = glm::perspective(glm::radians(FOV), ((float)renderer.rendererViewport.width / renderer.rendererViewport.height), 0.1f, 100000.0f);
     }
     else {
-        viewProjection.projection = glm::perspective(glm::radians(FOV), ((float)Engine::Globals::gWidth / Engine::Globals::gHeight), 0.1f, 1000.0f);
+        viewProjection.projection = glm::perspective(glm::radians(FOV), ((float)Engine::Globals::gWidth / Engine::Globals::gHeight), 0.1f, 100000.0f);
     }
     return viewProjection;
 }
@@ -173,9 +173,14 @@ void Engine::EditorCamera::Update()
 Engine::PointLightObject::PointLightObject() {
 	pointLightSettings.lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
 	pointLightSettings.lightPosition = glm::vec3(1.0f, 12.0f, 1.0f);
+
 	pointLightSettings.constant = 1.0f;
 	pointLightSettings.linear = 0.09f;
 	pointLightSettings.quadrantic = 0.032f;
+
+    pointLightSettings.ambient = 1.f;
+    pointLightSettings.diffuse = 1.f;
+    pointLightSettings.specular = 1.f;
 
 	Type = ENTITY_TYPE_POINTLIGHT_OBJECT;
 	Name = "PointLight";
@@ -348,6 +353,10 @@ Engine::DirectionalLightObject::DirectionalLightObject()
     Name = "Directional Light";
     directionalLightSettings.lightColor = glm::vec3(255.0f, 255.0f, 255.0f);
     directionalLightSettings.lightDirection = glm::vec3(0.25, 1, 0.25);
+
+    directionalLightSettings.ambient = 1.0f;
+    directionalLightSettings.diffuse = 1.0f;
+    directionalLightSettings.specular = 1.0f;
 }
 
 void Engine::DirectionalLightObject::UpdateUniforms(uint32_t imageIndex, VkDevice device, Camera camera)

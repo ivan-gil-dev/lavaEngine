@@ -287,6 +287,14 @@ namespace Engine{
 			PipelineLayoutInfo.pSetLayouts = &setLayout;
 			PipelineLayoutInfo.setLayoutCount = 1;
 
+			VkPushConstantRange pushConstantRange{};
+			pushConstantRange.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+			pushConstantRange.size = sizeof(DataTypes::PushConstants);
+			pushConstantRange.offset = 0;
+			
+			PipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
+			PipelineLayoutInfo.pushConstantRangeCount = uint32_t(1);
+
 			if (vkCreatePipelineLayout(device, &PipelineLayoutInfo, nullptr, &PipelineLayout) != VK_SUCCESS) {
 				throw std::runtime_error("Failed to create pipeline layout");
 			}

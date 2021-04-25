@@ -1,9 +1,12 @@
 #ifndef datatypes_h
 #define datatypes_h
 
+
+
 #include "../Globals.h"
 
 namespace Engine{
+	
 	namespace DataTypes{
 		struct QueueIndices_t {
 			uint32_t graphicsQueueIndex;
@@ -65,11 +68,19 @@ namespace Engine{
 		struct DirectionalLightAttributes_t{
             glm::vec3 lightDirection;
             alignas(16) glm::vec3 lightColor;
+			alignas(32) float ambient;
+            float diffuse;
+            float specular;
 		};
 
 		struct PointLightAttributes_t {
 			glm::vec3 lightPosition;
 			alignas(16) glm::vec3 lightColor;
+			alignas(32) float ambient;
+			
+			float diffuse;
+			float specular;
+
 			float constant;
 			float linear;
 			float quadrantic;
@@ -80,15 +91,19 @@ namespace Engine{
 		};
 
 		struct Material_t {
-			float ambient;
-			float diffuse;
-			float specular;
+			float shininess;
 		};
 
 		struct ViewProjection_t {
 			glm::mat4 view;
 			glm::mat4 projection;
 		};
+
+		struct PushConstants
+		{
+			int diffuseMapId;
+		};
+
 	}
 }
 

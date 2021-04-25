@@ -1,12 +1,19 @@
 #include "Mesh.h"
+#include <algorithm>
 #include "Renderer/Renderer.h"
 #define TINYOBJLOADER_STATIC
 #include    "../../vendor/tiny_obj_loader.h"
 
 void Engine::Mesh::LoadModel(std::string modelPath) {
+    std::vector<DataTypes::MeshVertex_t>	Vertices;
+    
+	size_t lastPos = modelPath.find_last_of("/");
 
 	tinyobj::ObjReaderConfig reader_config;
-	reader_config.mtl_search_path = "./"; // Path to material files
+	reader_config.mtl_search_path = modelPath.substr(0, lastPos+1); // Path to material files
+	
+	std::cout << modelPath.substr(0, lastPos+1) << std::endl;
+
 
 	tinyobj::ObjReader reader;
 
@@ -28,13 +35,36 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 	auto& attrib = reader.GetAttrib();
 	auto& shapes = reader.GetShapes();
 	auto& materials = reader.GetMaterials();
-	
+
+	bool MaterialsFound = true;
+	if (materials.size() == 0)
+	{
+		MaterialsFound = false;
+	}
+
+
+	if (MaterialsFound)
+	{
+		Faces.resize(materials.size());
+		for (size_t i = 0; i < Faces.size(); i++)
+		{
+			Faces[i].diffuseMapPath = reader_config.mtl_search_path + materials[i].diffuse_texname;
+			Faces[i].MatID = i;
+		}
+	}
+	else {
+		Faces.resize(1);
+		Faces[0].diffuseMapPath = "";
+		Faces[0].MatID = 0;
+	}
+
 	// Loop over shapes
 	for (size_t s = 0; s < shapes.size(); s++) {
 		// Loop over faces(polygon)
 		size_t index_offset = 0;
 		for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++) {
 			size_t fv = size_t(shapes[s].mesh.num_face_vertices[f]);
+                  
 			// Loop over vertices in the face.
 			for (size_t v = 0; v < fv; v++) {
 				DataTypes::MeshVertex_t vertex;
@@ -75,9 +105,9 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 				}
 
 
-				 tinyobj::real_t red   = attrib.colors[3*size_t(idx.vertex_index)+0];
-				 tinyobj::real_t green = attrib.colors[3*size_t(idx.vertex_index)+1];
-				 tinyobj::real_t blue  = attrib.colors[3*size_t(idx.vertex_index)+2];
+				tinyobj::real_t red   = attrib.colors[3*size_t(idx.vertex_index)+0];
+				tinyobj::real_t green = attrib.colors[3*size_t(idx.vertex_index)+1];
+				tinyobj::real_t blue  = attrib.colors[3*size_t(idx.vertex_index)+2];
 
 				vertex.color = { red,green,blue };
 
@@ -86,14 +116,42 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 					Vertices.push_back(vertex);
 				}
 
-				Indexes.push_back(UniqueVertices[vertex]);
+				if (MaterialsFound)
+				{
+					Faces[shapes[s].mesh.material_ids[f]].indexes.push_back(UniqueVertices[vertex]);
+				}
+				else {
+					Faces[0].indexes.push_back(UniqueVertices[vertex]);
+				}
+				
 			}
 			index_offset += fv;
 
 			// per-face material
 			shapes[s].mesh.material_ids[f];
+			
+			
 		}
 	}
+
+	
+	
+    VertexBuffer.CreateVertexBuffer(renderer.physicalDevice.Get(),
+        renderer.device.Get(),
+        renderer.device.GetGraphicsQueue(),
+        renderer.commandPool.Get(),
+        Vertices.data(),
+        sizeof(Vertices[0]) * Vertices.size());
+
+	for (size_t i = 0; i < Faces.size(); i++)
+	{
+        Faces[i].indexBuffer.CreateIndexBuffer(renderer.physicalDevice.Get(),
+            renderer.device.Get(),
+            renderer.device.GetGraphicsQueue(),
+            renderer.commandPool.Get(),
+            Faces[i].indexes.data(), sizeof(Faces[i].indexes[0]) * Faces[i].indexes.size());
+	}
+       
 }
 
 void Engine::Mesh::CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout descriptorSetLayoutForMesh, 
@@ -134,21 +192,29 @@ void Engine::Mesh::CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout d
         mvpWriteDescriptorSet.pBufferInfo = &bufferInfo;
         writeDescriptorSets.push_back(mvpWriteDescriptorSet);
 		
-		VkDescriptorImageInfo textureInfo{};
-        textureInfo.imageView = DiffuseTexture_b1.GetImageView();
-        textureInfo.sampler = DiffuseTexture_b1.GetImageSampler();
-        textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-
-		VkWriteDescriptorSet textureWriteDescriptorSet{};
+		std::vector<VkDescriptorImageInfo> imageInfos;
+		for (int j = 0; j < DiffuseTextures_b1.size(); j++)
+		{
+            VkDescriptorImageInfo textureInfo{};
+            textureInfo.imageView = DiffuseTextures_b1[j].GetImageView();
+            textureInfo.sampler = DiffuseTextures_b1[j].GetImageSampler();
+            textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+			imageInfos.push_back(textureInfo);
+		}
+		
+        VkWriteDescriptorSet textureWriteDescriptorSet{};
         textureWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        textureWriteDescriptorSet.descriptorCount = 1;
+        textureWriteDescriptorSet.descriptorCount = DiffuseTextures_b1.size();
         textureWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         textureWriteDescriptorSet.dstSet = DescriptorSets[i];
         textureWriteDescriptorSet.dstBinding = 1;
         textureWriteDescriptorSet.dstArrayElement = 0;
-        textureWriteDescriptorSet.pImageInfo = &textureInfo;
+        textureWriteDescriptorSet.pImageInfo = imageInfos.data();
+
         writeDescriptorSets.push_back(textureWriteDescriptorSet);
-		
+
+
+
 		VkDescriptorBufferInfo bufferInfo2{};
         bufferInfo2.buffer = UniformBuffersSpotLightAttributes_b2[i].Get();
         bufferInfo2.offset = 0;
@@ -212,45 +278,51 @@ void Engine::Mesh::CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout d
 		vkUpdateDescriptorSets(device, (uint32_t)writeDescriptorSets.size(), writeDescriptorSets.data(), 0, nullptr);
 		writeDescriptorSets.resize(0);
 	}
+
+    
 }
 
-VkBuffer Engine::Mesh::GetVertexBuffer() {
-	return VertexBuffer.Get();
-}
-
-VkBuffer Engine::Mesh::GetIndexBuffer() {
-	return IndexBuffer.Get();
-}
+//VkBuffer Engine::Mesh::GetVertexBuffer() {
+//	return VertexBuffer.Get();
+//}
+//
+//VkBuffer Engine::Mesh::GetIndexBuffer() {
+//	//return IndexBuffer.Get();
+//	return 0;
+//}
 
 std::string Engine::Mesh::pGetMeshPath() {
 	return MeshPath;
 }
 
 std::vector<Engine::DataTypes::MeshVertex_t>* Engine::Mesh::GetVertices() {
-	return &Vertices;
+    return &Vertices;
 }
 
-std::vector<glm::uint32_t> Engine::Mesh::GetIndexes() {
-	return Indexes;
-}
+//std::vector<glm::uint32_t> Engine::Mesh::GetIndexes() {
+//	return Indexes;
+//}
 
 Engine::DataTypes::Material_t Engine::Mesh::GetMaterial() {
 	return Material;
 }
 
-void Engine::Mesh::SetDiffuseTexture(std::string path) {
-	DiffuseTexture_b1.DestroyTexture(renderer.device.Get());
-	vkFreeDescriptorSets(renderer.device.Get(), renderer.descriptorPoolForMesh.Get(),
-		(uint32_t)DescriptorSets.size(), DescriptorSets.data());
-	DiffuseTexture_b1.CreateTexture(
-		renderer.physicalDevice.Get(), renderer.device.Get(), renderer.device.GetGraphicsQueue(), renderer.commandPool.Get(), path
-	);
-	CreateDescriptorSets(renderer.device.Get(), renderer.setLayoutForMesh.Get(),
-		renderer.descriptorPoolForMesh.Get(), *renderer.swapchain.PGetImageViews());
+void Engine::Mesh::SetDiffuseTexture(std::string path, short id) {
+	if (id < DiffuseMapsSize && id >= 0){
+        DiffuseTextures_b1[id].DestroyTexture(renderer.device.Get());
+        vkFreeDescriptorSets(renderer.device.Get(), renderer.descriptorPoolForMesh.Get(),
+            (uint32_t)DescriptorSets.size(), DescriptorSets.data());
+        DiffuseTextures_b1[id].CreateTexture(
+            renderer.physicalDevice.Get(), renderer.device.Get(), renderer.device.GetGraphicsQueue(), renderer.commandPool.Get(), path
+        );
+        CreateDescriptorSets(renderer.device.Get(), renderer.setLayoutForMesh.Get(),
+            renderer.descriptorPoolForMesh.Get(), *renderer.swapchain.PGetImageViews());
+	}
+	
 }
 
-Engine::Texture Engine::Mesh::GetDiffuseTexture(){
-	return DiffuseTexture_b1;
+Engine::Texture Engine::Mesh::GetDiffuseTexture(short id){
+	return DiffuseTextures_b1[id];
 }
 
 void Engine::Mesh::SetMaterial(DataTypes::Material_t mat) {
@@ -277,36 +349,45 @@ void Engine::Mesh::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
 	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, renderer.graphicsPipelineForMesh.GetPipelineLayout(),
 		0, 1, &DescriptorSets[imageIndex], 0, nullptr);
 
-	vkCmdBindIndexBuffer(commandBuffer, IndexBuffer.Get(), 0, VK_INDEX_TYPE_UINT32);
-	vkCmdDrawIndexed(commandBuffer, (uint32_t)Indexes.size(), 1, 0, 0, 0);
+	for (size_t i = 0; i < Faces.size(); i++)
+	{
+		DataTypes::PushConstants constants;
+		constants.diffuseMapId = Faces[i].MatID;
+
+		vkCmdPushConstants(commandBuffer, renderer.graphicsPipelineForMesh.GetPipelineLayout(),
+			VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(constants), &constants);
+
+        vkCmdBindIndexBuffer(commandBuffer, Faces[i].indexBuffer.Get(), 0, VK_INDEX_TYPE_UINT32);
+        vkCmdDrawIndexed(commandBuffer, (uint32_t)Faces[i].indexes.size(), 1, 0, 0, 0);
+	}
+	
 }
 
 void Engine::Mesh::CreateMesh(std::string modelPath) {
-	Material = { 0.1f,1.0f,2.0f };
+	Material = { 32.f };
 	MeshPath = modelPath;
 
 	LoadModel(modelPath);
 
 	{//Создание буферов
-		VertexBuffer.CreateVertexBuffer(renderer.physicalDevice.Get(),
-			renderer.device.Get(),
-			renderer.device.GetGraphicsQueue(),
-			renderer.commandPool.Get(),
-			Vertices.data(),
-			sizeof(Vertices[0]) * Vertices.size());
-
-		IndexBuffer.CreateIndexBuffer(renderer.physicalDevice.Get(),
-			renderer.device.Get(),
-			renderer.device.GetGraphicsQueue(),
-			renderer.commandPool.Get(),
-			Indexes.data(), sizeof(Indexes[0]) * Indexes.size());
-
-
+		
         //<1x1 текстура (0,0,0,255)> 
-        DiffuseTexture_b1.CreateTexture(renderer.physicalDevice.Get(),
-            renderer.device.Get(),
-            renderer.device.GetGraphicsQueue(),
-            renderer.commandPool.Get(), "");
+
+		DiffuseTextures_b1.resize(DiffuseMapsSize);
+
+		for (size_t i = 0; i < DiffuseTextures_b1.size(); i++)
+		{
+			if (i < Faces.size())
+                DiffuseTextures_b1[i].CreateTexture(renderer.physicalDevice.Get(),
+                    renderer.device.Get(),
+                    renderer.device.GetGraphicsQueue(),
+                    renderer.commandPool.Get(), Faces[i].diffuseMapPath);
+			else
+				DiffuseTextures_b1[i].CreateTexture(renderer.physicalDevice.Get(),
+                    renderer.device.Get(),
+                    renderer.device.GetGraphicsQueue(),
+                    renderer.commandPool.Get(), "");
+		}
 
 		UniformBuffersMVP_b0.resize(renderer.swapchain.PGetImageViews()->size());
 		UniformBuffersSpotLightAttributes_b2.resize(renderer.swapchain.PGetImageViews()->size());
@@ -402,9 +483,15 @@ void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec
 }
 
 void Engine::Mesh::Destroy() {
-	DiffuseTexture_b1.DestroyTexture(renderer.device.Get());
+	for (size_t i = 0; i < DiffuseTextures_b1.size(); i++)
+	{
+		DiffuseTextures_b1[i].DestroyTexture(renderer.device.Get());
+	}
+	
+
 	vkFreeDescriptorSets(renderer.device.Get(), renderer.descriptorPoolForMesh.Get(),
 		(uint32_t)DescriptorSets.size(), DescriptorSets.data());
+
 	for (size_t i = 0; i < UniformBuffersMVP_b0.size(); i++) {
 		UniformBuffersMVP_b0[i].Destroy(renderer.device.Get());
 		UniformBuffersDebugCameraPos_b3[i].Destroy(renderer.device.Get());
@@ -414,7 +501,11 @@ void Engine::Mesh::Destroy() {
 
 	}
 	VertexBuffer.Destroy(renderer.device.Get());
-	IndexBuffer.Destroy(renderer.device.Get());
+	for (size_t i = 0; i < Faces.size(); i++)
+	{
+		Faces[i].indexBuffer.Destroy(renderer.device.Get());
+	}
+	
 }
 
 void Engine::WireframeMesh::LoadModel(std::string modelPath, glm::vec3 color) {
