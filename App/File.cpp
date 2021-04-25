@@ -11,7 +11,7 @@ void Engine::Scene::Demo(){
 	//
 	Mesh* mesh;
 	RigidBody* rigidBody;
-//
+
 	std::vector<std::string> paths = {
 	"CoreAssets/skybox/right.jpg",
 	"CoreAssets/skybox/left.jpg",
@@ -24,33 +24,21 @@ void Engine::Scene::Demo(){
 	//  Объект, хранящий skybox
 	CubemapObject* cubemapObject = new CubemapObject(paths);
 	entities.push_back(cubemapObject);
-//
-    GameObject* gameObject = new GameObject;
-    gameObject->AddComponent<Mesh>();
-    gameObject->AddComponent<RigidBody>();
 
-    gameObject->SetID((int)entities.size());
-    gameObject->SetName("chair");
-    gameObject->Transform.Scale(glm::vec3(5.0f, 5.0f, 5.f));
-    gameObject->Transform.Translate(glm::vec3(+8.0f, 10.0f, 5.0f));
+    //GameObject* gameObject = new GameObject;
+    //gameObject->AddComponent<Mesh>();
+    //gameObject->SetID((int)entities.size());
+    //gameObject->SetName("sponza");
+    //gameObject->Transform.Scale(glm::vec3(1.0f, 1.0f, 1.f));
 
-    mesh = gameObject->pGetComponent<Mesh*>();
-    rigidBody = gameObject->pGetComponent<RigidBody*>();
+    //mesh = gameObject->pGetComponent<Mesh*>();
 
+    //mesh->CreateMesh("CoreAssets/sponza/sponza.obj");
 
-    mesh->CreateMesh("CoreAssets/sponza/sponza.obj");
-    //mesh->SetDiffuseTexture("CoreAssets/chair.png",0);
-
-    rigidBody->CreateRigidBody(RIGIDBODY_SHAPE_TYPE_CUBE,
-        Globals::gDynamicsWorld,
-        gameObject->GetID()
-    );
-
-    gameObject->ApplyEntityTransformToRigidbody();
-    entities.push_back(gameObject);
+    //entities.push_back(gameObject);
 
 
-   /* for (size_t i = 1; i < 40; i++) {
+    for (size_t i = 1; i < 40; i++) {
         GameObject* box = new GameObject;
         box->AddComponent<Mesh>();
         box->AddComponent<RigidBody>();
@@ -59,7 +47,6 @@ void Engine::Scene::Demo(){
         rigidBody = box->pGetComponent<RigidBody*>();
 
         mesh->CreateMesh("CoreAssets/AtlasCube.obj");
-        mesh->SetDiffuseTexture("CoreAssets/AtlasCube.png",0);
 
         rigidBody->CreateRigidBody(
             RIGIDBODY_SHAPE_TYPE_CUBE,
@@ -81,7 +68,7 @@ void Engine::Scene::Demo(){
         box->ApplyEntityTransformToRigidbody();
         entities.push_back(box);
     }
-
+    
     GameObject* gameObject2 = new Floor;
     gameObject2->AddComponent<Mesh>();
     gameObject2->AddComponent<RigidBody>();
@@ -89,8 +76,7 @@ void Engine::Scene::Demo(){
     mesh = gameObject2->pGetComponent<Mesh*>();
     rigidBody = gameObject2->pGetComponent<RigidBody*>();
 
-    mesh->CreateMesh("CoreAssets/plane.obj");
-    mesh->SetDiffuseTexture("CoreAssets/ceramic2.jpg",0);
+    mesh->CreateMesh("CoreAssets/ceramic.obj");
     rigidBody->CreateRigidBody(RIGIDBODY_SHAPE_TYPE_PLANE,
         Globals::gDynamicsWorld,
         gameObject2->GetID()
@@ -106,9 +92,8 @@ void Engine::Scene::Demo(){
     rigidBody->SetRigidbodyScale(gameObject2->Transform.GetScaleValue());
 
 
-
     gameObject2->ApplyEntityTransformToRigidbody();
-    entities.push_back(gameObject2);*/
+    entities.push_back(gameObject2);
 
     DirectionalLightObject* dlight = new DirectionalLightObject;
     dlight->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(1, -1, 1);

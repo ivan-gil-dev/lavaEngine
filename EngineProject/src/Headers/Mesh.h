@@ -16,37 +16,31 @@ namespace Engine{
 		short MatID;
 		std::string diffuseMapPath;
 
-        bool operator < (const Face& face) const
-        {
-            return (MatID < face.MatID);
-        }
-
 	};
 
 	class Mesh {
 	private:
-		
 		std::string										MeshPath;
+		bool											MaterialsFound = false;
 
 		std::vector<DataTypes::MeshVertex_t>			Vertices;
-		//std::vector<uint32_t>						    Indexes;
 		std::vector<Face>								Faces;
 
 
 		std::unordered_map<DataTypes::MeshVertex_t, uint32_t> UniqueVertices{};
 
 		VulkanBuffers::VertexBuffer					    VertexBuffer;
-		//VulkanBuffers::IndexBuffer					IndexBuffer;
-
 
 		DataTypes::MVP_t								MVP{};
+
 		DataTypes::Material_t							Material{};
+
 		std::vector<VkDescriptorSet>				    DescriptorSets;
 	private:
 		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMVP_b0;
 
 		std::vector<Texture>							DiffuseTextures_b1;
-
+		
 		std::vector<VulkanBuffers::UniformBuffer>   	UniformBuffersSpotLightAttributes_b2;
 		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersDebugCameraPos_b3;
 		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMaterial_b4;
@@ -58,22 +52,16 @@ namespace Engine{
 			VkDescriptorPool descriptorPoolForGameObjects, std::vector<VkImageView> swapchainImageViews);
 
 		public:
-
-		/*VkBuffer GetVertexBuffer();
-
-		VkBuffer GetIndexBuffer();*/
-
-		/*std::vector<uint32_t> GetIndexes();*/
+		
+		bool IsMaterialsFound() {
+				return MaterialsFound;
+		}
 
 		std::string pGetMeshPath();
 
 		std::vector<DataTypes::MeshVertex_t>* GetVertices();
 
 		DataTypes::Material_t GetMaterial();
-
-		void SetDiffuseTexture(std::string path, short id);
-
-		Texture GetDiffuseTexture(short id);
 
 		void SetMaterial(DataTypes::Material_t mat);
 	
@@ -116,13 +104,7 @@ namespace Engine{
 
 		void Draw(VkCommandBuffer commandBuffer, int imageIndex);
 
-		VkBuffer GetVertexBuffer();
-
-		VkBuffer GetIndexBuffer();
-
 		std::vector<DataTypes::WireframeMeshVertex_t> GetVertices();
-
-		std::vector<uint32_t> GetIndexes();
 
 		void CreateMesh(std::string modelPath, glm::vec3 color);
 

@@ -325,6 +325,8 @@ void Engine::Texture::CreateTexture(VkPhysicalDevice physicalDevice, VkDevice de
 	int texWidth, texHeight, texChannels;
 	Pixels = stbi_load(path.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 	
+
+
 	if (!Pixels) {
 		Pixels = stbi_load("CoreAssets/decoyTexture.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 		texturePath = "";

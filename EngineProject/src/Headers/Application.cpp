@@ -363,6 +363,8 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
             Engine::renderer.rendererViewport.width -= Engine::renderer.swapchain.GetInfo().imageExtent.width - ImGui::GetWindowPos().x;
 
 			if (SelectedItem_ID>=0){
+                float min = -FLT_MAX;
+                float max = FLT_MAX;
                 switch (Entities->at(SelectedItem_ID)->GetEntityType()) {
 
                 case Engine::ENTITY_TYPE_GAME_OBJECT://Панель свойств для объекта
@@ -374,18 +376,29 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
                     glm::vec3 objectRigidbodyScale;
 
                     if (ImGui::CollapsingHeader(u8"Translation")) {
-                        ImGui::DragFloat3("Position", (float*)&objectPos, 1.0f, -100.f, 100.f);
-                        ImGui::DragFloat3("Rotation", (float*)&objectRotation, 1.0f, 0.f, 360.0f);
-                        ImGui::DragFloat3("Scale", (float*)&objectScale, 1.0f, 0.f, 100.0f);
+						
+                        ImGui::DragFloat3("Position", (float*)&objectPos, 1.0f, min, max);
+                        ImGui::DragFloat3("Rotation", (float*)&objectRotation, 1.0f, min, max);
+                        ImGui::DragFloat3("Scale", (float*)&objectScale, 1.0f, min, max);
                     }
 
                     if (((Engine::GameObject*)Entities->at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>() != nullptr) {
                         objectRigidbodyScale = ((Engine::GameObject*)Entities->at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->pGetDebugMesh()->Transform.GetScaleValue();
                         if (ImGui::CollapsingHeader(u8"Rigidbody")) {
-                            ImGui::DragFloat3("Rigidbody Scale", (float*)&objectRigidbodyScale, 0.1f, -1.f, 1.0f);
+                            ImGui::DragFloat3("Rigidbody Scale", (float*)&objectRigidbodyScale, 0.1f, min, max);
                         }
 
                     }
+
+                   if (((Engine::GameObject*)Entities->at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>() != nullptr)
+                   {
+                       if (!((Engine::GameObject*)Entities->at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>()->IsMaterialsFound())
+                       {
+                           ImGui::BulletText("MTL File Not Found!");
+                       }
+                   }
+					
+                    
 
                     //Если сцена не проигрывается, то применить новые свойства
                     if (!Engine::Globals::gIsScenePlaying) {
@@ -411,7 +424,7 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 						*((Engine::PointLightObject*)Entities->at(SelectedItem_ID))->pGetPointLightUniformData();
 
                     if (ImGui::CollapsingHeader(u8"Translation")) {
-                        ImGui::DragFloat3("Position", (float*)&objectPos, 1.0f, -100.f, 100.f);
+                        ImGui::DragFloat3("Position", (float*)&objectPos, 1.0f, min, max);
 
                         ImGui::DragFloat("Ambient", &pointLightAttributes.ambient);
                         ImGui::DragFloat("Diffuse", &pointLightAttributes.diffuse);
@@ -434,8 +447,8 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
                 case Engine::ENTITY_TYPE_DIRECTIONAL_LIGHT_OBJECT:
                     Engine::DataTypes::DirectionalLightAttributes_t dirLightAttributes = *((Engine::DirectionalLightObject*)Entities->at(SelectedItem_ID))->pGetDirectionalLightUniformData();
 
-                    ImGui::DragFloat3("Direction", (float*)&dirLightAttributes.lightDirection, 0.1f, -1.f, 1.f, "%.3f", 0.1f);
-                    ImGui::DragFloat3("Color", (float*)&dirLightAttributes.lightColor, 0.1f, 0.f, 1.f, "%.3f", 0.1f);
+                    ImGui::DragFloat3("Direction", (float*)&dirLightAttributes.lightDirection, 0.1f, min, max, "%.3f", 0.1f);
+                    ImGui::DragFloat3("Color", (float*)&dirLightAttributes.lightColor, 0.1f, 0.0f, 255.f, "%.3f", 0.1f);
 
 					ImGui::DragFloat("Ambient", &dirLightAttributes.ambient);
 					ImGui::DragFloat("Diffuse", &dirLightAttributes.diffuse);

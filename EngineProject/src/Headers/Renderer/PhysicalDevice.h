@@ -18,26 +18,18 @@ namespace Engine{
             VkSampleCountFlags counts = deviceProperties.limits.framebufferColorSampleCounts &
                 deviceProperties.limits.framebufferDepthSampleCounts;
 
-            if (counts & VK_SAMPLE_COUNT_64_BIT) {
-				maxMSAAsamples = VK_SAMPLE_COUNT_64_BIT;
-            }
-            if (counts & VK_SAMPLE_COUNT_32_BIT) {
-				maxMSAAsamples = VK_SAMPLE_COUNT_32_BIT;
-            }
-            if (counts & VK_SAMPLE_COUNT_16_BIT) {
-				maxMSAAsamples = VK_SAMPLE_COUNT_16_BIT;
-            }
-            if (counts & VK_SAMPLE_COUNT_8_BIT) {
-				maxMSAAsamples = VK_SAMPLE_COUNT_8_BIT;
-            }
-            if (counts & VK_SAMPLE_COUNT_4_BIT) {
-				maxMSAAsamples = VK_SAMPLE_COUNT_4_BIT;
-            }
-            if (counts & VK_SAMPLE_COUNT_2_BIT) {
-				maxMSAAsamples = VK_SAMPLE_COUNT_2_BIT;
-            }
-			maxMSAAsamples = VK_SAMPLE_COUNT_1_BIT;
-
+		
+                 if (counts & VK_SAMPLE_COUNT_64_BIT) maxMSAAsamples = VK_SAMPLE_COUNT_64_BIT;
+			else if (counts & VK_SAMPLE_COUNT_32_BIT) maxMSAAsamples = VK_SAMPLE_COUNT_32_BIT;
+			else if (counts & VK_SAMPLE_COUNT_16_BIT) maxMSAAsamples = VK_SAMPLE_COUNT_16_BIT;
+			else if (counts & VK_SAMPLE_COUNT_8_BIT) maxMSAAsamples = VK_SAMPLE_COUNT_8_BIT;
+			else if (counts & VK_SAMPLE_COUNT_4_BIT) maxMSAAsamples = VK_SAMPLE_COUNT_4_BIT;
+			else if (counts & VK_SAMPLE_COUNT_2_BIT) maxMSAAsamples = VK_SAMPLE_COUNT_2_BIT;
+            else maxMSAAsamples = VK_SAMPLE_COUNT_1_BIT;  
+            
+			
+            
+			
             if (Globals::gMSAAsamples > maxMSAAsamples) {
                 Globals::gMSAAsamples = maxMSAAsamples;
             }

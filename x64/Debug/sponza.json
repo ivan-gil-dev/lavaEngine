@@ -1,0 +1,281 @@
+{
+ "Entities": [
+  {
+   "Id": 0,
+   "Name": "CubemapObect",
+   "Type": "Cubemap",
+   "CubemapPaths": [
+    "CoreAssets/skybox/right.jpg",
+    "CoreAssets/skybox/left.jpg",
+    "CoreAssets/skybox/top.jpg",
+    "CoreAssets/skybox/bottom.jpg",
+    "CoreAssets/skybox/front.jpg",
+    "CoreAssets/skybox/back.jpg"
+   ],
+   "Transform": {
+    "Position": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Id": 1,
+   "Name": "sponza",
+   "Type": "GameObject",
+   "Mesh": {
+    "Path": "CoreAssets/sponza/sponza.obj"
+   },
+   "Transform": {
+    "Position": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Id": 2,
+   "Name": "Directional Light",
+   "Type": "DirectionalLight",
+   "Direction": {
+    "X": 1.0,
+    "Y": -1.0,
+    "Z": 1.0
+   },
+   "Color": {
+    "R": 1.0,
+    "G": 1.0,
+    "B": 1.0
+   },
+   "Ambient": 1.0,
+   "Diffuse": 1.0,
+   "Specular": 1.0,
+   "Transform": {
+    "Position": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Id": 3,
+   "Name": "Directional Light",
+   "Type": "DirectionalLight",
+   "Direction": {
+    "X": 0.25,
+    "Y": -1.0,
+    "Z": 0.25
+   },
+   "Color": {
+    "R": 0.20000000298023224,
+    "G": 0.20000000298023224,
+    "B": 0.20000000298023224
+   },
+   "Ambient": 1.0,
+   "Diffuse": 1.0,
+   "Specular": 1.0,
+   "Transform": {
+    "Position": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Id": 4,
+   "Name": "PointLight",
+   "Type": "PointLight",
+   "LightPosition": {
+    "X": 13.0,
+    "Y": 464.0,
+    "Z": -460.0
+   },
+   "LightColor": {
+    "R": 1.0,
+    "G": 1.0,
+    "B": 1.0
+   },
+   "Constant": 1.0,
+   "Linear": 0.0010000000474974513,
+   "Quadrantic": 0.03200000151991844,
+   "Ambient": 297.0,
+   "Diffuse": 1.0,
+   "Specular": 1.0,
+   "Transform": {
+    "Position": {
+     "X": 13.0,
+     "Y": 464.0,
+     "Z": -460.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Id": 5,
+   "Name": "PointLight",
+   "Type": "PointLight",
+   "LightPosition": {
+    "X": -227.0,
+    "Y": 353.0,
+    "Z": -210.0
+   },
+   "LightColor": {
+    "R": 1.0,
+    "G": 1.0,
+    "B": 1.0
+   },
+   "Constant": 1.0,
+   "Linear": 0.0010000000474974513,
+   "Quadrantic": 0.03200000151991844,
+   "Ambient": 305.0,
+   "Diffuse": 1.0,
+   "Specular": 1.0,
+   "Transform": {
+    "Position": {
+     "X": -227.0,
+     "Y": 353.0,
+     "Z": -210.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Id": 6,
+   "Name": "PointLight",
+   "Type": "PointLight",
+   "LightPosition": {
+    "X": 50.0,
+    "Y": 36.0,
+    "Z": 452.0
+   },
+   "LightColor": {
+    "R": 1.0,
+    "G": 1.0,
+    "B": 1.0
+   },
+   "Constant": 1.0,
+   "Linear": 0.0010000000474974513,
+   "Quadrantic": 0.03200000151991844,
+   "Ambient": 303.0,
+   "Diffuse": 1.0,
+   "Specular": 1.0,
+   "Transform": {
+    "Position": {
+     "X": 50.0,
+     "Y": 36.0,
+     "Z": 452.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Id": 7,
+   "Name": "PointLight",
+   "Type": "PointLight",
+   "LightPosition": {
+    "X": 129.0,
+    "Y": 473.0,
+    "Z": 453.0
+   },
+   "LightColor": {
+    "R": 1.0,
+    "G": 1.0,
+    "B": 1.0
+   },
+   "Constant": 1.0,
+   "Linear": 9.999999747378752e-05,
+   "Quadrantic": 0.03200000151991844,
+   "Ambient": 298.0,
+   "Diffuse": 1.0,
+   "Specular": 1.0,
+   "Transform": {
+    "Position": {
+     "X": 129.0,
+     "Y": 473.0,
+     "Z": 453.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  }
+ ]
+}

@@ -3,6 +3,7 @@
 
 
 #include "../../vendor/volk.h"
+#include <spdlog/spdlog.h>
 #include "CommandBuffer.h"
 #include <iostream>
 
@@ -34,9 +35,12 @@ namespace Engine{
             bufferCreateInfo.size = size;
             bufferCreateInfo.usage = usage;
 			
+			VkResult result = vkCreateBuffer(device, &bufferCreateInfo, nullptr, &buffer);
 
-			if (vkCreateBuffer(device, &bufferCreateInfo, nullptr, &buffer) != VK_SUCCESS) {
-				throw std::runtime_error("Failed to create vertex buffer");
+			if (result != VK_SUCCESS) {
+
+				spdlog::error(result);
+				throw std::runtime_error("Failed to create buffer");
 			}
 
 			//Получить требования для выделения памяти

@@ -36,7 +36,7 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 	auto& shapes = reader.GetShapes();
 	auto& materials = reader.GetMaterials();
 
-	bool MaterialsFound = true;
+	MaterialsFound = true;
 	if (materials.size() == 0)
 	{
 		MaterialsFound = false;
@@ -134,8 +134,6 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 		}
 	}
 
-	
-	
     VertexBuffer.CreateVertexBuffer(renderer.physicalDevice.Get(),
         renderer.device.Get(),
         renderer.device.GetGraphicsQueue(),
@@ -282,15 +280,6 @@ void Engine::Mesh::CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout d
     
 }
 
-//VkBuffer Engine::Mesh::GetVertexBuffer() {
-//	return VertexBuffer.Get();
-//}
-//
-//VkBuffer Engine::Mesh::GetIndexBuffer() {
-//	//return IndexBuffer.Get();
-//	return 0;
-//}
-
 std::string Engine::Mesh::pGetMeshPath() {
 	return MeshPath;
 }
@@ -299,30 +288,8 @@ std::vector<Engine::DataTypes::MeshVertex_t>* Engine::Mesh::GetVertices() {
     return &Vertices;
 }
 
-//std::vector<glm::uint32_t> Engine::Mesh::GetIndexes() {
-//	return Indexes;
-//}
-
 Engine::DataTypes::Material_t Engine::Mesh::GetMaterial() {
 	return Material;
-}
-
-void Engine::Mesh::SetDiffuseTexture(std::string path, short id) {
-	if (id < DiffuseMapsSize && id >= 0){
-        DiffuseTextures_b1[id].DestroyTexture(renderer.device.Get());
-        vkFreeDescriptorSets(renderer.device.Get(), renderer.descriptorPoolForMesh.Get(),
-            (uint32_t)DescriptorSets.size(), DescriptorSets.data());
-        DiffuseTextures_b1[id].CreateTexture(
-            renderer.physicalDevice.Get(), renderer.device.Get(), renderer.device.GetGraphicsQueue(), renderer.commandPool.Get(), path
-        );
-        CreateDescriptorSets(renderer.device.Get(), renderer.setLayoutForMesh.Get(),
-            renderer.descriptorPoolForMesh.Get(), *renderer.swapchain.PGetImageViews());
-	}
-	
-}
-
-Engine::Texture Engine::Mesh::GetDiffuseTexture(short id){
-	return DiffuseTextures_b1[id];
 }
 
 void Engine::Mesh::SetMaterial(DataTypes::Material_t mat) {
@@ -616,20 +583,8 @@ void Engine::WireframeMesh::Draw(VkCommandBuffer commandBuffer, int imageIndex) 
 	vkCmdDrawIndexed(commandBuffer, (uint32_t)Indexes.size(), 1, 0, 0, 0);
 }
 
-VkBuffer Engine::WireframeMesh::GetVertexBuffer() {
-	return VertexBuffer.Get();
-}
-
-VkBuffer Engine::WireframeMesh::GetIndexBuffer() {
-	return IndexBuffer.Get();
-}
-
 std::vector<Engine::DataTypes::WireframeMeshVertex_t> Engine::WireframeMesh::GetVertices() {
 	return Vertices;
-}
-
-std::vector<glm::uint32_t> Engine::WireframeMesh::GetIndexes() {
-	return Indexes;
 }
 
 void Engine::WireframeMesh::CreateMesh(std::string modelPath, glm::vec3 color) {

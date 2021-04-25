@@ -44,7 +44,6 @@ void Engine::Scene::Load(std::string path)
                 ((GameObject*)entity)->AddComponent<Mesh>();
                 Mesh* mesh = ((GameObject*)entity)->pGetComponent<Mesh*>();
                 mesh->CreateMesh(entityJson["Mesh"]["Path"]);
-                mesh->SetDiffuseTexture(entityJson["Mesh"]["DiffuseTexturePath"],0);
             }
 
             if (entityJson.count("Rigidbody") != 0) {
@@ -91,7 +90,7 @@ void Engine::Scene::Load(std::string path)
             attrib->quadrantic = entityJson["Quadrantic"];
 
             attrib->lightPosition = glm::vec3(
-                entityJson["LightPosition"]["X"],
+                entityJson.at("LightPosition").at("X"),
                 entityJson["LightPosition"]["Y"],
                 entityJson["LightPosition"]["Z"] 
             );
@@ -102,6 +101,11 @@ void Engine::Scene::Load(std::string path)
                 entityJson["LightColor"]["B"]
             );
 
+           
+            attrib->ambient = entityJson.value("Ambient",1); 
+            attrib->diffuse = entityJson.value("Diffuse",1);
+            attrib->specular = entityJson.value("Specular",1);
+            
             pointLightAttributes.push_back(attrib);
         }
 
@@ -117,7 +121,11 @@ void Engine::Scene::Load(std::string path)
             attrib->lightColor.r = entityJson["Color"]["R"];
             attrib->lightColor.g = entityJson["Color"]["G"];
             attrib->lightColor.b = entityJson["Color"]["B"];
-          
+
+            attrib->ambient = entityJson.value("Ambient", 1);
+            attrib->diffuse = entityJson.value("Diffuse", 1);
+            attrib->specular = entityJson.value("Specular", 1);
+
             directionalLightAttributes.push_back(attrib);
         }
 
@@ -188,7 +196,6 @@ void Engine::Scene::SaveAs(std::string path)
             Mesh* mesh = ((GameObject*)entities[i])->pGetComponent<Mesh*>();
             if (mesh != nullptr) {
                 sceneJson["Entities"][i]["Mesh"]["Path"] = mesh->pGetMeshPath();
-                sceneJson["Entities"][i]["Mesh"]["DiffuseTexturePath"] = mesh->GetDiffuseTexture(0).GetTexturePath();
             }
             RigidBody* rigidBody = ((GameObject*)entities[i])->pGetComponent<RigidBody*>();
             if (rigidBody != nullptr) {
@@ -223,6 +230,11 @@ void Engine::Scene::SaveAs(std::string path)
             sceneJson["Entities"][i]["Constant"] = attributes.constant;
             sceneJson["Entities"][i]["Linear"] = attributes.linear;
             sceneJson["Entities"][i]["Quadrantic"] = attributes.quadrantic;
+
+
+            sceneJson["Entities"][i]["Ambient"] = attributes.ambient;
+            sceneJson["Entities"][i]["Diffuse"] = attributes.diffuse;
+            sceneJson["Entities"][i]["Specular"] = attributes.specular;
         }
         if (entityType == ENTITY_TYPE_DIRECTIONAL_LIGHT_OBJECT) {
             sceneJson["Entities"][i]["Type"] = "DirectionalLight";
@@ -235,6 +247,11 @@ void Engine::Scene::SaveAs(std::string path)
             sceneJson["Entities"][i]["Color"]["R"] = attributes.lightColor.r;
             sceneJson["Entities"][i]["Color"]["G"] = attributes.lightColor.g;
             sceneJson["Entities"][i]["Color"]["B"] = attributes.lightColor.b;
+           
+            sceneJson["Entities"][i]["Ambient"] = attributes.ambient;
+            sceneJson["Entities"][i]["Diffuse"] = attributes.diffuse;
+            sceneJson["Entities"][i]["Specular"] = attributes.specular;
+
         }
         if (entityType == ENTITY_TYPE_CUBEMAP_OBJECT) {
             sceneJson["Entities"][i]["Type"] = "Cubemap";
