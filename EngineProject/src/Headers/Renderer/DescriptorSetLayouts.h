@@ -40,7 +40,7 @@ namespace Engine{
 			
 			VkDescriptorSetLayoutBinding diffuseTexturesBinding{};
             diffuseTexturesBinding.binding = 1;
-            diffuseTexturesBinding.descriptorCount = DiffuseMapsSize;
+            diffuseTexturesBinding.descriptorCount = MAX_MATERIALS;
             diffuseTexturesBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
             diffuseTexturesBinding.pImmutableSamplers = nullptr;
             diffuseTexturesBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
@@ -78,6 +78,15 @@ namespace Engine{
 			directionalLightBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
             setLayoutBindings.push_back(directionalLightBinding);
 			
+            VkDescriptorSetLayoutBinding specularTexturesBinding{};
+			specularTexturesBinding.binding = 6;
+			specularTexturesBinding.descriptorCount = MAX_MATERIALS;
+			specularTexturesBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			specularTexturesBinding.pImmutableSamplers = nullptr;
+			specularTexturesBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+            setLayoutBindings.push_back(specularTexturesBinding);
+
+
 			CreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 			CreateInfo.pBindings = setLayoutBindings.data();
 			CreateInfo.bindingCount = (uint32_t)setLayoutBindings.size();

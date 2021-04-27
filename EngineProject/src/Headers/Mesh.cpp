@@ -49,12 +49,14 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 		for (size_t i = 0; i < Faces.size(); i++)
 		{
 			Faces[i].diffuseMapPath = reader_config.mtl_search_path + materials[i].diffuse_texname;
+			Faces[i].specularMapPath = reader_config.mtl_search_path + materials[i].specular_texname;
 			Faces[i].MatID = i;
 		}
 	}
 	else {
 		Faces.resize(1);
 		Faces[0].diffuseMapPath = "";
+		Faces[0].specularMapPath = "";
 		Faces[0].MatID = 0;
 	}
 
@@ -190,27 +192,65 @@ void Engine::Mesh::CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout d
         mvpWriteDescriptorSet.pBufferInfo = &bufferInfo;
         writeDescriptorSets.push_back(mvpWriteDescriptorSet);
 		
-		std::vector<VkDescriptorImageInfo> imageInfos;
+		std::vector<VkDescriptorImageInfo> diffuseImageInfos;
 		for (int j = 0; j < DiffuseTextures_b1.size(); j++)
 		{
-            VkDescriptorImageInfo textureInfo{};
-            textureInfo.imageView = DiffuseTextures_b1[j].GetImageView();
-            textureInfo.sampler = DiffuseTextures_b1[j].GetImageSampler();
-            textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			imageInfos.push_back(textureInfo);
+			if (j < Faces.size()) {
+                VkDescriptorImageInfo textureInfo{};
+                textureInfo.imageView = DiffuseTextures_b1[j].GetImageView();
+                textureInfo.sampler = DiffuseTextures_b1[j].GetImageSampler();
+                textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                diffuseImageInfos.push_back(textureInfo);
+			}
+			else {
+                VkDescriptorImageInfo textureInfo{};
+                textureInfo.imageView = Blank.GetImageView();
+                textureInfo.sampler = Blank.GetImageSampler();
+                textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                diffuseImageInfos.push_back(textureInfo);
+			}
+            
 		}
 		
-        VkWriteDescriptorSet textureWriteDescriptorSet{};
-        textureWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-        textureWriteDescriptorSet.descriptorCount = DiffuseTextures_b1.size();
-        textureWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-        textureWriteDescriptorSet.dstSet = DescriptorSets[i];
-        textureWriteDescriptorSet.dstBinding = 1;
-        textureWriteDescriptorSet.dstArrayElement = 0;
-        textureWriteDescriptorSet.pImageInfo = imageInfos.data();
+        VkWriteDescriptorSet diffuseMapWriteDescriptorSet{};
+        diffuseMapWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        diffuseMapWriteDescriptorSet.descriptorCount = MAX_MATERIALS;
+        diffuseMapWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        diffuseMapWriteDescriptorSet.dstSet = DescriptorSets[i];
+        diffuseMapWriteDescriptorSet.dstBinding = 1;
+        diffuseMapWriteDescriptorSet.dstArrayElement = 0;
+        diffuseMapWriteDescriptorSet.pImageInfo = diffuseImageInfos.data();
+        writeDescriptorSets.push_back(diffuseMapWriteDescriptorSet);
 
-        writeDescriptorSets.push_back(textureWriteDescriptorSet);
+        std::vector<VkDescriptorImageInfo> specularImageInfos;
+        for (int j = 0; j < SpecularTextures_b6.size(); j++)
+        {
+			if (j<Faces.size())
+			{
+                VkDescriptorImageInfo textureInfo{};
+                textureInfo.imageView = SpecularTextures_b6[j].GetImageView();
+                textureInfo.sampler = SpecularTextures_b6[j].GetImageSampler();
+                textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                specularImageInfos.push_back(textureInfo);
+			}
+			else {
+                VkDescriptorImageInfo textureInfo{};
+                textureInfo.imageView = Blank.GetImageView();
+                textureInfo.sampler = Blank.GetImageSampler();
+                textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+                specularImageInfos.push_back(textureInfo);
+			}
+        }
 
+        VkWriteDescriptorSet specularMapWriteDescriptorSet{};
+		specularMapWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		specularMapWriteDescriptorSet.descriptorCount = MAX_MATERIALS;
+		specularMapWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		specularMapWriteDescriptorSet.dstSet = DescriptorSets[i];
+		specularMapWriteDescriptorSet.dstBinding = 6;
+		specularMapWriteDescriptorSet.dstArrayElement = 0;
+		specularMapWriteDescriptorSet.pImageInfo = specularImageInfos.data();
+        writeDescriptorSets.push_back(specularMapWriteDescriptorSet);
 
 
 		VkDescriptorBufferInfo bufferInfo2{};
@@ -340,20 +380,39 @@ void Engine::Mesh::CreateMesh(std::string modelPath) {
 		
         //<1x1 текстура (0,0,0,255)> 
 
-		DiffuseTextures_b1.resize(DiffuseMapsSize);
+		DiffuseTextures_b1.resize(MAX_MATERIALS);
+		SpecularTextures_b6.resize(MAX_MATERIALS);
+
+        Blank.CreateTexture(
+			renderer.physicalDevice.Get(),
+            renderer.device.Get(),
+            renderer.device.GetGraphicsQueue(),
+            renderer.commandPool.Get(), "");
 
 		for (size_t i = 0; i < DiffuseTextures_b1.size(); i++)
 		{
-			if (i < Faces.size())
+			if (i < Faces.size()){
                 DiffuseTextures_b1[i].CreateTexture(renderer.physicalDevice.Get(),
                     renderer.device.Get(),
                     renderer.device.GetGraphicsQueue(),
                     renderer.commandPool.Get(), Faces[i].diffuseMapPath);
-			else
+
+				SpecularTextures_b6[i].CreateTexture(renderer.physicalDevice.Get(),
+                    renderer.device.Get(),
+                    renderer.device.GetGraphicsQueue(),
+                    renderer.commandPool.Get(), Faces[i].specularMapPath);
+			}
+			/*else{
 				DiffuseTextures_b1[i].CreateTexture(renderer.physicalDevice.Get(),
                     renderer.device.Get(),
                     renderer.device.GetGraphicsQueue(),
                     renderer.commandPool.Get(), "");
+
+                SpecularTextures_b6[i].CreateTexture(renderer.physicalDevice.Get(),
+                    renderer.device.Get(),
+                    renderer.device.GetGraphicsQueue(),
+                    renderer.commandPool.Get(), "");
+			}*/
 		}
 
 		UniformBuffersMVP_b0.resize(renderer.swapchain.PGetImageViews()->size());
@@ -450,11 +509,16 @@ void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec
 }
 
 void Engine::Mesh::Destroy() {
+	Blank.DestroyTexture(renderer.device.Get());
 	for (size_t i = 0; i < DiffuseTextures_b1.size(); i++)
 	{
 		DiffuseTextures_b1[i].DestroyTexture(renderer.device.Get());
 	}
-	
+    for (size_t i = 0; i < SpecularTextures_b6.size(); i++)
+    {
+		SpecularTextures_b6[i].DestroyTexture(renderer.device.Get());
+    }
+
 
 	vkFreeDescriptorSets(renderer.device.Get(), renderer.descriptorPoolForMesh.Get(),
 		(uint32_t)DescriptorSets.size(), DescriptorSets.data());

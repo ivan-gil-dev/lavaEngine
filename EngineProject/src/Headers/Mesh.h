@@ -15,6 +15,7 @@ namespace Engine{
 		VulkanBuffers::IndexBuffer indexBuffer;
 		short MatID;
 		std::string diffuseMapPath;
+		std::string specularMapPath;
 
 	};
 
@@ -40,7 +41,9 @@ namespace Engine{
 		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMVP_b0;
 
 		std::vector<Texture>							DiffuseTextures_b1;
-		
+		std::vector<Texture>							SpecularTextures_b6;
+		Texture											Blank;
+
 		std::vector<VulkanBuffers::UniformBuffer>   	UniformBuffersSpotLightAttributes_b2;
 		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersDebugCameraPos_b3;
 		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMaterial_b4;

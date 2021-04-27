@@ -43,17 +43,17 @@ struct DirectionalLight_t{
 
 layout(binding = 5) uniform DirectionalLight{DirectionalLight_t directionalLight_t[MAX_DLIGHTS];}directionalLight;
 
-#define DiffuseMapsSize 32
-layout(binding = 1) uniform sampler2D diffuseColorMaps[DiffuseMapsSize];
+
 
 layout( push_constant ) uniform constants
 {
-	int diffuseMapId;
+	int MaterialID;
 
 } PushConstants;
 
-
-layout(binding = 6) uniform sampler2D specularColorTexture;
+#define MAX_MATERIALS 32
+layout(binding = 1) uniform sampler2D diffuseColorMaps[MAX_MATERIALS];
+layout(binding = 6) uniform sampler2D specularColorMaps[MAX_MATERIALS];
 
 layout(location = 0) in vec3 frag_Color;
 layout(location = 1) in vec2 frag_UVmap;
@@ -71,32 +71,24 @@ vec3 CalculateSpotlight(Spotlight_t spotlight_p, vec3 normals_p, vec3 viewDir_p)
         float diff = max(dot(normals_p,lightDir), 0.0);
         vec3 diffuse = diff * spotlight_p.Color * spotlight_p.Diffuse;
 
-        vec4 diffuseColor = texture(diffuseColorMaps[PushConstants.diffuseMapId],frag_UVmap);
-        
-        if(diffuseColor.a<0.5){
-            discard;
-        }
-
-        ambient *= vec3(diffuseColor);
-        diffuse *= vec3(diffuseColor);
-
-        // for(int i = 0; i < DiffuseMapsSize; i++){
-        //     ambient *= vec3(texture(diffuseColorMaps[i],frag_UVmap));
-        // }
-        
-        // for(int i = 0; i < DiffuseMapsSize; i++){
-        //     diffuse *= vec3(texture(diffuseColorMaps[i],frag_UVmap));
-        // }
-
-
         vec3 reflectDir = reflect(-lightDir,normals_p);
-
         float spec = pow(max(dot(viewDir_p,reflectDir),0.0),material.material.shininess);
         vec3 specular = spotlight_p.Specular * spec * spotlight_p.Color;
 
         float distance = length(spotlight_p.Position - frag_Pos);
         float attenuation = 1.0/(spotlight_p.Constant + spotlight_p.Linear*distance + spotlight_p.Quadrantic*distance*distance);
-        
+
+        vec4 diffuseColor = texture(diffuseColorMaps[PushConstants.MaterialID],frag_UVmap);
+
+        if(diffuseColor.a<0.5){
+            discard;
+        }
+       
+
+        ambient *= vec3(diffuseColor);
+        diffuse *= vec3(diffuseColor);
+        specular *= vec3(texture(specularColorMaps[PushConstants.MaterialID],frag_UVmap));
+  
         return (ambient*attenuation + diffuse*attenuation + specular*attenuation);
     }else{
         return vec3(0,0,0);
@@ -112,28 +104,21 @@ vec3 CalculateDirectionalLight(DirectionalLight_t directionalLight_p, vec3 norma
         float diff = max(dot(normals_p,lightDir), 0.0);
         vec3 diffuse = diff * directionalLight_p.Color * directionalLight_p.Diffuse;
 
-        vec4 diffuseColor = texture(diffuseColorMaps[PushConstants.diffuseMapId],frag_UVmap);
-        
-        if(diffuseColor.a<0.5){
-            discard;
-        }
-
-        ambient *= vec3(diffuseColor);
-        diffuse *= vec3(diffuseColor);
-
-
-        // for(int i = 0; i < DiffuseMapsSize; i++){
-        //     ambient *= vec3(texture(diffuseColorMaps[i],frag_UVmap));
-        // }
-
-        // for(int i = 0; i < DiffuseMapsSize; i++){
-        //     diffuse *= vec3(texture(diffuseColorMaps[i],frag_UVmap));
-        // }
-
         vec3 reflectDir = reflect(-lightDir,normals_p);
 
         float spec = pow(max(dot(viewDir_p,reflectDir),0.0),material.material.shininess);
         vec3 specular = directionalLight_p.Specular * spec * directionalLight_p.Color;
+
+        vec4 diffuseColor = texture(diffuseColorMaps[PushConstants.MaterialID],frag_UVmap);
+
+        if(diffuseColor.a<0.5){
+            discard;
+        }
+        
+
+        ambient *= vec3(diffuseColor);
+        diffuse *= vec3(diffuseColor);
+        specular *= vec3(texture(specularColorMaps[PushConstants.MaterialID],frag_UVmap));
 
         return (ambient + diffuse + specular);
     }else{

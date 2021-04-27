@@ -37,7 +37,7 @@ namespace Engine{
             poolSizes.push_back(mvpPoolSize);
 			
 			VkDescriptorPoolSize diffuseTextureSamplerPoolSize{};
-            diffuseTextureSamplerPoolSize.descriptorCount = (uint32_t)imageViews.size() * 1000 * DiffuseMapsSize;
+            diffuseTextureSamplerPoolSize.descriptorCount = (uint32_t)imageViews.size() * 1000 * MAX_MATERIALS;
             diffuseTextureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
             poolSizes.push_back(diffuseTextureSamplerPoolSize);
 			
@@ -60,6 +60,12 @@ namespace Engine{
 			directionalLightAttributesPoolSize.descriptorCount = (uint32_t)imageViews.size() * 1000 * MAX_DLIGHTS;
 			directionalLightAttributesPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             poolSizes.push_back(directionalLightAttributesPoolSize);
+
+            VkDescriptorPoolSize specularTextureSamplerPoolSize{};
+			specularTextureSamplerPoolSize.descriptorCount = (uint32_t)imageViews.size() * 100 * MAX_MATERIALS;
+			specularTextureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            poolSizes.push_back(specularTextureSamplerPoolSize);
+
 
 			VkDescriptorPoolCreateInfo createInfo{};
             createInfo.pPoolSizes = poolSizes.data();

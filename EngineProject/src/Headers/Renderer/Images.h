@@ -12,7 +12,7 @@
 #include	"CommandBuffer.h"
 
 namespace Engine{
-	#define DiffuseMapsSize 32
+	#define MAX_MATERIALS 32
 
 	//Создание изображения
 	void Img_Func_CreateImage(VkPhysicalDevice physicalDevice, VkDevice device, VkImage& image,

@@ -194,7 +194,9 @@ void Engine::DepthImage::CreateDepthImageView(VkDevice device) {
 	ImageViewCreateInfo.subresourceRange.levelCount = 1;
 	ImageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
 	ImageViewCreateInfo.subresourceRange.layerCount = 1;
-	ImageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+	//ImageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+	ImageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+
 	if (vkCreateImageView(device, &ImageViewCreateInfo, nullptr, &DepthImageView) != VK_SUCCESS) {
 		throw std::runtime_error("Failed to create Image View");
 	}

@@ -1,5 +1,4 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\Microsoft.Common.CurrentVersion.targets(1947,5): warning : The referenced project '..\Engine\Lava.vcxproj' does not exist.
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(519,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (Lava.vcxproj).  Это может привести к ошибкам очистки и перестроения.
   File.cpp
 G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(275,1): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
 G:\dev\cpp\WinAPI Branch\App\File.cpp(98,64): warning C4316: "Engine::DirectionalLightObject": объект, размещенный в куче, может не быть выровнен 32

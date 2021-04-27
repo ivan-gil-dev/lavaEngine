@@ -1,4 +1,73 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(519,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (Lava.vcxproj).  Это может привести к ошибкам очистки и перестроения.
+  EntryPoint.cpp
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(275,1): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+  Application.cpp
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(275,1): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(285,57): warning C4244: аргумент: преобразование "int" в "float", возможна потеря данных
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\include\xstring(2468,23): warning C4244: аргумент: преобразование "wchar_t" в "const _Elem", возможна потеря данных
+          with
+          [
+              _Elem=char
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\include\xstring(2479): message : выполняется компиляция ссылки на экземпляр шаблон функции "void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct<wchar_t*>(_Iter,const _Iter,std::input_iterator_tag)"
+          with
+          [
+              _Iter=wchar_t *
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\include\xstring(2479): message : выполняется компиляция ссылки на экземпляр шаблон функции "void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct<wchar_t*>(_Iter,const _Iter,std::input_iterator_tag)"
+          with
+          [
+              _Iter=wchar_t *
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\include\xstring(2459): message : выполняется компиляция ссылки на экземпляр шаблон функции "void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct<wchar_t*>(const _Iter,const _Iter,std::forward_iterator_tag)"
+          with
+          [
+              _Iter=wchar_t *
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\include\xstring(2459): message : выполняется компиляция ссылки на экземпляр шаблон функции "void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct<wchar_t*>(const _Iter,const _Iter,std::forward_iterator_tag)"
+          with
+          [
+              _Iter=wchar_t *
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(118): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(118): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+  Entities.cpp
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(275,1): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+  Globals.cpp
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(275,1): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+  Mesh.cpp
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(275,1): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Mesh.cpp(53,22): warning C4267: =: преобразование из "size_t" в "short"; возможна потеря данных
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Mesh.cpp(133,33): warning C4834: отмена возвращаемого значения функции с атрибутом "nodiscard"
+  Renderer.cpp
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(275,1): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+  RigidBody.cpp
+  GLM: GLM_GTX_hash extension included
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\exponential.hpp(21,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\detail\func_geometric.inl(1,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\geometric.hpp(116,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\detail\func_matrix.inl(1,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\matrix.hpp(161,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\detail\type_mat4x4.inl(1,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\detail\type_mat4x4.hpp(188,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\ext\matrix_double4x4.hpp(5,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\mat4x4.hpp(5,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\gtc\matrix_transform.hpp(24,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\gtc\quaternion.hpp(18,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\gtx\hash.hpp(30,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Globals.h(7,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
   Scene.cpp
   GLM: GLM_GTX_hash extension included
 G:\dev\cpp\WinAPI Branch\EngineProject\vendor\glm\exponential.hpp(21,1): warning C4103: выравнивание изменилось после включения заголовка, возможно из-за отсутствия директивы #pragma pack(pop)
@@ -46,4 +115,5 @@ G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(127,48): warning C4
           [
               ValueType=int
           ]
+  Создание кода...
   Engine.vcxproj -> G:\dev\cpp\WinAPI Branch\x64\Debug\Engine.lib

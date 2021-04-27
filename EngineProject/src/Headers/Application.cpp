@@ -307,31 +307,13 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 
 
 			//TODO: добавление объекта
-			//if (ImGui::Button(u8"Add+")) {
+            /*if (ImGui::Button(u8"Add+")) {
+				Engine::GameObject *obj = new Engine::GameObject;
+				obj->AddComponent<Engine::Mesh>();
+				obj->SetID(Entities->size());
+				Entities->push_back(obj);
 
-			//	//<>
-			//	{
-			//		Engine::GameObject* newObject = new Engine::GameObject;
-			//		newObject->pMesh->CreateMesh("assets/cube.obj");
-			//		newObject->SetID((int)Entities.size());
-			//		std::string nameString = "GameObject";
-			//		newObject->SetName(nameString);
-			//		newObject->Transform.Translate(glm::vec3(0.0f, 0.0f, 0.0f));
-			//		newObject->Transform.Scale(glm::vec3(1.f, 1.f, 1.f));
-			//		newObject->Transform.Rotate(glm::vec3(0.f, 0.f, 0.f));
-			//		newObject->pRigidBody->CreateRigidBody(
-			//			Engine::RIGIDBODY_SHAPE_TYPE_CUBE,
-			//			1.1f,
-			//			0.2f,
-			//			1.9f,
-			//			Engine::Globals::gDynamicsWorld,
-			//			newObject->GetID()
-			//		);
-			//		newObject->ApplyEntityTransformToRigidbody();
-			//		//	*GameObjects.push_back(newObject);
-			//	}
-
-			//}
+            }*/
 
 			if (!opened) {
 				ShowHierarchyPanel = false;
@@ -423,8 +405,13 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 					Engine::DataTypes::PointLightAttributes_t pointLightAttributes = 
 						*((Engine::PointLightObject*)Entities->at(SelectedItem_ID))->pGetPointLightUniformData();
 
-                    if (ImGui::CollapsingHeader(u8"Translation")) {
+                
                         ImGui::DragFloat3("Position", (float*)&objectPos, 1.0f, min, max);
+                    
+
+					if (ImGui::CollapsingHeader(u8"Light Params")) {
+
+						ImGui::DragFloat3("Color", (float*)&pointLightAttributes.lightColor, 1.0f, min, max);
 
                         ImGui::DragFloat("Ambient", &pointLightAttributes.ambient);
                         ImGui::DragFloat("Diffuse", &pointLightAttributes.diffuse);
@@ -433,8 +420,8 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
                         ImGui::DragFloat("Constant", &pointLightAttributes.constant);
                         ImGui::DragFloat("Linear", &pointLightAttributes.linear);
                         ImGui::DragFloat("Quadrantic", &pointLightAttributes.quadrantic);
-
-                    }
+					}
+                    
 
                     //Если сцена не проигрывается, то применить новые свойства
                     if (!Engine::Globals::gIsScenePlaying) {
@@ -448,11 +435,12 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
                     Engine::DataTypes::DirectionalLightAttributes_t dirLightAttributes = *((Engine::DirectionalLightObject*)Entities->at(SelectedItem_ID))->pGetDirectionalLightUniformData();
 
                     ImGui::DragFloat3("Direction", (float*)&dirLightAttributes.lightDirection, 0.1f, min, max, "%.3f", 0.1f);
-                    ImGui::DragFloat3("Color", (float*)&dirLightAttributes.lightColor, 0.1f, 0.0f, 255.f, "%.3f", 0.1f);
-
-					ImGui::DragFloat("Ambient", &dirLightAttributes.ambient);
-					ImGui::DragFloat("Diffuse", &dirLightAttributes.diffuse);
-					ImGui::DragFloat("Specular", &dirLightAttributes.specular);
+					if (ImGui::CollapsingHeader(u8"Light Params")) {
+                        ImGui::DragFloat3("Color", (float*)&dirLightAttributes.lightColor, 0.1f, 0.0f, 255.f, "%.3f", 0.1f);
+                        ImGui::DragFloat("Ambient", &dirLightAttributes.ambient);
+                        ImGui::DragFloat("Diffuse", &dirLightAttributes.diffuse);
+                        ImGui::DragFloat("Specular", &dirLightAttributes.specular);
+					}
 
                     if (!Engine::Globals::gIsScenePlaying) {
                         *((Engine::DirectionalLightObject*)Entities->at(SelectedItem_ID))->pGetDirectionalLightUniformData() = dirLightAttributes;
