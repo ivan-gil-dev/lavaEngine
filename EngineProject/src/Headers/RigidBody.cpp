@@ -73,8 +73,9 @@ void Engine::RigidBody::CreateShape(RigidBodyShapeType shapeType) {
 	case RIGIDBODY_SHAPE_TYPE_CUBE:
 	{
 		if (ENABLE_RIGIDBODY_MESH) {
-			DebugMesh.CreateMesh("CoreAssets/cube.obj", glm::vec3(0.0f, 1.0f, 0.0f));
+			
 			pShape = new btConvexHullShape;
+			DebugMesh.CreateMesh("CoreAssets/cube.obj", glm::vec3(0.0f, 1.0f, 0.0f));
 			for (size_t i = 0; i < DebugMesh.GetVertices().size(); i++) {
 				btVector3 vec = btVector3(
 					DebugMesh.GetVertices().at(i).pos.x,
@@ -132,6 +133,14 @@ void Engine::RigidBody::CreateShape(RigidBodyShapeType shapeType) {
 	case RIGIDBODY_SHAPE_TYPE_SPHERE:
 	{
 		pShape = new btSphereShape(0.5);
+        DebugMesh.CreateMesh("CoreAssets/sphere.obj", glm::vec3(0.0f, 1.0f, 0.0f));
+
+        /* for (size_t i = 0; i < DebugMesh.GetVertices().size(); i++) {
+             btVector3 vec = btVector3(
+                 DebugMesh.GetVertices().at(i).pos.x,
+                 DebugMesh.GetVertices().at(i).pos.y,
+                 DebugMesh.GetVertices().at(i).pos.z);
+         }*/
 		break;
 	}
 
@@ -198,14 +207,15 @@ Engine::RigidBody::RigidBody(){
 	SetRestitution(0.5f);
 	SetFriction(0.5f);
 	rigidbodyScale = glm::vec3(1, 1, 1);
+	rigidbodyOffset = glm::vec3(0, 0, 0);
 }
 
 void Engine::RigidBody::SetRigidBodyTransform(Transform& transform) {
 	if (pRigidBody != nullptr) {
 		btVector3 pos(
-			transform.GetPosition().x,
-			transform.GetPosition().y,
-			transform.GetPosition().z
+			transform.GetPosition().x + rigidbodyOffset.x,
+			transform.GetPosition().y + rigidbodyOffset.y,
+			transform.GetPosition().z + rigidbodyOffset.z
 		);
 
 		btQuaternion rot;

@@ -5,16 +5,13 @@
 #include    "../../vendor/tiny_obj_loader.h"
 
 void Engine::Mesh::LoadModel(std::string modelPath) {
-    std::vector<DataTypes::MeshVertex_t>	Vertices;
+    //std::vector<DataTypes::MeshVertex_t>	Vertices;
     
 	size_t lastPos = modelPath.find_last_of("/");
 
 	tinyobj::ObjReaderConfig reader_config;
 	reader_config.mtl_search_path = modelPath.substr(0, lastPos+1); // Path to material files
 	
-	std::cout << modelPath.substr(0, lastPos+1) << std::endl;
-
-
 	tinyobj::ObjReader reader;
 
 	if (!reader.ParseFromFile(modelPath, reader_config)) {
@@ -23,23 +20,26 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 			std::string error = "TinyObjReader: " ;
 			error.append(reader.Error());
 
-			throw std::runtime_error(error);
+			if (modelPath!="")
+			{
+				spdlog::warn(error);
+			}
+
+			reader.ParseFromFile("CoreAssets/cube.obj", reader_config);
 		}
-		exit(1);
 	}
 
-	/*if (!reader.Warning().empty()) {
-		std::cout << "TinyObjReader: " << reader.Warning();
-	}*/
 
 	auto& attrib = reader.GetAttrib();
 	auto& shapes = reader.GetShapes();
 	auto& materials = reader.GetMaterials();
 
-	MaterialsFound = true;
 	if (materials.size() == 0)
 	{
 		MaterialsFound = false;
+	}
+	else {
+		MaterialsFound = true;
 	}
 
 
@@ -47,7 +47,7 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 	{
 		Faces.resize(materials.size());
 		for (size_t i = 0; i < Faces.size(); i++)
-		{
+        {
 			Faces[i].diffuseMapPath = reader_config.mtl_search_path + materials[i].diffuse_texname;
 			Faces[i].specularMapPath = reader_config.mtl_search_path + materials[i].specular_texname;
 			Faces[i].MatID = i;
@@ -111,7 +111,7 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 				tinyobj::real_t green = attrib.colors[3*size_t(idx.vertex_index)+1];
 				tinyobj::real_t blue  = attrib.colors[3*size_t(idx.vertex_index)+2];
 
-				vertex.color = { red,green,blue };
+				vertex.color = { 1.0f,1.0f,1.0f };
 
 				if (UniqueVertices.count(vertex) == 0) {
 					UniqueVertices[vertex] = static_cast<uint32_t>(Vertices.size());
@@ -337,105 +337,112 @@ void Engine::Mesh::SetMaterial(DataTypes::Material_t mat) {
 }
 
 void Engine::Mesh::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
-	vkCmdBindPipeline(
-		commandBuffer,
-		VK_PIPELINE_BIND_POINT_GRAPHICS,
-		renderer.graphicsPipelineForMesh.Get()
-	);
-
-	if (ENABLE_DYNAMIC_VIEWPORT) {
-		vkCmdSetViewport(commandBuffer, 0, 1, &renderer.rendererViewport);
-		vkCmdSetScissor(commandBuffer, 0, 1, &renderer.rendererScissors);
-	}
-
-	VkBuffer buffers[] = { VertexBuffer.Get() };
-	VkDeviceSize offsets[] = { 0 };
-
-
-	vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
-	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, renderer.graphicsPipelineForMesh.GetPipelineLayout(),
-		0, 1, &DescriptorSets[imageIndex], 0, nullptr);
-
-	for (size_t i = 0; i < Faces.size(); i++)
+	if (IsCreated)
 	{
-		DataTypes::PushConstants constants;
-		constants.diffuseMapId = Faces[i].MatID;
+        vkCmdBindPipeline(
+            commandBuffer,
+            VK_PIPELINE_BIND_POINT_GRAPHICS,
+            renderer.graphicsPipelineForMesh.Get()
+        );
 
-		vkCmdPushConstants(commandBuffer, renderer.graphicsPipelineForMesh.GetPipelineLayout(),
-			VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(constants), &constants);
+        if (ENABLE_DYNAMIC_VIEWPORT) {
+            vkCmdSetViewport(commandBuffer, 0, 1, &renderer.rendererViewport);
+            vkCmdSetScissor(commandBuffer, 0, 1, &renderer.rendererScissors);
+        }
 
-        vkCmdBindIndexBuffer(commandBuffer, Faces[i].indexBuffer.Get(), 0, VK_INDEX_TYPE_UINT32);
-        vkCmdDrawIndexed(commandBuffer, (uint32_t)Faces[i].indexes.size(), 1, 0, 0, 0);
+        VkBuffer buffers[] = { VertexBuffer.Get() };
+        VkDeviceSize offsets[] = { 0 };
+
+
+        vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, renderer.graphicsPipelineForMesh.GetPipelineLayout(),
+            0, 1, &DescriptorSets[imageIndex], 0, nullptr);
+
+        for (size_t i = 0; i < Faces.size(); i++)
+        {
+
+            DataTypes::PushConstants constants;
+            constants.diffuseMapId = Faces[i].MatID;
+
+            vkCmdPushConstants(commandBuffer, renderer.graphicsPipelineForMesh.GetPipelineLayout(),
+                VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(constants), &constants);
+
+            vkCmdBindIndexBuffer(commandBuffer, Faces[i].indexBuffer.Get(), 0, VK_INDEX_TYPE_UINT32);
+            vkCmdDrawIndexed(commandBuffer, (uint32_t)Faces[i].indexes.size(), 1, 0, 0, 0);
+        }
 	}
-	
 }
 
 void Engine::Mesh::CreateMesh(std::string modelPath) {
-	Material = { 32.f };
-	MeshPath = modelPath;
+	if (!IsCreated)
+	{
+		Material = { 32.f };
+		MeshPath = modelPath;
 
-	LoadModel(modelPath);
+		LoadModel(modelPath);
 
-	{//Создание буферов
-		
-        //<1x1 текстура (0,0,0,255)> 
+		{//Создание буферов
 
-		DiffuseTextures_b1.resize(MAX_MATERIALS);
-		SpecularTextures_b6.resize(MAX_MATERIALS);
+			//<1x1 текстура (0,0,0,255)> 
 
-        Blank.CreateTexture(
-			renderer.physicalDevice.Get(),
-            renderer.device.Get(),
-            renderer.device.GetGraphicsQueue(),
-            renderer.commandPool.Get(), "");
+			DiffuseTextures_b1.resize(MAX_MATERIALS);
+			SpecularTextures_b6.resize(MAX_MATERIALS);
 
-		for (size_t i = 0; i < DiffuseTextures_b1.size(); i++)
-		{
-			if (i < Faces.size()){
-                DiffuseTextures_b1[i].CreateTexture(renderer.physicalDevice.Get(),
-                    renderer.device.Get(),
-                    renderer.device.GetGraphicsQueue(),
-                    renderer.commandPool.Get(), Faces[i].diffuseMapPath);
+			Blank.CreateTexture(
+				renderer.physicalDevice.Get(),
+				renderer.device.Get(),
+				renderer.device.GetGraphicsQueue(),
+				renderer.commandPool.Get(), "");
 
-				SpecularTextures_b6[i].CreateTexture(renderer.physicalDevice.Get(),
-                    renderer.device.Get(),
-                    renderer.device.GetGraphicsQueue(),
-                    renderer.commandPool.Get(), Faces[i].specularMapPath);
+			for (size_t i = 0; i < DiffuseTextures_b1.size(); i++)
+			{
+				if (i < Faces.size()) {
+					DiffuseTextures_b1[i].CreateTexture(renderer.physicalDevice.Get(),
+						renderer.device.Get(),
+						renderer.device.GetGraphicsQueue(),
+						renderer.commandPool.Get(), Faces[i].diffuseMapPath);
+
+					SpecularTextures_b6[i].CreateTexture(renderer.physicalDevice.Get(),
+						renderer.device.Get(),
+						renderer.device.GetGraphicsQueue(),
+						renderer.commandPool.Get(), Faces[i].specularMapPath);
+				}
+				/*else{
+					DiffuseTextures_b1[i].CreateTexture(renderer.physicalDevice.Get(),
+						renderer.device.Get(),
+						renderer.device.GetGraphicsQueue(),
+						renderer.commandPool.Get(), "");
+
+					SpecularTextures_b6[i].CreateTexture(renderer.physicalDevice.Get(),
+						renderer.device.Get(),
+						renderer.device.GetGraphicsQueue(),
+						renderer.commandPool.Get(), "");
+				}*/
 			}
-			/*else{
-				DiffuseTextures_b1[i].CreateTexture(renderer.physicalDevice.Get(),
-                    renderer.device.Get(),
-                    renderer.device.GetGraphicsQueue(),
-                    renderer.commandPool.Get(), "");
 
-                SpecularTextures_b6[i].CreateTexture(renderer.physicalDevice.Get(),
-                    renderer.device.Get(),
-                    renderer.device.GetGraphicsQueue(),
-                    renderer.commandPool.Get(), "");
-			}*/
+			UniformBuffersMVP_b0.resize(renderer.swapchain.PGetImageViews()->size());
+			UniformBuffersSpotLightAttributes_b2.resize(renderer.swapchain.PGetImageViews()->size());
+			UniformBuffersDebugCameraPos_b3.resize(renderer.swapchain.PGetImageViews()->size());
+			UniformBuffersMaterial_b4.resize(renderer.swapchain.PGetImageViews()->size());
+			UniformBuffersDirectionalLightAttributes_b5.resize(renderer.swapchain.PGetImageViews()->size());
+
+			for (size_t i = 0; i < renderer.swapchain.PGetImageViews()->size(); i++) {
+				UniformBuffersMVP_b0[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::MVP_t));
+				UniformBuffersDebugCameraPos_b3[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::CameraPos_t));
+				UniformBuffersMaterial_b4[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::Material_t));
+				UniformBuffersSpotLightAttributes_b2[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(),
+					sizeof(DataTypes::PointLightAttributes_t) * MAX_SPOTLIGHTS);
+				UniformBuffersDirectionalLightAttributes_b5[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(),
+					sizeof(DataTypes::DirectionalLightAttributes_t) * MAX_DLIGHTS);
+			}
 		}
 
-		UniformBuffersMVP_b0.resize(renderer.swapchain.PGetImageViews()->size());
-		UniformBuffersSpotLightAttributes_b2.resize(renderer.swapchain.PGetImageViews()->size());
-		UniformBuffersDebugCameraPos_b3.resize(renderer.swapchain.PGetImageViews()->size());
-		UniformBuffersMaterial_b4.resize(renderer.swapchain.PGetImageViews()->size());
-		UniformBuffersDirectionalLightAttributes_b5.resize(renderer.swapchain.PGetImageViews()->size());
-
-		for (size_t i = 0; i < renderer.swapchain.PGetImageViews()->size(); i++) {
-			UniformBuffersMVP_b0[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::MVP_t));
-			UniformBuffersDebugCameraPos_b3[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::CameraPos_t));
-			UniformBuffersMaterial_b4[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::Material_t));
-			UniformBuffersSpotLightAttributes_b2[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(),
-				sizeof(DataTypes::PointLightAttributes_t) * MAX_SPOTLIGHTS);
-			UniformBuffersDirectionalLightAttributes_b5[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), 
-				sizeof(DataTypes::DirectionalLightAttributes_t)*MAX_DLIGHTS);
-		}
+		CreateDescriptorSets(
+			renderer.device.Get(), renderer.setLayoutForMesh.Get(),
+			renderer.descriptorPoolForMesh.Get(), *renderer.swapchain.PGetImageViews()
+		);
+		IsCreated = true;
 	}
-
-	CreateDescriptorSets(
-		renderer.device.Get(), renderer.setLayoutForMesh.Get(),
-		renderer.descriptorPoolForMesh.Get(), *renderer.swapchain.PGetImageViews()
-	);
 }
 
 void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec3 cameraPosition, 
@@ -509,34 +516,37 @@ void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec
 }
 
 void Engine::Mesh::Destroy() {
-	Blank.DestroyTexture(renderer.device.Get());
-	for (size_t i = 0; i < DiffuseTextures_b1.size(); i++)
+	if (IsCreated)
 	{
-		DiffuseTextures_b1[i].DestroyTexture(renderer.device.Get());
+        Blank.DestroyTexture(renderer.device.Get());
+        for (size_t i = 0; i < DiffuseTextures_b1.size(); i++)
+        {
+            DiffuseTextures_b1[i].DestroyTexture(renderer.device.Get());
+        }
+        for (size_t i = 0; i < SpecularTextures_b6.size(); i++)
+        {
+            SpecularTextures_b6[i].DestroyTexture(renderer.device.Get());
+        }
+
+
+        vkFreeDescriptorSets(renderer.device.Get(), renderer.descriptorPoolForMesh.Get(),
+            (uint32_t)DescriptorSets.size(), DescriptorSets.data());
+
+        for (size_t i = 0; i < UniformBuffersMVP_b0.size(); i++) {
+            UniformBuffersMVP_b0[i].Destroy(renderer.device.Get());
+            UniformBuffersDebugCameraPos_b3[i].Destroy(renderer.device.Get());
+            UniformBuffersMaterial_b4[i].Destroy(renderer.device.Get());
+            UniformBuffersDirectionalLightAttributes_b5[i].Destroy(renderer.device.Get());
+            UniformBuffersSpotLightAttributes_b2[i].Destroy(renderer.device.Get());
+
+        }
+        VertexBuffer.Destroy(renderer.device.Get());
+        for (size_t i = 0; i < Faces.size(); i++)
+        {
+            Faces[i].indexBuffer.Destroy(renderer.device.Get());
+        }
+        IsCreated = false;
 	}
-    for (size_t i = 0; i < SpecularTextures_b6.size(); i++)
-    {
-		SpecularTextures_b6[i].DestroyTexture(renderer.device.Get());
-    }
-
-
-	vkFreeDescriptorSets(renderer.device.Get(), renderer.descriptorPoolForMesh.Get(),
-		(uint32_t)DescriptorSets.size(), DescriptorSets.data());
-
-	for (size_t i = 0; i < UniformBuffersMVP_b0.size(); i++) {
-		UniformBuffersMVP_b0[i].Destroy(renderer.device.Get());
-		UniformBuffersDebugCameraPos_b3[i].Destroy(renderer.device.Get());
-		UniformBuffersMaterial_b4[i].Destroy(renderer.device.Get());
-		UniformBuffersDirectionalLightAttributes_b5[i].Destroy(renderer.device.Get());
-		UniformBuffersSpotLightAttributes_b2[i].Destroy(renderer.device.Get());
-
-	}
-	VertexBuffer.Destroy(renderer.device.Get());
-	for (size_t i = 0; i < Faces.size(); i++)
-	{
-		Faces[i].indexBuffer.Destroy(renderer.device.Get());
-	}
-	
 }
 
 void Engine::WireframeMesh::LoadModel(std::string modelPath, glm::vec3 color) {

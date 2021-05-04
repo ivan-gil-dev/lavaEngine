@@ -3,9 +3,6 @@
 
 extern Application app;
 
-void Engine::Scene::SetScrypts() {
-
-}
 
 void Engine::Scene::Demo(){
 	//
@@ -25,19 +22,6 @@ void Engine::Scene::Demo(){
 	CubemapObject* cubemapObject = new CubemapObject(paths);
 	entities.push_back(cubemapObject);
 
-    //GameObject* gameObject = new GameObject;
-    //gameObject->AddComponent<Mesh>();
-    //gameObject->SetID((int)entities.size());
-    //gameObject->SetName("sponza");
-    //gameObject->Transform.Scale(glm::vec3(1.0f, 1.0f, 1.f));
-
-    //mesh = gameObject->pGetComponent<Mesh*>();
-
-    //mesh->CreateMesh("CoreAssets/sponza/sponza.obj");
-
-    //entities.push_back(gameObject);
-
-
     for (size_t i = 1; i < 40; i++) {
         GameObject* box = new GameObject;
         box->AddComponent<Mesh>();
@@ -50,8 +34,8 @@ void Engine::Scene::Demo(){
 
         rigidBody->CreateRigidBody(
             RIGIDBODY_SHAPE_TYPE_CUBE,
-            Globals::gDynamicsWorld,
-            box->GetID()
+            Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
+            (int)box
         );
 
         rigidBody->SetRestitution(2.0f);
@@ -60,7 +44,7 @@ void Engine::Scene::Demo(){
         box->Transform.Translate(glm::vec3(i * 3, i * 3, i * 3));
         box->Transform.Rotate(glm::vec3(0.1f, 90.1f, 15.1f));
 
-        box->SetID((int)entities.size());
+        box->SetID((int)box);
         box->SetName("box1");
 
         box->Transform.Scale(glm::vec3(1.5f, 1.5f, 1.5f));
@@ -68,7 +52,7 @@ void Engine::Scene::Demo(){
         box->ApplyEntityTransformToRigidbody();
         entities.push_back(box);
     }
-    
+
     GameObject* gameObject2 = new Floor;
     gameObject2->AddComponent<Mesh>();
     gameObject2->AddComponent<RigidBody>();
@@ -78,15 +62,14 @@ void Engine::Scene::Demo(){
 
     mesh->CreateMesh("CoreAssets/ceramic.obj");
     rigidBody->CreateRigidBody(RIGIDBODY_SHAPE_TYPE_PLANE,
-        Globals::gDynamicsWorld,
-        gameObject2->GetID()
+        Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
+        (int)gameObject2
     );
 
-    gameObject2->SetID((int)entities.size());
+    gameObject2->SetID((int)gameObject2);
     gameObject2->SetName("Arena");
 
-
-    gameObject2->Transform.Scale(glm::vec3(70.0f, 70.0f, 70.0f));
+    gameObject2->Transform.Scale(glm::vec3(70.0f,70.0f, 70.0f));
 
     rigidBody->SetMass(0.0f);
     rigidBody->SetRigidbodyScale(gameObject2->Transform.GetScaleValue());
@@ -95,42 +78,49 @@ void Engine::Scene::Demo(){
     gameObject2->ApplyEntityTransformToRigidbody();
     entities.push_back(gameObject2);
 
+    GameObject* obj = new GameObject;
+    obj->SetID((int)obj);
+    obj->SetName("Test");
+    entities.push_back(obj);
+
     DirectionalLightObject* dlight = new DirectionalLightObject;
     dlight->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(1, -1, 1);
     dlight->pGetDirectionalLightUniformData()->lightColor = glm::vec3(1, 1, 1);
 
-    dlight->SetID((int)entities.size());
+    dlight->SetID((int)dlight);
     entities.push_back(dlight);
+    directionalLightAttributes.push_back(dlight->pGetDirectionalLightUniformData());
+
 
     DirectionalLightObject* dlight2 = new DirectionalLightObject;
     dlight2->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(0.25, -1, 0.25);
     dlight2->pGetDirectionalLightUniformData()->lightColor = glm::vec3(0.2, 0.2, 0.2);
 
-    dlight2->SetID((int)entities.size());
+    dlight2->SetID((int)dlight2);
     entities.push_back(dlight2);
 
 
-    directionalLightAttributes.push_back(dlight->pGetDirectionalLightUniformData());
+   
 	directionalLightAttributes.push_back(dlight2->pGetDirectionalLightUniformData());
 
     PointLightObject* pointLight = new PointLightObject;
     pointLight->Transform.Translate(glm::vec3(-50.0f, 3.0f, 2.0f));
-    pointLight->SetID((int)entities.size());
+    pointLight->SetID((int)pointLight);
     entities.push_back(pointLight);
 
     PointLightObject* pointLight2 = new PointLightObject;
     pointLight2->Transform.Translate(glm::vec3(25.0f, 3.0f, 13.0f));
-    pointLight2->SetID((int)entities.size());
+    pointLight2->SetID((int)pointLight2);
     entities.push_back(pointLight2);
 
     PointLightObject* pointLight3 = new PointLightObject;
     pointLight3->Transform.Translate(glm::vec3(50.0f, 3.0f, 13.0f));
-    pointLight3->SetID((int)entities.size());
+    pointLight3->SetID((int)pointLight3);
     entities.push_back(pointLight3);
 
     PointLightObject* pointLight4 = new PointLightObject;
     pointLight4->Transform.Translate(glm::vec3(70.0f, 3.0f, 13.0f));
-    pointLight4->SetID((int)entities.size());
+    pointLight4->SetID((int)pointLight4);
     entities.push_back(pointLight4);
 
 	pointLightAttributes.push_back(pointLight->pGetPointLightUniformData());

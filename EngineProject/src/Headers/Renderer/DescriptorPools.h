@@ -62,7 +62,7 @@ namespace Engine{
             poolSizes.push_back(directionalLightAttributesPoolSize);
 
             VkDescriptorPoolSize specularTextureSamplerPoolSize{};
-			specularTextureSamplerPoolSize.descriptorCount = (uint32_t)imageViews.size() * 100 * MAX_MATERIALS;
+			specularTextureSamplerPoolSize.descriptorCount = (uint32_t)imageViews.size() * 1000 * MAX_MATERIALS;
 			specularTextureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
             poolSizes.push_back(specularTextureSamplerPoolSize);
 
@@ -172,16 +172,6 @@ namespace Engine{
 		}
 
 	};
-
-	//namespace Globals{
- //       extern DescriptorPoolForMesh gDescriptorPoolForMesh;
- //       extern DescriptorPoolForRigidBodyMesh gDescriptorPoolForRigidBodyMesh;
- //       extern DescriptorPoolForCubemapObjects gDescriptorPoolForCubemapObjects;
- //       extern DescriptorPoolForImgui gDescriptorPoolForImgui;
-	//}
-
-	
-		  
 
 }
 

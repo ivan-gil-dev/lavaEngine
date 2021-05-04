@@ -18,8 +18,9 @@ public:
 		 ResetPhysics        = true,  //Сбросить физические параметры (Если симуляция не начата)
 		 CloseWindow         = false, //Закрыть окно
 		 OpenFileDialog		 = false;
-
+	
 public:
+	bool enableEditor = true;
 	Engine::EditorCamera editorCamera{};
 	int   SelectedItem_ID  = -1;  //Текущий выбранный элемент
 	float MenubarHeight = 0;    //Высота менюбара (для вычисления отступов)
@@ -29,7 +30,7 @@ public:
 	void InitEditor(HWND hwnd);
 
 	//Обработка интерфейса в главном цикле
-	void DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Entities);
+	void DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities);
 	
 };
 
@@ -92,6 +93,21 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpara
 				return true;
 				break;
 
+		/*	case WM_MOVING:
+                if (Engine::renderer.device.Get() != VK_NULL_HANDLE) {
+                    Engine::renderer.recreateSwapchain();
+                }
+                break;*/
+
+			case WM_SIZING:
+                if (Engine::renderer.device.Get() != VK_NULL_HANDLE) {
+                    Engine::renderer.recreateSwapchain();
+                }
+
+                return true;
+
+			break;
+
 			case WM_DESTROY:
 				PostQuitMessage(0);
 				return 0;
@@ -115,8 +131,6 @@ public:
 	HWND	    hwnd;
 	HINSTANCE   hInstance;
 	WNDCLASSEX	wc;
-
-	
 
 	ImDrawData* ImguiDrawData;
 

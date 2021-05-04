@@ -25,18 +25,14 @@ namespace Engine {
 		int   gHeight = 1366,
 			  gWidth = 768;
 
-		std::shared_ptr<spdlog::logger> gLogger = spdlog::basic_logger_mt("file", "logs/log.txt");
+		BulletPhysicsGlobalObjects bulletPhysicsGlobalObjects;
+
+		std::shared_ptr<spdlog::logger> gLogger = spdlog::basic_logger_mt("file", "logs/log.txt",true);
 
 		bool  gIsScenePlaying = false;
 		const int gmax_frames = 2;
 
 		VkSampleCountFlagBits gMSAAsamples = VK_SAMPLE_COUNT_4_BIT;
-
-		btBroadphaseInterface* gBroadphase;
-		btDefaultCollisionConfiguration* gCollisionConfiguration;
-		btCollisionDispatcher* gDispatcher;
-		btSequentialImpulseConstraintSolver* gSolver;
-		btDynamicsWorld* gDynamicsWorld;
 
 		Application App;
 

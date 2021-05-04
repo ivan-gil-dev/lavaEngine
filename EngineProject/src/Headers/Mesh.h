@@ -22,7 +22,9 @@ namespace Engine{
 	class Mesh {
 	private:
 		std::string										MeshPath;
-		bool											MaterialsFound = false;
+
+		bool											MaterialsFound;
+		bool											IsCreated = false;
 
 		std::vector<DataTypes::MeshVertex_t>			Vertices;
 		std::vector<Face>								Faces;
@@ -55,7 +57,10 @@ namespace Engine{
 			VkDescriptorPool descriptorPoolForGameObjects, std::vector<VkImageView> swapchainImageViews);
 
 		public:
-		
+		bool IsMeshCreated() {
+			return IsCreated;
+		}
+
 		bool IsMaterialsFound() {
 				return MaterialsFound;
 		}

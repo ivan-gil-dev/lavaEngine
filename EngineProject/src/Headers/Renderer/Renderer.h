@@ -1,6 +1,7 @@
 #pragma once
 #define	VK_NO_PROTOTYPES
-#define	GLM_FORCE_RADIANS
+#define GLM_FORCE_CXX11 
+
 
 #include "../../vendor/imgui.h"
 #include "../../vendor/imgui_impl_glfw.h"
@@ -272,7 +273,7 @@ namespace Engine {
 
         void DrawScene(ImDrawData* drawData, Scene* scene, Camera camera){
             uint32_t imageIndex;
-            newNumberOfEntities = scene->pGetVectorOfEntities()->size();
+            newNumberOfEntities = (int)scene->pGetVectorOfEntities()->size();
 
             vkWaitForFences(device.Get(), 1, &syncObjects.GetFences()[currentFrame], VK_TRUE, UINT64_MAX);
             vkResetFences(device.Get(), 1, &syncObjects.GetFences()[currentFrame]);
@@ -295,7 +296,8 @@ namespace Engine {
             std::vector<Entity*>* entities = scene->pGetVectorOfEntities();
             for (size_t i = 0; i < entities->size(); i++) {
                 if (entities->at(i)->GetEntityType() == ENTITY_TYPE_GAME_OBJECT) {
-                    ((GameObject*)entities->at(i))->UpdateUniforms(imageIndex, device.Get(), camera, scene->GetVectorOfSpotlightAttributes(),scene->GetVectorOfDirectionalLightAttributes());
+                    ((GameObject*)entities->at(i))->UpdateUniforms(imageIndex, device.Get(), camera, 
+                        *scene->pGetVectorOfSpotlightAttributes(),*scene->pGetVectorOfDirectionalLightAttributes());
                 }
                 if (entities->at(i)->GetEntityType() == ENTITY_TYPE_CUBEMAP_OBJECT) {
                     ((CubemapObject*)entities->at(i))->UpdateUniforms(imageIndex, device.Get(), camera);

@@ -36,8 +36,9 @@ void Engine::Scene::Load(std::string path)
     for (auto entityJson : sceneJson["Entities"]) {
 
         Entity* entity;
-        if (entityJson["Type"] == "GameObject") {
-           // std::cout << entityJson["Type"] << std::endl;
+       
+
+        if (entityJson["Type"] == "GameObject") {      
             entity = new GameObject;
 
             if (entityJson.count("Mesh") !=0 ){
@@ -55,17 +56,24 @@ void Engine::Scene::Load(std::string path)
                 if (shapeType == "Plane"){
                     rigidbody->CreateRigidBody(
                         RIGIDBODY_SHAPE_TYPE_PLANE,
-                        Globals::gDynamicsWorld,
-                        entityJson["Id"]);
+                        Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
+                        int(entity));
                 }
 
                 if (shapeType == "Cube") {
                     rigidbody->CreateRigidBody(
                         RIGIDBODY_SHAPE_TYPE_CUBE,
-                        Globals::gDynamicsWorld,
-                        entityJson["Id"]);
+                        Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
+                        int(entity));
                 }
                 
+                if (shapeType == "Sphere") {
+                    rigidbody->CreateRigidBody(
+                        RIGIDBODY_SHAPE_TYPE_SPHERE,
+                        Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
+                        int(entity));
+                }
+
 
                 rigidbody->SetMass(entityJson["Rigidbody"]["Mass"]);
                 rigidbody->SetFriction(entityJson["Rigidbody"]["Friction"]);
@@ -144,7 +152,7 @@ void Engine::Scene::Load(std::string path)
             break;
         }
 
-        entity->SetID(entityJson["Id"]);
+        entity->SetID((int)entity);
         entity->SetName(entityJson["Name"]);
 
         glm::vec3 Position;
@@ -175,6 +183,56 @@ void Engine::Scene::Load(std::string path)
 
 }
 
+void Engine::Scene::New()
+{
+    for (size_t i = 0; i < entities.size(); i++) {
+        delete entities[i];
+    }
+
+    entities.clear();
+
+    pointLightAttributes.clear();
+    directionalLightAttributes.clear();
+
+    std::vector<std::string> paths = {
+    "CoreAssets/skybox/right.jpg",
+    "CoreAssets/skybox/left.jpg",
+    "CoreAssets/skybox/top.jpg",
+    "CoreAssets/skybox/bottom.jpg",
+    "CoreAssets/skybox/front.jpg",
+    "CoreAssets/skybox/back.jpg"
+    };
+
+    //  Объект, хранящий skybox
+    CubemapObject* cubemapObject = new CubemapObject(paths);
+    entities.push_back(cubemapObject);
+
+    GameObject* gameObject2 = new GameObject;
+    gameObject2->AddComponent<Mesh>();
+   
+    Mesh* mesh;
+    mesh = gameObject2->pGetComponent<Mesh*>();
+
+    mesh->CreateMesh("CoreAssets/plane.obj");
+   
+
+    gameObject2->SetID((int)gameObject2);
+    gameObject2->SetName("Plane");
+
+    gameObject2->Transform.Scale(glm::vec3(70.0f, 70.0f, 70.0f));
+    entities.push_back(gameObject2);
+
+
+    DirectionalLightObject* dlight = new DirectionalLightObject;
+    dlight->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(1, -1, 1);
+    dlight->pGetDirectionalLightUniformData()->lightColor = glm::vec3(1, 1, 1);
+
+    dlight->SetID((int)dlight);
+    entities.push_back(dlight);
+    directionalLightAttributes.push_back(dlight->pGetDirectionalLightUniformData());
+
+}
+
 void Engine::Scene::Save()
 {
     SaveAs(scenePath);
@@ -187,7 +245,6 @@ void Engine::Scene::SaveAs(std::string path)
     sceneJson.clear();
     for (int i = 0; i < entities.size(); i++) {
 
-        sceneJson["Entities"][i]["Id"] = entities[i]->GetID();
         sceneJson["Entities"][i]["Name"] = entities[i]->GetName();
 
         EntityType entityType = EntityType(entities[i]->GetEntityType());
@@ -212,6 +269,10 @@ void Engine::Scene::SaveAs(std::string path)
 
                 if (rigidBody->GetShapeType() == RIGIDBODY_SHAPE_TYPE_PLANE) {
                     sceneJson["Entities"][i]["Rigidbody"]["ShapeType"] = "Plane";
+                }
+
+                if (rigidBody->GetShapeType() == RIGIDBODY_SHAPE_TYPE_SPHERE) {
+                    sceneJson["Entities"][i]["Rigidbody"]["ShapeType"] = "Sphere";
                 }
             }
         }
@@ -283,7 +344,7 @@ std::vector<Engine::Entity*>* Engine::Scene::pGetVectorOfEntities()
 
 Engine::Scene::Scene()
 {
-    InitBullet();
+    Engine::Globals::bulletPhysicsGlobalObjects.InitBullet();
     scenePath = "";
     #ifdef DemoFromFile
         Load("demo.json");
@@ -291,14 +352,14 @@ Engine::Scene::Scene()
     
 }
 
-std::vector<Engine::DataTypes::DirectionalLightAttributes_t*> Engine::Scene::GetVectorOfDirectionalLightAttributes()
+std::vector<Engine::DataTypes::DirectionalLightAttributes_t*>* Engine::Scene::pGetVectorOfDirectionalLightAttributes()
 {
-    return directionalLightAttributes;
+    return &directionalLightAttributes;
 }
 
-std::vector<Engine::DataTypes::PointLightAttributes_t*> Engine::Scene::GetVectorOfSpotlightAttributes()
+std::vector<Engine::DataTypes::PointLightAttributes_t*>* Engine::Scene::pGetVectorOfSpotlightAttributes()
 {
-    return pointLightAttributes;
+    return &pointLightAttributes;
 }
 
 void Engine::Scene::CleanScene()
@@ -310,5 +371,5 @@ void Engine::Scene::CleanScene()
         delete entities[i];
     }
 
-    CleanBullet();
+    Engine::Globals::bulletPhysicsGlobalObjects.CleanBullet();
 }

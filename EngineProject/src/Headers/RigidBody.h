@@ -16,7 +16,7 @@ namespace Engine{
 
 	class RigidBody	{
 		RigidBodyShapeType    ShapeType;
-		btConvexShape *   pShape;
+		btConvexShape *       pShape;
 		btRigidBody *		  pRigidBody;
 		
 		btDefaultMotionState* pMotionState;
@@ -26,7 +26,7 @@ namespace Engine{
 							  restitution,
 							  friction;
 		
-        glm::vec3			  rigidbodyPosition;
+        glm::vec3			  rigidbodyOffset;
         glm::vec3			  rigidbodyRotation;
 		glm::vec3			  rigidbodyScale;
 		private:

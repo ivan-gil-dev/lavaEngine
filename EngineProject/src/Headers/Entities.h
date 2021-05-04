@@ -170,6 +170,25 @@ namespace Engine{
             return pMesh;
         }
 
+        template <typename T> void DeleteComponent() {
+
+        }
+
+        template <> void DeleteComponent<RigidBody>() {
+			pRigidBody->Destroy(Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld);
+			delete pRigidBody;
+			pRigidBody = nullptr;
+        }
+
+        template <> void DeleteComponent<Mesh>() {
+			pMesh->Destroy();
+			delete pMesh;
+			pMesh = nullptr;
+        }
+
+
+
+
 		void UpdateUniforms(uint32_t imageIndex, VkDevice device, Camera camera, std::vector<DataTypes::PointLightAttributes_t*> spotlightAttributes, std::vector<DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes);
 
 		void Draw(VkCommandBuffer commandBuffer, int imageIndex) override;

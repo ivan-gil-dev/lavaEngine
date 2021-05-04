@@ -25,6 +25,37 @@ static bool ENABLE_RIGIDBODY_MESH = false;
 
 namespace Engine{
 	namespace Globals{
+		struct BulletPhysicsGlobalObjects
+		{
+            btBroadphaseInterface* broadphase;
+            btDefaultCollisionConfiguration* collisionConfiguration;
+            btCollisionDispatcher* dispatcher;
+            btSequentialImpulseConstraintSolver* solver;
+            btDynamicsWorld* dynamicsWorld;
+
+            void InitBullet() {
+                broadphase = new btDbvtBroadphase();
+                collisionConfiguration = new btDefaultCollisionConfiguration();
+                dispatcher = new btCollisionDispatcher(collisionConfiguration);
+                solver = new btSequentialImpulseConstraintSolver;
+                dynamicsWorld = new btDiscreteDynamicsWorld(
+                    dispatcher, broadphase,
+                    solver,collisionConfiguration
+                );
+                dynamicsWorld->setGravity(btVector3(0, -9.8, 0));
+            }
+
+            void CleanBullet() {
+                delete solver;
+                delete dispatcher;
+                delete collisionConfiguration;
+                delete broadphase;
+                delete dynamicsWorld;
+            }
+		};
+
+        extern BulletPhysicsGlobalObjects bulletPhysicsGlobalObjects;
+
 
 		#define MAX_SPOTLIGHTS 10
 		#define MAX_DLIGHTS 5
@@ -42,11 +73,7 @@ namespace Engine{
 
 		extern std::shared_ptr<spdlog::logger> gLogger;
 
-		extern btBroadphaseInterface* gBroadphase;
-		extern btDefaultCollisionConfiguration* gCollisionConfiguration;
-		extern btCollisionDispatcher* gDispatcher;
-		extern btSequentialImpulseConstraintSolver* gSolver;
-		extern btDynamicsWorld* gDynamicsWorld;
+		
 
 		//extern VkRect2D   gEditor3DScissors;
 		//extern VkViewport gEditor3DView;

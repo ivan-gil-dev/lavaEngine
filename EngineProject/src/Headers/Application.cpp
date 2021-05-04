@@ -1,6 +1,133 @@
 #include "Application.h"
 #include <shobjidl.h> 
+#include <algorithm>
 //Подготовка ImGui
+
+struct InputTextCallback_UserData
+{
+    std::string* Str;
+    ImGuiInputTextCallback  ChainCallback;
+    void* ChainCallbackUserData;
+};
+
+int InputTextCallback(ImGuiInputTextCallbackData* data)
+{
+    InputTextCallback_UserData* user_data = (InputTextCallback_UserData*)data->UserData;
+    if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
+    {
+        // Resize string callback
+        // If for some reason we refuse the new length (BufTextLen) and/or capacity (BufSize) we need to set them back to what we want.
+        std::string* str = user_data->Str;
+        IM_ASSERT(data->Buf == str->c_str());
+        str->resize(data->BufTextLen);
+        data->Buf = (char*)str->c_str();
+    }
+    else if (user_data->ChainCallback)
+    {
+        // Forward to user callback, if any
+        data->UserData = user_data->ChainCallbackUserData;
+        return user_data->ChainCallback(data);
+    }
+    return 0;
+}
+
+std::string WinApiOpenDialog() {
+    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED |
+        COINIT_DISABLE_OLE1DDE);
+
+	std::string result;
+
+    if (SUCCEEDED(hr))
+    {
+        IFileOpenDialog* pFileOpen;
+
+        // Create the FileOpenDialog object.
+        hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
+            IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+
+        if (SUCCEEDED(hr))
+        {
+            // Show the Open dialog box.
+            hr = pFileOpen->Show(NULL);
+
+            // Get the file name from the dialog box.
+            if (SUCCEEDED(hr))
+            {
+                IShellItem* pItem;
+                hr = pFileOpen->GetResult(&pItem);
+                if (SUCCEEDED(hr))
+                {
+                    PWSTR pszFilePath;
+                    hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+                    // Display the file name to the user.
+                    if (SUCCEEDED(hr))
+                    {
+                        std::wstring str(pszFilePath);
+                        std::string path(str.begin(), str.end());
+                     
+						result = path;
+                      
+                   
+                        CoTaskMemFree(pszFilePath);
+                    }
+                    pItem->Release();
+                }
+            }
+            pFileOpen->Release();
+        }
+        CoUninitialize();
+    }
+	return result;
+}
+
+std::string WinApiSaveDialog() {
+    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED |
+        COINIT_DISABLE_OLE1DDE);
+	std::string result;
+
+    if (SUCCEEDED(hr))
+    {
+        IFileSaveDialog* pFileSave;
+
+        // Create the FileOpenDialog object.
+        hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_ALL,
+            IID_IFileSaveDialog, reinterpret_cast<void**>(&pFileSave));
+
+        if (SUCCEEDED(hr))
+        {
+            // Show the Open dialog box.
+            hr = pFileSave->Show(NULL);
+
+            // Get the file name from the dialog box.
+            if (SUCCEEDED(hr))
+            {
+                IShellItem* pItem;
+                hr = pFileSave->GetResult(&pItem);
+                if (SUCCEEDED(hr))
+                {
+                    PWSTR pszFilePath;
+                    hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
+
+                    // Display the file name to the user.
+                    if (SUCCEEDED(hr))
+                    {
+                        std::wstring str(pszFilePath);
+                        std::string path(str.begin(), str.end());
+						result = path;
+                        CoTaskMemFree(pszFilePath);
+                    }
+                    pItem->Release();
+                }
+            }
+            pFileSave->Release();
+        }
+        CoUninitialize();
+    }
+	return result;
+}
+
+
 void SceneEditor::InitEditor(HWND hwnd) {
 
 	IMGUI_CHECKVERSION();
@@ -67,8 +194,8 @@ void SceneEditor::InitEditor(HWND hwnd) {
 }
 
 //Реализация интерфейса
-void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Entities) {
-	if (ENABLE_IMGUI) {
+void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) {
+	if (enableEditor) {
 		
 		ImGui::ShowDemoWindow(&DemoWindowActive);//Демо ImGui
 		
@@ -82,55 +209,22 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 
 			//Меню: Файл
 			if (ImGui::BeginMenu(u8"File")) {
+				if (ImGui::MenuItem("New"))
+				{
+					SelectedItem_ID = -1;
+					Engine::Globals::gScene->New();
+				}
+
+
 				ImGui::MenuItem(u8"Open", "", &OpenFileDialog);
 				if (OpenFileDialog){
-
-                    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED |
-                        COINIT_DISABLE_OLE1DDE);
-
-                    if (SUCCEEDED(hr))
-                    {
-                        IFileOpenDialog* pFileOpen;
-
-                        // Create the FileOpenDialog object.
-                        hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL,
-                            IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
-
-                        if (SUCCEEDED(hr))
-                        {
-                            // Show the Open dialog box.
-                            hr = pFileOpen->Show(NULL);
-
-                            // Get the file name from the dialog box.
-                            if (SUCCEEDED(hr))
-                            {
-                                IShellItem* pItem;
-                                hr = pFileOpen->GetResult(&pItem);
-                                if (SUCCEEDED(hr))
-                                {
-                                    PWSTR pszFilePath;
-                                    hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
-
-                                    // Display the file name to the user.
-                                    if (SUCCEEDED(hr))
-                                    {
-										std::wstring str(pszFilePath);
-										std::string path(str.begin(), str.end());
-										spdlog::info("Loading...");
-										std::cout << path << std::endl;									
-										Engine::Globals::gScene->Load(path);
-										spdlog::info("Done!");
-                                        CoTaskMemFree(pszFilePath);
-                                    }
-                                    pItem->Release();
-                                }
-                            }
-                            pFileOpen->Release();
-                        }
-                        CoUninitialize();
-
-
-                    }
+					SelectedItem_ID = -1;
+					std::string path = WinApiOpenDialog();
+					spdlog::info("Loading...");
+					std::cout << path << std::endl;
+					Engine::Globals::gScene->Load(path);
+					spdlog::info("Done!");
+                    
 					OpenFileDialog = false;
 				}
 
@@ -141,7 +235,10 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
                 if (Save) {
 					if (Engine::Globals::gScene->GetScenePath() != "")
 					{
+                        spdlog::info("Saving...");
+                        std::cout << Engine::Globals::gScene->GetScenePath() << std::endl;
 						Engine::Globals::gScene->Save();
+                        spdlog::info("Done!");
 					}
 					else {
 						SaveAs = true;
@@ -151,50 +248,11 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 				
 				ImGui::MenuItem("Save As", "", &SaveAs);
 				if (SaveAs){
-                    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED |
-                        COINIT_DISABLE_OLE1DDE);
-
-					if (SUCCEEDED(hr))
-					{
-						IFileSaveDialog* pFileSave;
-
-						// Create the FileOpenDialog object.
-						hr = CoCreateInstance(CLSID_FileSaveDialog, NULL, CLSCTX_ALL,
-							IID_IFileSaveDialog, reinterpret_cast<void**>(&pFileSave));
-
-						if (SUCCEEDED(hr))
-						{
-							// Show the Open dialog box.
-							hr = pFileSave->Show(NULL);
-
-							// Get the file name from the dialog box.
-							if (SUCCEEDED(hr))
-							{
-								IShellItem* pItem;
-								hr = pFileSave->GetResult(&pItem);
-								if (SUCCEEDED(hr))
-								{
-									PWSTR pszFilePath;
-									hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath);
-
-									// Display the file name to the user.
-									if (SUCCEEDED(hr))
-									{
-										std::wstring str(pszFilePath);
-										std::string path(str.begin(), str.end());
-										spdlog::info("Saving...");
-										std::cout << path << std::endl;
-										Engine::Globals::gScene->SaveAs(path);
-										spdlog::info("Done!");
-										CoTaskMemFree(pszFilePath);
-									}
-									pItem->Release();
-								}
-							}
-							pFileSave->Release();
-						}
-						CoUninitialize();
-					}
+					std::string path = WinApiSaveDialog();
+                    spdlog::info("Saving...");
+                    std::cout << path << std::endl;
+                    Engine::Globals::gScene->SaveAs(path);
+                    spdlog::info("Done!");
 				}
 				
 
@@ -207,9 +265,8 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 				if (CloseWindow) {
 					SendMessage(hwnd, WM_CLOSE, 0, 0);
 				}
-			}
+			}//Конец меню
 
-			//Конец меню
 			if (ImGui::BeginMenu(u8"Simulation")) {//Меню: начало симуляции
 				ImGui::MenuItem(u8"Start", "", &StartButtonActive);
 
@@ -217,23 +274,17 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 
 					Engine::Globals::gIsScenePlaying = true; //Начало сцены
 					ResetPhysics = true; //Физика будет сброшена после остановки симуляции
-						
-					/*Engine::renderer.rendererViewport.x = 0;
-					Engine::renderer.rendererViewport.y = 0;
-					Engine::renderer.rendererViewport.height = static_cast<float>(Engine::Globals::gSwapchain.GetInfo().imageExtent.height - MenubarHeight);
-					Engine::renderer.rendererViewport.width = static_cast<float>(Engine::Globals::gSwapchain.GetInfo().imageExtent.width);
-					Engine::Globals::gEditor3DScissors.extent = Engine::Globals::gSwapchain.GetInfo().imageExtent;*/
-						
+							
 				}
 				else {
 					Engine::Globals::gIsScenePlaying = false;
 						
 				
 					if (ResetPhysics) {//Сброс параметров объектов
-						for (size_t i = 0; i < Entities->size(); i++) {
-							Entities->at(i)->Transform.ResetTransform();
-							if (Entities->at(i)->GetEntityType() == Engine::ENTITY_TYPE_GAME_OBJECT) {
-								Engine::GameObject* obj = (Engine::GameObject*)Entities->at(i);
+						for (size_t i = 0; i < Entities.size(); i++) {
+							Entities.at(i)->Transform.ResetTransform();
+							if (Entities.at(i)->GetEntityType() == Engine::ENTITY_TYPE_GAME_OBJECT) {
+								Engine::GameObject* obj = (Engine::GameObject*)Entities.at(i);
 								if (obj->pGetComponent<Engine::RigidBody*>() != nullptr) {
 									obj->ApplyEntityTransformToRigidbody();
 
@@ -248,7 +299,7 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 								}
 							}
 						}
-						Engine::Globals::gDynamicsWorld->clearForces();
+						Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld->clearForces();
 						ResetPhysics = false;
 					}
 				}
@@ -268,7 +319,7 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 		//Панель иерархии
 		if (ShowHierarchyPanel) {
 			bool opened = true;
-			ImGui::Begin(u8"Hierarchy", &opened, ImGuiWindowFlags_NoMove);
+			ImGui::Begin(u8"Hierarchy", &opened, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse);
 
 			//Размещение 3D вьюпорта справа от панели иерархии
 			Engine::renderer.rendererViewport.x = ImGui::GetWindowWidth();
@@ -282,38 +333,83 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 			);
 
 			if (ImGui::GetWindowWidth()>Engine::Globals::gWidth/2){
-				ImGui::SetWindowSize(ImVec2(Engine::Globals::gWidth / 2,
+				ImGui::SetWindowSize(ImVec2((float)Engine::Globals::gWidth / 2,
 					Engine::renderer.swapchain.GetInfo().imageExtent.height - MenubarHeight)
 				);
 			}
 				
 			//Список объектов
-			for (size_t i = 0; i < Entities->size(); i++) {
-				if (ImGui::TreeNode(Entities->at(i)->GetName().c_str())) {
-					ImGui::PushID(Entities->at(i)->GetID());
+			for (size_t i = 0; i < Entities.size(); i++) {
+				if (ImGui::TreeNode(Entities.at(i)->GetName().c_str())) {
+					ImGui::PushID(Entities.at(i)->GetID());
 					ImGui::PopID();
 					ImGui::TreePop();
 				}
 
 				if (ImGui::IsItemClicked()) {
-					spdlog::info("Object with number {:08d} is selected", i);
+					SelectedItem_ID = i;
+					spdlog::info("Object with ID {:08d} is selected", Entities.at(i)->GetID());
 
 					//Получение ID выбранного объекта
-					SelectedItem_ID = Entities->at(i)->GetID();
+					
 					ShowPropertiesPanel = true;
 				}
+				if (ImGui::IsItemClicked(1))
+				{
+					SelectedItem_ID = i;
+					ImGui::OpenPopup("Popup");
+				}
+			}
+			
+			if (ImGui::BeginPopup("Popup")) {
+				if(ImGui::MenuItem("Delete")) {
+					delete Entities[SelectedItem_ID];
+					Entities.erase(Entities.begin()+ SelectedItem_ID);
+					SelectedItem_ID = -1;
+				}
+				
+                ImGui::EndPopup();
 			}
 			
 
 
-			//TODO: добавление объекта
-            /*if (ImGui::Button(u8"Add+")) {
-				Engine::GameObject *obj = new Engine::GameObject;
-				obj->AddComponent<Engine::Mesh>();
-				obj->SetID(Entities->size());
-				Entities->push_back(obj);
 
-            }*/
+			
+			//TODO: добавление объекта
+			if (ImGui::Button(u8"Add+")) {
+				ImGui::OpenPopup("Select Object Type");
+			}
+
+            if (ImGui::BeginPopupModal("Select Object Type"))
+            {
+				ImGui::Text("Object types");
+				ImGui::Separator();
+                if (ImGui::MenuItem("Game Object"))
+                {
+                    Engine::GameObject* obj = new Engine::GameObject;
+                    obj->AddComponent<Engine::Mesh>();
+                    obj->pGetComponent<Engine::Mesh*>()->CreateMesh("");
+                    obj->SetID((int)obj);
+                    Entities.push_back(obj);
+                }
+                if (ImGui::MenuItem("Point Light"))
+                {
+                    Engine::PointLightObject* obj = new Engine::PointLightObject;
+                    
+                    obj->SetID((int)obj);
+					Engine::Globals::gScene->pGetVectorOfSpotlightAttributes()->push_back(obj->pGetPointLightUniformData());
+                    Entities.push_back(obj);
+                }
+                if (ImGui::MenuItem("Directional Light"))
+                {
+                    Engine::DirectionalLightObject* obj = new Engine::DirectionalLightObject;
+					Engine::Globals::gScene->pGetVectorOfDirectionalLightAttributes()->push_back(obj->pGetDirectionalLightUniformData());
+                    obj->SetID((int)obj);
+                    Entities.push_back(obj);
+                }
+
+                ImGui::EndPopup();
+            }
 
 			if (!opened) {
 				ShowHierarchyPanel = false;
@@ -325,8 +421,8 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 			//Растяжение 3D вьюпорта если панель иерархии не отображена
 			Engine::renderer.rendererViewport.x = 0;
 			Engine::renderer.rendererViewport.width = static_cast<float>(Engine::renderer.swapchain.GetInfo().imageExtent.width);
-		}
-		//Конец панели иерархии
+		}//Конец панели иерархии
+		
 
 
 	
@@ -341,21 +437,38 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
                     Engine::renderer.swapchain.GetInfo().imageExtent.height - MenubarHeight)
             );
 
+            
+
             //Расположение 3D вьюпорта слева от панели свойств
             Engine::renderer.rendererViewport.width -= Engine::renderer.swapchain.GetInfo().imageExtent.width - ImGui::GetWindowPos().x;
 
 			if (SelectedItem_ID>=0){
                 float min = -FLT_MAX;
                 float max = FLT_MAX;
-                switch (Entities->at(SelectedItem_ID)->GetEntityType()) {
+				
+                switch (Entities.at(SelectedItem_ID)->GetEntityType()) {
 
+				
                 case Engine::ENTITY_TYPE_GAME_OBJECT://Панель свойств для объекта
 
                 {//Выставление свойств слайдерами
-                    glm::vec3 objectPos = Entities->at(SelectedItem_ID)->Transform.GetPosition();
-                    glm::vec3 objectRotation = Entities->at(SelectedItem_ID)->Transform.GetEulerAngles();
-                    glm::vec3 objectScale = Entities->at(SelectedItem_ID)->Transform.GetScaleValue();
+                    glm::vec3 objectPos = Entities.at(SelectedItem_ID)->Transform.GetPosition();
+                    glm::vec3 objectRotation = Entities.at(SelectedItem_ID)->Transform.GetEulerAngles();
+                    glm::vec3 objectScale = Entities.at(SelectedItem_ID)->Transform.GetScaleValue();
                     glm::vec3 objectRigidbodyScale;
+                    float mass;
+                    float friction;
+                    float restitution;
+					
+					std::string name;
+					name = Entities.at(SelectedItem_ID)->GetName();
+					
+                    InputTextCallback_UserData cb_user_data;
+                    cb_user_data.Str = &name;
+                    cb_user_data.ChainCallback = 0;
+                    cb_user_data.ChainCallbackUserData = 0;
+
+                    ImGui::InputText("Name", (char*)name.c_str(), name.capacity()+1, ImGuiInputTextFlags_CallbackResize,InputTextCallback,&cb_user_data);
 
                     if (ImGui::CollapsingHeader(u8"Translation")) {
 						
@@ -364,49 +477,147 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
                         ImGui::DragFloat3("Scale", (float*)&objectScale, 1.0f, min, max);
                     }
 
-                    if (((Engine::GameObject*)Entities->at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>() != nullptr) {
-                        objectRigidbodyScale = ((Engine::GameObject*)Entities->at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->pGetDebugMesh()->Transform.GetScaleValue();
+                    if (((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>() != nullptr) {
+                        objectRigidbodyScale = ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->pGetDebugMesh()->Transform.GetScaleValue();
+						mass = ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->GetMass();
+						friction = ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->GetFriction();
+						restitution = ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->GetRestitution();
+
                         if (ImGui::CollapsingHeader(u8"Rigidbody")) {
                             ImGui::DragFloat3("Rigidbody Scale", (float*)&objectRigidbodyScale, 0.1f, min, max);
+							ImGui::DragFloat("Mass", (float*)&mass, 0.1f, min, max);
+							ImGui::DragFloat("Friction", (float*)&friction, 0.1f, min, max);
+							ImGui::DragFloat("Restitution", (float*)&restitution, 0.1f, min, max);
                         }
 
                     }
 
-                   if (((Engine::GameObject*)Entities->at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>() != nullptr)
+                   if (((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>() != nullptr)
                    {
-                       if (!((Engine::GameObject*)Entities->at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>()->IsMaterialsFound())
-                       {
-                           ImGui::BulletText("MTL File Not Found!");
-                       }
+					   if (ImGui::CollapsingHeader(u8"Mesh")) {
+                           if (((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>()->pGetMeshPath() != "")
+                           {
+                               ImGui::TextWrapped(((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>()->pGetMeshPath().c_str());
+
+                           }
+
+                           if (ImGui::Button("Browse Mesh"))
+                           {
+                               std::string path = WinApiOpenDialog();
+                               if (path != "")
+                               {
+                                   std::cout << path << std::endl;
+                                   std::replace(path.begin(), path.end(), '\\', '/');
+                                   ((Engine::GameObject*)Entities.at(SelectedItem_ID))->DeleteComponent<Engine::Mesh>();
+
+                                   ((Engine::GameObject*)Entities.at(SelectedItem_ID))->AddComponent<Engine::Mesh>();
+                                   ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>()->CreateMesh(path);
+                               }
+                           }
+
+
+
+                           if (!((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>()->IsMaterialsFound())
+                           {
+                               ImGui::BulletText("MTL File Not Found!");
+                           }
+					   }                  
                    }
-					
-                    
 
                     //Если сцена не проигрывается, то применить новые свойства
                     if (!Engine::Globals::gIsScenePlaying) {
-						Entities->at(SelectedItem_ID)->Transform.Translate(objectPos);
-						Entities->at(SelectedItem_ID)->Transform.Rotate(objectRotation);
-						Entities->at(SelectedItem_ID)->Transform.Scale(objectScale);
-
-                        if (((Engine::GameObject*)Entities->at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>() != nullptr) {
-                            ((Engine::GameObject*)Entities->at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->SetRigidbodyScale(objectRigidbodyScale);
-                            ((Engine::GameObject*)Entities->at(SelectedItem_ID))->ApplyEntityTransformToRigidbody();
+						Entities.at(SelectedItem_ID)->Transform.Translate(objectPos);
+						Entities.at(SelectedItem_ID)->Transform.Rotate(objectRotation);
+						Entities.at(SelectedItem_ID)->Transform.Scale(objectScale);
+						Entities.at(SelectedItem_ID)->SetName(name);
+                        if (((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>() != nullptr) {
+                            ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->SetRigidbodyScale(objectRigidbodyScale);
+							((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->SetMass(mass);
+							((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->SetFriction(friction);
+							((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->SetRestitution(restitution);
+                            ((Engine::GameObject*)Entities.at(SelectedItem_ID))->ApplyEntityTransformToRigidbody();
                         }
+                    }
+
+					if (((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>() == nullptr)
+					{
+						if (ImGui::CollapsingHeader(u8"Mesh")) {
+                            if (ImGui::Button("Create Mesh"))
+                            {
+                                ((Engine::GameObject*)Entities.at(SelectedItem_ID))->AddComponent<Engine::Mesh>();
+                                ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>()->CreateMesh("");
+
+                            }
+						}
+					}
+                    if (((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>() == nullptr)
+                    {
+						if (ImGui::CollapsingHeader(u8"Rigidbody")) {
+                            if (ImGui::Button("Create Rigidbody"))
+                            {
+                                ImGui::OpenPopup("Choose Shapetype");
+
+
+                            }
+                            if (ImGui::BeginPopup("Choose Shapetype"))
+                            {
+                                if (ImGui::MenuItem("Cube"))
+                                {
+                                    ((Engine::GameObject*)Entities.at(SelectedItem_ID))->AddComponent<Engine::RigidBody>();
+                                    ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->CreateRigidBody(
+                                        Engine::RIGIDBODY_SHAPE_TYPE_CUBE,
+                                        Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
+                                        SelectedItem_ID
+                                    );
+                                }
+                                if (ImGui::MenuItem("Plane"))
+                                {
+                                    ((Engine::GameObject*)Entities.at(SelectedItem_ID))->AddComponent<Engine::RigidBody>();
+                                    ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->CreateRigidBody(
+                                        Engine::RIGIDBODY_SHAPE_TYPE_PLANE,
+                                        Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
+                                        SelectedItem_ID
+                                    );
+                                }
+                                if (ImGui::MenuItem("Sphere"))
+                                {
+                                    ((Engine::GameObject*)Entities.at(SelectedItem_ID))->AddComponent<Engine::RigidBody>();
+                                    ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->CreateRigidBody(
+                                        Engine::RIGIDBODY_SHAPE_TYPE_SPHERE,
+                                        Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
+                                        SelectedItem_ID
+                                    );
+                                }
+
+                                ImGui::EndPopup();
+                            }
+						}
                     }
                 }
 
                 break;
-
+		
                 //Панель свойств для точечного источника света
                 case Engine::ENTITY_TYPE_POINTLIGHT_OBJECT:
+				{
+                    std::string name;
+                    name = Entities.at(SelectedItem_ID)->GetName();
 
-                    glm::vec3 objectPos = Entities->at(SelectedItem_ID)->Transform.GetPosition();
+                    InputTextCallback_UserData cb_user_data;
+                    cb_user_data.Str = &name;
+                    cb_user_data.ChainCallback = 0;
+                    cb_user_data.ChainCallbackUserData = 0;
+
+                    ImGui::InputText("Name", (char*)name.c_str(), name.capacity() + 1, ImGuiInputTextFlags_CallbackResize, InputTextCallback, &cb_user_data);
+
+                    glm::vec3 objectPos = Entities.at(SelectedItem_ID)->Transform.GetPosition();
 
 					Engine::DataTypes::PointLightAttributes_t pointLightAttributes = 
-						*((Engine::PointLightObject*)Entities->at(SelectedItem_ID))->pGetPointLightUniformData();
+						*((Engine::PointLightObject*)Entities.at(SelectedItem_ID))->pGetPointLightUniformData();
 
                 
                         ImGui::DragFloat3("Position", (float*)&objectPos, 1.0f, min, max);
+
                     
 
 					if (ImGui::CollapsingHeader(u8"Light Params")) {
@@ -425,14 +636,27 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 
                     //Если сцена не проигрывается, то применить новые свойства
                     if (!Engine::Globals::gIsScenePlaying) {
-						Entities->at(SelectedItem_ID)->Transform.Translate(objectPos);
-						*((Engine::PointLightObject*)Entities->at(SelectedItem_ID))->pGetPointLightUniformData() = pointLightAttributes;
+						Entities.at(SelectedItem_ID)->SetName(name);
+						Entities.at(SelectedItem_ID)->Transform.Translate(objectPos);
+						*((Engine::PointLightObject*)Entities.at(SelectedItem_ID))->pGetPointLightUniformData() = pointLightAttributes;
                     }
 
                     break;
-
+				}
                 case Engine::ENTITY_TYPE_DIRECTIONAL_LIGHT_OBJECT:
-                    Engine::DataTypes::DirectionalLightAttributes_t dirLightAttributes = *((Engine::DirectionalLightObject*)Entities->at(SelectedItem_ID))->pGetDirectionalLightUniformData();
+				{
+                    std::string name;
+                    name = Entities.at(SelectedItem_ID)->GetName();
+
+                    InputTextCallback_UserData cb_user_data;
+                    cb_user_data.Str = &name;
+                    cb_user_data.ChainCallback = 0;
+                    cb_user_data.ChainCallbackUserData = 0;
+
+                    ImGui::InputText("Name", (char*)name.c_str(), name.capacity() + 1, ImGuiInputTextFlags_CallbackResize, InputTextCallback, &cb_user_data);
+
+
+                    Engine::DataTypes::DirectionalLightAttributes_t dirLightAttributes = *((Engine::DirectionalLightObject*)Entities.at(SelectedItem_ID))->pGetDirectionalLightUniformData();
 
                     ImGui::DragFloat3("Direction", (float*)&dirLightAttributes.lightDirection, 0.1f, min, max, "%.3f", 0.1f);
 					if (ImGui::CollapsingHeader(u8"Light Params")) {
@@ -443,11 +667,12 @@ void SceneEditor::DrawEditor(HWND hwnd, const std::vector<Engine::Entity*>* Enti
 					}
 
                     if (!Engine::Globals::gIsScenePlaying) {
-                        *((Engine::DirectionalLightObject*)Entities->at(SelectedItem_ID))->pGetDirectionalLightUniformData() = dirLightAttributes;
+						Entities.at(SelectedItem_ID)->SetName(name);
+                        *((Engine::DirectionalLightObject*)Entities.at(SelectedItem_ID))->pGetDirectionalLightUniformData() = dirLightAttributes;
                     }
 
                     break;
-
+				}
                 default:
                     break;
                 }
@@ -474,7 +699,7 @@ void Application::Init() {
 
 	Engine::Globals::gHeight = WindowHeight;
 	Engine::Globals::gWidth = WindowWidth;
-
+	sceneEditor.enableEditor = true;
 	{
 		const wchar_t CLASS_NAME[] = L"Engine";
 		wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -534,7 +759,6 @@ void Application::Init() {
 	::UpdateWindow(hwnd);
 
 
-
 	//Первоначальная настройка компонентов Vulkan
 	Engine::renderer.initVulkan(hwnd, hInstance);
 
@@ -542,7 +766,7 @@ void Application::Init() {
 	Engine::Globals::gScene = new Engine::Scene;
 	
 	Engine::Globals::gScene->Demo();//Имплементация Demo() вне библиотеки
-	Engine::Globals::gScene->SetScrypts();
+
 
 	if (ENABLE_IMGUI) {
 		sceneEditor.InitEditor(hwnd);
@@ -590,7 +814,7 @@ void Application::Execute() {
 
 				Engine::Globals::gScene->pGetVectorOfEntities()->at(i)->Update();
 			}
-			Engine::Globals::gDynamicsWorld->stepSimulation(floor(Engine::Globals::DeltaTime * 1000) / 1000);
+			Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld->stepSimulation(floor(Engine::Globals::DeltaTime * 1000) / 1000);
 		}
 
 		
@@ -601,7 +825,7 @@ void Application::Execute() {
 				ImGui_ImplWin32_NewFrame();
 				ImGui::NewFrame();
 
-				sceneEditor.DrawEditor(hwnd, Engine::Globals::gScene->pGetVectorOfEntities());
+				sceneEditor.DrawEditor(hwnd, *Engine::Globals::gScene->pGetVectorOfEntities());
 
 				ImGui::Render();
 				ImguiDrawData = ImGui::GetDrawData();

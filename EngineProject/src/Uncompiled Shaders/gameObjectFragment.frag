@@ -51,7 +51,7 @@ layout( push_constant ) uniform constants
 
 } PushConstants;
 
-#define MAX_MATERIALS 32
+#define MAX_MATERIALS 256
 layout(binding = 1) uniform sampler2D diffuseColorMaps[MAX_MATERIALS];
 layout(binding = 6) uniform sampler2D specularColorMaps[MAX_MATERIALS];
 
@@ -84,7 +84,6 @@ vec3 CalculateSpotlight(Spotlight_t spotlight_p, vec3 normals_p, vec3 viewDir_p)
             discard;
         }
        
-
         ambient *= vec3(diffuseColor);
         diffuse *= vec3(diffuseColor);
         specular *= vec3(texture(specularColorMaps[PushConstants.MaterialID],frag_UVmap));
@@ -143,8 +142,6 @@ void main(){
      for (int i = 0; i < MAX_DLIGHTS; i++){
         result += CalculateDirectionalLight(directionalLight.directionalLight_t[i],norm,viewDir);
      }
-    
-
 
     outColor = vec4(result,1.0f);
     

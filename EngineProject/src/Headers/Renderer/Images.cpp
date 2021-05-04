@@ -225,7 +225,7 @@ void Engine::DepthImage::CreateDepthBuffer(VkDevice logicalDevice, VkQueue comma
 	CreateDepthImageView(logicalDevice);
 
 	VkImageSubresourceRange subresourceRange{};
-	subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
+	subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 	subresourceRange.baseArrayLayer = 0;
 	subresourceRange.baseMipLevel = 0;
 	subresourceRange.layerCount = 1;
@@ -330,11 +330,14 @@ void Engine::Texture::CreateTexture(VkPhysicalDevice physicalDevice, VkDevice de
 
 
 	if (!Pixels) {
-		Pixels = stbi_load("CoreAssets/decoyTexture.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+		Pixels = stbi_load("CoreAssets/decoyTexture2.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 		texturePath = "";
 	}
+	else {
+		texturePath = path;
+	}
 
-	texturePath = path;
+	
 
 	VkDeviceSize imageSize = texWidth * texHeight * 4;
 	VkBuffer stagingBuffer;
@@ -528,7 +531,7 @@ void Engine::CubemapTexture::CreateCubemapTexture(VkDevice device, VkPhysicalDev
 
 	Pixels = stbi_load(paths[0].c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 	if (!Pixels) {
-		stbi_load("assets/decoyTexture.png", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+		stbi_load("CoreAssets/decoyTexture2.jpg", &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 		spdlog::warn("Failed to load cubemap face");
 	}
 

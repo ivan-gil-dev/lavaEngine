@@ -63,7 +63,7 @@ namespace Engine{
 				throw std::runtime_error("Failed to record command buffer");
 			}
 		}
-	//Getters
+
 	public:
 		VkCommandBuffer Get() {
 			return CommandBuffer;

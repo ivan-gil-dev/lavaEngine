@@ -144,30 +144,34 @@ void Engine::EditorCamera::Update()
     MouseUpdate();
 
     //Перемещение камеры
-    if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_A)) {
-        CameraPos -= glm::normalize(glm::cross(CameraFront, CameraUp)) * moveSpeed * (float)Engine::Globals::DeltaTime;
+    if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_ALT))
+    {
+        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_A)) {
+            CameraPos -= glm::normalize(glm::cross(CameraFront, CameraUp)) * moveSpeed * (float)Engine::Globals::DeltaTime;
+        }
+        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_A) && Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
+            CameraPos -= glm::normalize(glm::cross(CameraFront, CameraUp)) * moveSpeed * (float)Engine::Globals::DeltaTime * sprintSpeed;
+        }
+        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_D)) {
+            CameraPos += glm::normalize(glm::cross(CameraFront, CameraUp)) * moveSpeed * (float)Engine::Globals::DeltaTime;
+        }
+        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_D) && Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
+            CameraPos += glm::normalize(glm::cross(CameraFront, CameraUp)) * moveSpeed * (float)Engine::Globals::DeltaTime * sprintSpeed;
+        }
+        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_W)) {
+            CameraPos += moveSpeed * CameraFront * (float)Engine::Globals::DeltaTime;
+        }
+        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_W) && Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
+            CameraPos += moveSpeed * CameraFront * (float)Engine::Globals::DeltaTime * sprintSpeed;
+        }
+        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_S)) {
+            CameraPos -= moveSpeed * CameraFront * (float)Engine::Globals::DeltaTime;
+        }
+        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_S) && Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
+            CameraPos -= moveSpeed * CameraFront * (float)Engine::Globals::DeltaTime * sprintSpeed;
+        }
     }
-    if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_A) && Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
-        CameraPos -= glm::normalize(glm::cross(CameraFront, CameraUp)) * moveSpeed * (float)Engine::Globals::DeltaTime * sprintSpeed;
-    }
-    if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_D)) {
-        CameraPos += glm::normalize(glm::cross(CameraFront, CameraUp)) * moveSpeed * (float)Engine::Globals::DeltaTime;
-    }
-    if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_D) && Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
-        CameraPos += glm::normalize(glm::cross(CameraFront, CameraUp)) * moveSpeed * (float)Engine::Globals::DeltaTime * sprintSpeed;
-    }
-    if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_W)) {
-        CameraPos += moveSpeed * CameraFront * (float)Engine::Globals::DeltaTime;
-    }
-    if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_W) && Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
-        CameraPos += moveSpeed * CameraFront * (float)Engine::Globals::DeltaTime * sprintSpeed;
-    }
-    if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_S)) {
-        CameraPos -= moveSpeed * CameraFront * (float)Engine::Globals::DeltaTime;
-    }
-    if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_S) && Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
-        CameraPos -= moveSpeed * CameraFront * (float)Engine::Globals::DeltaTime * sprintSpeed;
-    }
+    
 }
 
 Engine::PointLightObject::PointLightObject() {
@@ -269,7 +273,7 @@ Engine::GameObject::~GameObject() {
 		delete pMesh;
 	}
 	if (pRigidBody != nullptr) {
-		pRigidBody->Destroy(Globals::gDynamicsWorld);
+		pRigidBody->Destroy(Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld);
 		delete pRigidBody;
 	}
 }
@@ -284,9 +288,11 @@ void Engine::GameObject::ApplyPhysicsToEntity() {
 			worldTransform = pRigidBody->GetBulletRigidBody()->getCenterOfMassTransform();
 
 			//Применить трансформации к графической модели
-			glm::vec3 position = glm::vec3(worldTransform.getOrigin().getX(),
+			glm::vec3 position = glm::vec3(
+                worldTransform.getOrigin().getX(),
 				worldTransform.getOrigin().getY(),
-				worldTransform.getOrigin().getZ());
+				worldTransform.getOrigin().getZ()
+            );
 
 			Transform.Translate(glm::vec3(position.x, position.y, position.z));
 
