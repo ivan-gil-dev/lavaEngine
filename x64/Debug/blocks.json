@@ -1501,8 +1501,8 @@
    "Name": "PointLight",
    "Type": "PointLight",
    "LightPosition": {
-    "X": -179.0,
-    "Y": 3.0,
+    "X": 0.0,
+    "Y": 472.0,
     "Z": 2.0
    },
    "LightColor": {
@@ -1518,8 +1518,8 @@
    "Specular": 1.0,
    "Transform": {
     "Position": {
-     "X": -179.0,
-     "Y": 3.0,
+     "X": 0.0,
+     "Y": 472.0,
      "Z": 2.0
     },
     "Scale": {

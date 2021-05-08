@@ -748,7 +748,6 @@ namespace Engine{
             depthState.depthWriteEnable = VK_TRUE;
             depthState.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
 			
-
             VkVertexInputAttributeDescription attribDescription{};
             attribDescription.binding = 0;
             attribDescription.location = 0;
@@ -756,7 +755,6 @@ namespace Engine{
             attribDescription.offset = 0;
             attributeDescriptions.push_back(attribDescription);
          
-
             VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
             vertexInputInfo.sType = { VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO };
             vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
@@ -805,7 +803,7 @@ namespace Engine{
             rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
             rasterizationInfo.depthClampEnable = VK_FALSE;
             rasterizationInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
-            //rasterizationInfo.pNext = (VkPipelineRasterizationStateCreateInfo*)&depthClipState;
+			rasterizationInfo.lineWidth = 1.0f;
 
             VkPipelineMultisampleStateCreateInfo multisampleInfo = { VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO };
             multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;

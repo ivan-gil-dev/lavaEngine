@@ -538,11 +538,11 @@ void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec
 	DataTypes::MVP_t lightMvp{};
 	if (spotlightAttributes.size()!=0)
 	{
-        lightMvp.proj = glm::perspective(glm::radians(45.f), 1.0f, 1.0f, 96.f);
+        lightMvp.proj = glm::perspective(glm::radians(45.f), 1.0f, 1.0f, 1000.f);
         lightMvp.view = glm::lookAt(spotlightAttributes[0]->lightPosition, glm::vec3(0.0f), glm::vec3(0, 1, 0));
 	}
 	else {
-        lightMvp.proj = glm::perspective(glm::radians(45.f), 1.0f, 1.0f, 96.f);
+        lightMvp.proj = glm::perspective(glm::radians(45.f), 1.0f, 1.0f, 1000.f);
         lightMvp.view = glm::lookAt(glm::vec3(0,0,0), glm::vec3(0.0f), glm::vec3(0, 1, 0));
 	}
     

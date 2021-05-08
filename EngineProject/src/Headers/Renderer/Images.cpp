@@ -658,9 +658,9 @@ void Engine::DepthImageShadowMap::CreateImageSampler(VkDevice device)
     samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
     samplerInfo.magFilter = VK_FILTER_NEAREST;
     samplerInfo.minFilter = VK_FILTER_NEAREST;
-    samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-    samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
-    samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+    samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
+    samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
     samplerInfo.maxAnisotropy = 1.0f;
     samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
     samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
@@ -696,8 +696,6 @@ void Engine::DepthImageShadowMap::CreateDepthImageView(VkDevice device)
     }
 }
 
-
-
 void Engine::DepthImageShadowMap::CreateDepthBuffer(VkDevice logicalDevice, VkQueue commandBufferQueue, 
 	VkPhysicalDevice physicalDevice, VkCommandPool commandPool, int swapchainImageViewCount, VkDescriptorPool pool, VkDescriptorSetLayout * pSetLayout)
 {
@@ -709,13 +707,11 @@ void Engine::DepthImageShadowMap::CreateDepthBuffer(VkDevice logicalDevice, VkQu
 
 		std::vector<VkDescriptorSetLayout> layouts(swapchainImageViewCount, *pSetLayout);
 
-
 		VkDescriptorSetAllocateInfo allocateInfo{};
 		allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
 		allocateInfo.descriptorPool = pool;
 		allocateInfo.descriptorSetCount = (uint32_t)layouts.size();
 		allocateInfo.pSetLayouts = layouts.data();
-
 
 		VkResult result = vkAllocateDescriptorSets(logicalDevice, &allocateInfo, DescriptorSets[i].data());
 		if (result != VK_SUCCESS) {
@@ -733,7 +729,6 @@ void Engine::DepthImageShadowMap::CreateDepthBuffer(VkDevice logicalDevice, VkQu
 		for (size_t j = 0; j < swapchainImageViewCount; j++){
 			b0_MVP[i][j].CreateUniformBuffer(physicalDevice, logicalDevice, sizeof(DataTypes::MVP_t));
 		}
-		
 	}
 
 	for (size_t i = 0; i < DescriptorSets.size(); i++)
@@ -766,7 +761,7 @@ void Engine::DepthImageShadowMap::CreateDepthBuffer(VkDevice logicalDevice, VkQu
         }
 	}
 
-    DepthFormat = VK_FORMAT_D16_UNORM;
+    DepthFormat = VK_FORMAT_D32_SFLOAT;
 	ShadowMapDimensions = 2048;
 
     Img_Func_CreateImage(
@@ -821,7 +816,11 @@ void Engine::DepthImageShadowMap::Destroy(VkDevice device,VkDescriptorPool pool)
 	
 	for (size_t i = 0; i < b0_MVP.size(); i++){
 		for (size_t j = 0; j < b0_MVP[i].size(); j++){
+
+
 			b0_MVP[i][j].Destroy(device);
+
+
 		}		
 	}
     vkDestroySampler(device, DepthSampler, nullptr);
@@ -838,7 +837,7 @@ void Engine::DepthImageShadowMap::UpdateUniformBuffers(uint32_t imageIndex, VkDe
         {
             UpdateDescriptorSets(device, b0_MVP[i]);
             vkMapMemory(device, b0_MVP[i][imageIndex].GetDeviceMemory(), 0, sizeof(DataTypes::MVP_t), 0, &data);
-            mvp.proj = glm::perspective(glm::radians(45.f), 1.0f, 1.0f, 96.f);
+            mvp.proj = glm::perspective(glm::radians(45.f), 1.0f, 1.0f, 1000.f);
             mvp.view = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0, 1, 0));
             mvp.model = MVPs[i].model;
             memcpy(data, &mvp, sizeof(DataTypes::MVP_t));
@@ -850,8 +849,6 @@ std::vector<VkDescriptorSet> Engine::DepthImageShadowMap::GetDescriptorSetsByInd
 {
 	return DescriptorSets[index];
 }
-
-
 
 VkFormat Engine::DepthImageShadowMap::GetDepthFormat()
 {

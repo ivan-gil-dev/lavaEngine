@@ -401,7 +401,7 @@ namespace Engine {
             drawCommandBuffer.AllocateCommandBuffer(device.Get(), commandPool.Get());
             drawCommandBuffer.BeginCommandBuffer();
 
-            //-------------------------------------------------------------------
+            //--------shadowmapping---------
             VkClearValue clVal = { 1.f,0 };
             VkClearValue values[] = { clVal };
 
@@ -440,21 +440,26 @@ namespace Engine {
 
 
             for (size_t j = 0 ,i = 0; i < entities->size(); i++) {
+
+
                 if (entities->at(i)->GetEntityType() == ENTITY_TYPE_GAME_OBJECT)
                 {
-                    std::vector<VkDescriptorSet> descriptorSets = depthImageShadowMap.GetDescriptorSetsByIndex(j);
-                    ((GameObject*)entities->at(i))->DrawShadowMaps(
-                        drawCommandBuffer.Get(),
-                        imageIndex,
-                        descriptorSets
-                    );
-                    j++;
+                    if (((GameObject*)entities->at(i))->pGetComponent<Mesh*>() != nullptr)
+                    {
+                        std::vector<VkDescriptorSet> descriptorSets = depthImageShadowMap.GetDescriptorSetsByIndex(j);
+                        ((GameObject*)entities->at(i))->DrawShadowMaps(
+                            drawCommandBuffer.Get(),
+                            imageIndex,
+                            descriptorSets
+                        );
+                        j++;
+                    }
                 }
             }
 
             vkCmdEndRenderPass(drawCommandBuffer.Get());
             //------------------------------------------------------------------------------------
-
+            MVPs.clear();
 
             VkPipelineStageFlags stages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
             VkSemaphore waitSemaphores[] = { syncObjects.GetImageAvailableSemaphores()[currentFrame] };

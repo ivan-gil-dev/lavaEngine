@@ -104,7 +104,7 @@ void Engine::Scene::Demo(){
     gameObject2->SetID((int)gameObject2);
     gameObject2->SetName("Arena");
 
-    gameObject2->Transform.Scale(glm::vec3(25.0f,25.0f, 25.0f));
+    gameObject2->Transform.Scale(glm::vec3(228.0f,25.0f, 329.0f));
 
     rigidBody->SetMass(0.0f);
     rigidBody->SetRigidbodyScale(gameObject2->Transform.GetScaleValue());
@@ -139,7 +139,7 @@ void Engine::Scene::Demo(){
 	directionalLightAttributes.push_back(dlight2->pGetDirectionalLightUniformData());
 
     PointLightObject* pointLight = new PointLightObject;
-    pointLight->Transform.Translate(glm::vec3(1.0f, 77.0f, 0.0f));
+    pointLight->Transform.Translate(glm::vec3(1.0f, 585.0f, 0.0f));
     pointLight->SetID((int)pointLight);
     entities.push_back(pointLight);
 

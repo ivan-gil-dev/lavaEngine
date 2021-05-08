@@ -1,15 +1,5 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(519,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (Lava.vcxproj).  Это может привести к ошибкам очистки и перестроения.
-  Mesh.cpp
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(250,1): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(255,1): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(260,1): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(265,1): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(272,1): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(293,1): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(301,1): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(420,73): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(421,72): warning C4244: =: преобразование "int" в "float", возможна потеря данных
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.h(445,1): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Mesh.cpp(53,22): warning C4267: =: преобразование из "size_t" в "short"; возможна потеря данных
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Mesh.cpp(133,33): warning C4834: отмена возвращаемого значения функции с атрибутом "nodiscard"
+  Images.cpp
+  GLM: GLM_GTX_hash extension included
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Images.cpp(814,88): warning C4267: аргумент: преобразование из "size_t" в "uint32_t"; возможна потеря данных
   Engine.vcxproj -> G:\dev\cpp\WinAPI Branch\x64\Debug\Engine.lib
