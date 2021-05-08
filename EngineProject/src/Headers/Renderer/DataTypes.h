@@ -65,6 +65,10 @@ namespace Engine{
 			glm::mat4 proj;
 		};
 
+		struct LightSpace_t {
+			glm::mat4 lightSpace;
+		};
+
 		struct DirectionalLightAttributes_t{
             glm::vec3 lightDirection;
             alignas(16) glm::vec3 lightColor;

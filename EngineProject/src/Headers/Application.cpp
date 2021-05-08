@@ -1,6 +1,8 @@
 #include "Application.h"
 #include <shobjidl.h> 
 #include <algorithm>
+
+#include <Shlwapi.h>
 //Подготовка ImGui
 
 struct InputTextCallback_UserData
@@ -65,8 +67,29 @@ std::string WinApiOpenDialog() {
                     {
                         std::wstring str(pszFilePath);
                         std::string path(str.begin(), str.end());
-                     
-						result = path;
+
+                        TCHAR buffer[MAX_PATH] = { 0 };
+						GetCurrentDirectory(MAX_PATH, buffer);
+						std::wstring buffer2 = buffer;
+						std::string currentDir(buffer2.begin(), buffer2.end());
+						//std::string out;
+
+						char out[MAX_PATH] = "";
+						char *p = new char[path.length()+1];
+						strcpy(p, path.c_str());
+						char *p2 = new char[currentDir.length()+1];
+						strcpy(p2, currentDir.c_str());
+
+						PathRelativePathToA(out, p2, FILE_ATTRIBUTE_DIRECTORY,
+							p, FILE_ATTRIBUTE_NORMAL);
+
+
+						delete []p;
+						delete []p2;
+
+
+						std::string path2(out);
+						result = path2;
                       
                    
                         CoTaskMemFree(pszFilePath);
@@ -220,10 +243,14 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 				if (OpenFileDialog){
 					SelectedItem_ID = -1;
 					std::string path = WinApiOpenDialog();
-					spdlog::info("Loading...");
-					std::cout << path << std::endl;
-					Engine::Globals::gScene->Load(path);
-					spdlog::info("Done!");
+                    if (path!="")
+                    {
+                        spdlog::info("Loading...");
+                        std::cout << path << std::endl;
+                        Engine::Globals::gScene->Load(path);
+                        spdlog::info("Done!");
+                    }
+					
                     
 					OpenFileDialog = false;
 				}
@@ -249,18 +276,18 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 				ImGui::MenuItem("Save As", "", &SaveAs);
 				if (SaveAs){
 					std::string path = WinApiSaveDialog();
-                    spdlog::info("Saving...");
-                    std::cout << path << std::endl;
-                    Engine::Globals::gScene->SaveAs(path);
-                    spdlog::info("Done!");
+					if (path != "")
+					{
+                        spdlog::info("Saving...");
+                        std::cout << path << std::endl;
+                        Engine::Globals::gScene->SaveAs(path);
+                        spdlog::info("Done!");
+					}
+					
 				}
 				
-
-
 				ImGui::MenuItem(u8"Exit", "ALT + F4", &CloseWindow);
 			
-				
-				
 				ImGui::EndMenu();
 				if (CloseWindow) {
 					SendMessage(hwnd, WM_CLOSE, 0, 0);
@@ -363,8 +390,49 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 			
 			if (ImGui::BeginPopup("Popup")) {
 				if(ImGui::MenuItem("Delete")) {
-					delete Entities[SelectedItem_ID];
-					Entities.erase(Entities.begin()+ SelectedItem_ID);
+					if (Entities[SelectedItem_ID]->GetEntityType() == Engine::ENTITY_TYPE_GAME_OBJECT)
+					{
+                        delete Entities[SelectedItem_ID];
+                        Entities.erase(Entities.begin() + SelectedItem_ID);
+					}else
+                    if (Entities[SelectedItem_ID]->GetEntityType() == Engine::ENTITY_TYPE_DIRECTIONAL_LIGHT_OBJECT)
+                    {
+						for (size_t i = 0; i < Engine::Globals::gScene->pGetVectorOfDirectionalLightAttributes()->size(); i++)
+						{
+							if (Engine::Globals::gScene->pGetVectorOfDirectionalLightAttributes()->at(i)
+								== ((Engine::DirectionalLightObject*)Entities[SelectedItem_ID])->pGetDirectionalLightUniformData())
+							{
+
+								Engine::Globals::gScene->pGetVectorOfDirectionalLightAttributes()->erase(
+									Engine::Globals::gScene->pGetVectorOfDirectionalLightAttributes()->begin()+i
+								);
+
+							}
+						}
+                        delete Entities[SelectedItem_ID];
+                        Entities.erase(Entities.begin() + SelectedItem_ID);
+						
+                    }
+					else if(Entities[SelectedItem_ID]->GetEntityType() == Engine::ENTITY_TYPE_POINTLIGHT_OBJECT)
+					{
+                        for (size_t i = 0; i < Engine::Globals::gScene->pGetVectorOfSpotlightAttributes()->size(); i++)
+                        {
+                            if (Engine::Globals::gScene->pGetVectorOfSpotlightAttributes()->at(i)
+                                == ((Engine::PointLightObject*)Entities[SelectedItem_ID])->pGetPointLightUniformData())
+                            {
+                                Engine::Globals::gScene->pGetVectorOfSpotlightAttributes()->erase(
+                                    Engine::Globals::gScene->pGetVectorOfSpotlightAttributes()->begin()+i
+                                );
+
+                            }
+                        }
+                        delete Entities[SelectedItem_ID];
+                        Entities.erase(Entities.begin() + SelectedItem_ID);
+					}
+					else {
+
+					}
+					
 					SelectedItem_ID = -1;
 				}
 				
@@ -402,8 +470,12 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                 }
                 if (ImGui::MenuItem("Directional Light"))
                 {
+
                     Engine::DirectionalLightObject* obj = new Engine::DirectionalLightObject;
+					obj->pGetDirectionalLightUniformData()->lightColor = glm::vec3(1, 1, 1);
+					obj->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(1, -1, 1);
 					Engine::Globals::gScene->pGetVectorOfDirectionalLightAttributes()->push_back(obj->pGetDirectionalLightUniformData());
+
                     obj->SetID((int)obj);
                     Entities.push_back(obj);
                 }

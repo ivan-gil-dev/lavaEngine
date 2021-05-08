@@ -260,11 +260,18 @@ void Engine::GameObject::UpdateUniforms(uint32_t imageIndex, VkDevice device, Ca
 
 void Engine::GameObject::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
 	if (ENABLE_RIGIDBODY_MESH && Globals::gShowRigidbodyMeshes && pRigidBody != nullptr) {
-		pRigidBody->pGetDebugMesh()->Draw(commandBuffer, imageIndex);
+		pRigidBody->pGetDebugMesh()->Draw(commandBuffer, imageIndex,renderer.graphicsPipelineForRigidBodyMesh.Get());
 	}
 	if (Globals::gShowMeshes && pMesh != nullptr) {
-		pMesh->Draw(commandBuffer, imageIndex);
+		pMesh->Draw(commandBuffer, imageIndex,renderer.graphicsPipelineForMesh.Get());
 	}
+}
+
+void Engine::GameObject::DrawShadowMaps(VkCommandBuffer commandBuffer, int imageIndex, std::vector<VkDescriptorSet>& pDescriptorSets)
+{
+    if (Globals::gShowMeshes && pMesh != nullptr) {
+        pMesh->DrawShadowMaps(commandBuffer, imageIndex,pDescriptorSets);
+    }
 }
 
 Engine::GameObject::~GameObject() {
@@ -332,7 +339,7 @@ Engine::CubemapObject::CubemapObject(std::vector<std::string> paths) {
 
 void Engine::CubemapObject::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
 	if (Globals::gShowSkybox && pMesh != nullptr) {
-		pMesh->Draw(commandBuffer, imageIndex);
+		pMesh->Draw(commandBuffer, imageIndex, renderer.graphicsPipelineForCubemapObjects.Get());
 	}
 }
 

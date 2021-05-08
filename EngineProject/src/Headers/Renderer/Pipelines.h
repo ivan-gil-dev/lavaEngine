@@ -106,6 +106,74 @@ namespace Engine{
 
 	};
 
+    class ShadowMapOffscreenRenderPass {
+        VkRenderPass vRenderPass;
+    public:
+        VkRenderPass GetRenderPass() {
+            return vRenderPass;
+        }
+
+		void CreateRenderPass(VkDevice device, VkSwapchainCreateInfoKHR swapchainCreateInfo, VkFormat depthImageFormat) {
+
+			VkAttachmentDescription attachmentDescription{};
+			attachmentDescription.format = depthImageFormat;
+			attachmentDescription.samples = VK_SAMPLE_COUNT_1_BIT;
+			attachmentDescription.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;							// Clear depth at beginning of the render pass
+			attachmentDescription.storeOp = VK_ATTACHMENT_STORE_OP_STORE;						// We will read from depth, so it's important to store the depth attachment results
+			attachmentDescription.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
+			attachmentDescription.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
+			attachmentDescription.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;					// We don't care about initial layout of the attachment
+			attachmentDescription.finalLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;// Attachment will be transitioned to shader read at render pass end
+
+			VkAttachmentReference depthReference = {};
+			depthReference.attachment = 0;
+			depthReference.layout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;			
+
+			VkSubpassDescription subpass = {};
+			subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
+			subpass.colorAttachmentCount = 0;													
+			subpass.pDepthStencilAttachment = &depthReference;									
+
+			// Use subpass dependencies for layout transitions
+			std::array<VkSubpassDependency, 2> dependencies;
+
+			dependencies[0].srcSubpass = VK_SUBPASS_EXTERNAL;
+			dependencies[0].dstSubpass = 0;
+			dependencies[0].srcStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+			dependencies[0].dstStageMask = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
+			dependencies[0].srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+			dependencies[0].dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+			dependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+			dependencies[1].srcSubpass = 0;
+			dependencies[1].dstSubpass = VK_SUBPASS_EXTERNAL;
+			dependencies[1].srcStageMask = VK_PIPELINE_STAGE_LATE_FRAGMENT_TESTS_BIT;
+			dependencies[1].dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
+			dependencies[1].srcAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
+			dependencies[1].dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+			dependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+			VkRenderPassCreateInfo renderPassCreateInfo = {};
+			renderPassCreateInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
+            renderPassCreateInfo.attachmentCount = 1;
+            renderPassCreateInfo.pAttachments = &attachmentDescription;
+            renderPassCreateInfo.subpassCount = 1;
+            renderPassCreateInfo.pSubpasses = &subpass;
+            renderPassCreateInfo.dependencyCount = static_cast<uint32_t>(dependencies.size());
+            renderPassCreateInfo.pDependencies = dependencies.data();
+
+			VkResult r = vkCreateRenderPass(device, &renderPassCreateInfo, nullptr, &vRenderPass);
+			if (r != VK_SUCCESS) {
+				throw std::runtime_error("Failed to create offscreen renderpass");
+			}
+        }
+
+        void Destroy(VkDevice device) {
+            vkDestroyRenderPass(device, vRenderPass, nullptr);
+        }
+
+    };
+
 	class GraphicsPipeline {
 		protected:
 		VkPipeline vGraphicsPipeline;
@@ -392,11 +460,17 @@ namespace Engine{
 			vertexStage.pName = "main";
 			vertexStage.stage = VK_SHADER_STAGE_VERTEX_BIT;
 
+
+		
+
+
 			VkPipelineShaderStageCreateInfo fragmentStage = {};
 			fragmentStage.module = fragmentModule;
 			fragmentStage.sType = { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO };
 			fragmentStage.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
 			fragmentStage.pName = "main";
+		
+
 
 			VkPipelineShaderStageCreateInfo stages[] = { vertexStage,fragmentStage };
 
@@ -653,13 +727,155 @@ namespace Engine{
 
 	};
 
-	//namespace Globals{
-	//	extern RenderPass gRenderPass;
-	//	extern GraphicsPipelineForMesh gGraphicsPipelineForMesh;
-	//	extern GraphicsPipelineForCubemapObjects gGraphicsPipelineForCubemapObjects;
-	//	extern GraphicsPipelineForRigidBodyMesh gGraphicsPipelineForRigidBodyMesh;
-	//}
-	
+	class GraphicsPipelineForShadowMap : public GraphicsPipeline{
+
+    public:
+        void CreateGraphicsPipeline(VkDevice device, VkSwapchainCreateInfoKHR swapchainCreateInfo,
+            VkDescriptorSetLayout setLayout, VkRenderPass renderPass)
+        {
+            std::vector<char> vertexShader = this->ReadShader("src/SPIRV/offscreen.vert.spv");
+
+            std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
+            VkVertexInputBindingDescription bindingDescription;
+            bindingDescription = {};
+            bindingDescription.binding = 0;
+            bindingDescription.stride = sizeof(glm::vec3);
+            bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
+
+            VkPipelineDepthStencilStateCreateInfo depthState{};
+            depthState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
+            depthState.depthTestEnable = VK_TRUE;
+            depthState.depthWriteEnable = VK_TRUE;
+            depthState.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+			
+
+            VkVertexInputAttributeDescription attribDescription{};
+            attribDescription.binding = 0;
+            attribDescription.location = 0;
+            attribDescription.format = VK_FORMAT_R32G32B32_SFLOAT;
+            attribDescription.offset = 0;
+            attributeDescriptions.push_back(attribDescription);
+         
+
+            VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
+            vertexInputInfo.sType = { VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO };
+            vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
+            vertexInputInfo.vertexAttributeDescriptionCount = (uint32_t)attributeDescriptions.size();
+            vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
+            vertexInputInfo.vertexBindingDescriptionCount = (uint32_t)1;
+
+            VkPipelineInputAssemblyStateCreateInfo assemblyInfo = {};
+            assemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+            assemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
+            assemblyInfo.primitiveRestartEnable = VK_FALSE;
+
+            VkShaderModule vertexModule = CreateShaderModule(device, vertexShader);
+       
+            VkPipelineShaderStageCreateInfo vertexStage = {};
+            vertexStage.module = vertexModule;
+            vertexStage.sType = { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO };
+            vertexStage.pName = "main";
+            vertexStage.stage = VK_SHADER_STAGE_VERTEX_BIT;
+
+            VkPipelineShaderStageCreateInfo stages[] = { vertexStage};
+
+            VkViewport viewport = {};
+            viewport.x = 0;
+            viewport.y = 0;
+            viewport.height = (float)swapchainCreateInfo.imageExtent.height;
+            viewport.width = (float)swapchainCreateInfo.imageExtent.width;
+            viewport.minDepth = 0.0f;
+            viewport.maxDepth = 1.0f;
+
+            VkRect2D scissors = {};
+            scissors.extent = swapchainCreateInfo.imageExtent;
+            scissors.offset = {};
+
+            VkPipelineViewportStateCreateInfo viewportStateCreateInfo = { VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO };
+            viewportStateCreateInfo.pViewports = &viewport;
+            viewportStateCreateInfo.viewportCount = 1;
+            viewportStateCreateInfo.pScissors = &scissors;
+            viewportStateCreateInfo.scissorCount = 1;
+
+            VkPipelineRasterizationStateCreateInfo rasterizationInfo = {};
+            rasterizationInfo.sType = { VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO };
+            rasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
+            rasterizationInfo.depthBiasEnable = VK_TRUE;
+            rasterizationInfo.cullMode = VK_CULL_MODE_FRONT_BIT;
+            rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
+            rasterizationInfo.depthClampEnable = VK_FALSE;
+            rasterizationInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+            //rasterizationInfo.pNext = (VkPipelineRasterizationStateCreateInfo*)&depthClipState;
+
+            VkPipelineMultisampleStateCreateInfo multisampleInfo = { VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO };
+            multisampleInfo.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+            multisampleInfo.minSampleShading = 0.0f;
+            multisampleInfo.pSampleMask = nullptr;
+            multisampleInfo.sampleShadingEnable = VK_FALSE;
+            multisampleInfo.alphaToCoverageEnable = VK_FALSE;
+            multisampleInfo.alphaToOneEnable = VK_FALSE;
+
+            PipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+            PipelineLayoutInfo.pSetLayouts = &setLayout;
+            PipelineLayoutInfo.setLayoutCount = 1;
+
+            if (vkCreatePipelineLayout(device, &PipelineLayoutInfo, nullptr, &PipelineLayout) != VK_SUCCESS) {
+                throw std::runtime_error("Failed to create pipeline layout");
+            }
+
+            CreateInfo.sType = { VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO };
+
+            if (ENABLE_DYNAMIC_VIEWPORT) {
+                VkDynamicState dynamicStates[] = {
+                VK_DYNAMIC_STATE_VIEWPORT,
+                VK_DYNAMIC_STATE_SCISSOR,
+				VK_DYNAMIC_STATE_DEPTH_BIAS
+                };
+
+                VkPipelineDynamicStateCreateInfo dynamicStateInfo = { VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO };
+                dynamicStateInfo.dynamicStateCount = 3;
+                dynamicStateInfo.pDynamicStates = dynamicStates;
+
+                CreateInfo.pDynamicState = &dynamicStateInfo;
+			}
+			else {
+                VkDynamicState dynamicStates[] = {
+                VK_DYNAMIC_STATE_DEPTH_BIAS
+                };
+
+                VkPipelineDynamicStateCreateInfo dynamicStateInfo = { VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO };
+                dynamicStateInfo.dynamicStateCount = 1;
+                dynamicStateInfo.pDynamicStates = dynamicStates;
+
+                CreateInfo.pDynamicState = &dynamicStateInfo;
+
+			}
+
+            CreateInfo.pViewportState = &viewportStateCreateInfo;
+            CreateInfo.pColorBlendState = 0;
+            CreateInfo.pMultisampleState = &multisampleInfo;
+            CreateInfo.pRasterizationState = &rasterizationInfo;
+            CreateInfo.renderPass = renderPass;
+            CreateInfo.stageCount = 1;
+            CreateInfo.pStages = stages;
+            CreateInfo.pInputAssemblyState = &assemblyInfo;
+            CreateInfo.subpass = 0;
+            CreateInfo.layout = PipelineLayout;
+            CreateInfo.pVertexInputState = &vertexInputInfo;
+            CreateInfo.pDepthStencilState = &depthState;
+
+            if (vkCreateGraphicsPipelines(device, 0, 1, &CreateInfo, nullptr, &vGraphicsPipeline) != VK_SUCCESS) {
+                throw std::runtime_error("Failed to create graphics pipeline");
+            }
+            vkDestroyShaderModule(device, vertexModule, nullptr);
+        }
+
+        void DestroyPipelineObjects(VkDevice device) {
+            vkDestroyPipelineLayout(device, PipelineLayout, nullptr);
+            vkDestroyPipeline(device, vGraphicsPipeline, nullptr);
+        }
+	};
+
 
 }
 

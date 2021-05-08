@@ -1,8 +1,6 @@
 #version    450
 #extension  GL_ARB_separate_shader_objects : enable
 
-
-
 struct Spotlight_t{
     vec3 Position;        
     vec3 Color;
@@ -16,7 +14,7 @@ struct Spotlight_t{
     float Quadrantic;
 };
 
-#define MAX_SPOTLIGHTS 10 
+#define MAX_SPOTLIGHTS 100 
 
 layout(binding = 2) uniform Light{Spotlight_t spotlight[MAX_SPOTLIGHTS];}light;
 
@@ -39,7 +37,7 @@ struct DirectionalLight_t{
     float Specular;
 };
 
-#define MAX_DLIGHTS 5 
+#define MAX_DLIGHTS 20 
 
 layout(binding = 5) uniform DirectionalLight{DirectionalLight_t directionalLight_t[MAX_DLIGHTS];}directionalLight;
 
@@ -54,13 +52,32 @@ layout( push_constant ) uniform constants
 #define MAX_MATERIALS 256
 layout(binding = 1) uniform sampler2D diffuseColorMaps[MAX_MATERIALS];
 layout(binding = 6) uniform sampler2D specularColorMaps[MAX_MATERIALS];
+layout(binding = 7) uniform sampler2D shadowMap;
+
 
 layout(location = 0) in vec3 frag_Color;
 layout(location = 1) in vec2 frag_UVmap;
 layout(location = 2) in vec3 frag_Normals;
 layout(location = 3) in vec3 frag_Pos;
+layout(location = 4) in vec4 frag_PosLightSpace;
 
 layout(location = 0) out vec4 outColor;
+
+float CalculateShadow(vec4 shadowCoord)
+{
+    shadowCoord = shadowCoord/shadowCoord.w;
+	float shadow = 1.0;
+	if ( shadowCoord.z > -1.0 && shadowCoord.z < 1.0 ) 
+	{
+		float dist = texture( shadowMap, shadowCoord.st).r;
+		if ( shadowCoord.w > 0.0 && dist < shadowCoord.z ) 
+		{
+			shadow = 0.1;
+		}
+	}
+	return shadow;
+}
+
 
 vec3 CalculateSpotlight(Spotlight_t spotlight_p, vec3 normals_p, vec3 viewDir_p){
     if(spotlight_p.Color != vec3(0,0,0)){
@@ -77,8 +94,9 @@ vec3 CalculateSpotlight(Spotlight_t spotlight_p, vec3 normals_p, vec3 viewDir_p)
 
         float distance = length(spotlight_p.Position - frag_Pos);
         float attenuation = 1.0/(spotlight_p.Constant + spotlight_p.Linear*distance + spotlight_p.Quadrantic*distance*distance);
-
+        //float attenuation = 1.0f;
         vec4 diffuseColor = texture(diffuseColorMaps[PushConstants.MaterialID],frag_UVmap);
+        //float diffuseColor = texture(shadowMap,frag_UVmap).r;
 
         if(diffuseColor.a<0.5){
             discard;
@@ -88,7 +106,9 @@ vec3 CalculateSpotlight(Spotlight_t spotlight_p, vec3 normals_p, vec3 viewDir_p)
         diffuse *= vec3(diffuseColor);
         specular *= vec3(texture(specularColorMaps[PushConstants.MaterialID],frag_UVmap));
   
-        return (ambient*attenuation + diffuse*attenuation + specular*attenuation);
+	    float shadow = CalculateShadow(frag_PosLightSpace);
+
+        return (ambient*attenuation + (shadow)*(diffuse*attenuation) + specular*attenuation);
     }else{
         return vec3(0,0,0);
     }
@@ -109,6 +129,7 @@ vec3 CalculateDirectionalLight(DirectionalLight_t directionalLight_p, vec3 norma
         vec3 specular = directionalLight_p.Specular * spec * directionalLight_p.Color;
 
         vec4 diffuseColor = texture(diffuseColorMaps[PushConstants.MaterialID],frag_UVmap);
+        //float diffuseColor = texture(shadowMap,frag_UVmap).r;
 
         if(diffuseColor.a<0.5){
             discard;
@@ -119,7 +140,9 @@ vec3 CalculateDirectionalLight(DirectionalLight_t directionalLight_p, vec3 norma
         diffuse *= vec3(diffuseColor);
         specular *= vec3(texture(specularColorMaps[PushConstants.MaterialID],frag_UVmap));
 
-        return (ambient + diffuse + specular);
+        float shadow = CalculateShadow(frag_PosLightSpace);
+
+        return (ambient + shadow*diffuse + specular);
     }else{
         return vec3(0,0,0);
     }
@@ -139,9 +162,9 @@ void main(){
     }
     
 
-     for (int i = 0; i < MAX_DLIGHTS; i++){
-        result += CalculateDirectionalLight(directionalLight.directionalLight_t[i],norm,viewDir);
-     }
+    for (int i = 0; i < MAX_DLIGHTS; i++){
+       result += CalculateDirectionalLight(directionalLight.directionalLight_t[i],norm,viewDir);
+    }
 
     outColor = vec4(result,1.0f);
     

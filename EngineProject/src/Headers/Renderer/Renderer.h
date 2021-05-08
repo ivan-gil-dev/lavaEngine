@@ -78,6 +78,38 @@ namespace Engine {
             return framebuffers;
         }
 
+        std::vector<VkFramebuffer> createOffscreenFramebuffers(VkDevice device, VkRenderPass renderPass, int swapchainImageViewCount,
+            VkImageView depthImageView, int ShadowMapDimensions) {
+
+            std::vector<VkFramebuffer> framebuffers;
+            framebuffers.resize(swapchainImageViewCount);
+            for (size_t i = 0; i < swapchainImageViewCount; i++) {
+
+                //	Набор изображений для вывода во фреймбуфер
+                VkImageView attachments[] = {
+                      //  Z-буфер
+                      depthImageView         
+                };
+
+                VkFramebufferCreateInfo framebufferCreateInfo{};
+
+                //  Размер фреймбуфера указывается в соответствии с размером изображения,
+                //  получаемым из свапчейна
+                framebufferCreateInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+                framebufferCreateInfo.renderPass = renderPass;
+                framebufferCreateInfo.height = (uint32_t)ShadowMapDimensions;
+                framebufferCreateInfo.width = (uint32_t)ShadowMapDimensions;
+                framebufferCreateInfo.pAttachments = attachments;
+                framebufferCreateInfo.attachmentCount = (uint32_t)1;
+                framebufferCreateInfo.layers = 1;
+
+                if (vkCreateFramebuffer(device, &framebufferCreateInfo, nullptr, &framebuffers[i]) != VK_SUCCESS) {
+                    throw std::runtime_error("Failed to create framebuffer");
+                }
+            }
+            return framebuffers;
+        }
+
     public:
         Instance instance;
         PhysicalDevice physicalDevice;
@@ -88,11 +120,20 @@ namespace Engine {
         CommandPool commandPool;
     public:
         RenderPass renderPass;
+        
         GraphicsPipelineForMesh graphicsPipelineForMesh;
         GraphicsPipelineForCubemapObjects graphicsPipelineForCubemapObjects;
-        GraphicsPipelineForRigidBodyMesh gGraphicsPipelineForRigidBodyMesh;
+        GraphicsPipelineForRigidBodyMesh graphicsPipelineForRigidBodyMesh;
         DepthImage depthImage;
         MultisamplingBuffer multisamplingBuffer;
+    public:
+        //Shadows
+        DescriptorSetLayoutForShadowMap setLayoutForShadowMap;
+        DescriptorPoolForShadowMap descriptorPoolForShadowMap;
+        ShadowMapOffscreenRenderPass offscreenRenderpass;
+        GraphicsPipelineForShadowMap graphicsPipelineForShadowMap;
+        DepthImageShadowMap depthImageShadowMap;
+        std::vector<VkFramebuffer> offscreenFramebuffers;
     public:
         DescriptorPoolForMesh descriptorPoolForMesh;
         DescriptorPoolForRigidBodyMesh descriptorPoolForRigidBodyMesh;
@@ -185,7 +226,7 @@ namespace Engine {
                 renderPass.GetRenderPass()
             );
 
-            gGraphicsPipelineForRigidBodyMesh.CreateGraphicsPipeline(
+            graphicsPipelineForRigidBodyMesh.CreateGraphicsPipeline(
                 device.Get(),
                 swapchain.GetInfo(),
                 setLayoutForRigidBodyMesh.Get(),
@@ -203,30 +244,61 @@ namespace Engine {
                 )
             );
 
-            //drawCommandBuffers.resize(swapchain.GetSwapchainFramebuffers().size());
-
             descriptorPoolForMesh.CreateDescriptorPool(
                 device.Get(),
-                *swapchain.PGetImageViews()
+                swapchain.PGetImageViews()->size()
             );
 
             descriptorPoolForRigidBodyMesh.CreateDescriptorPool(
                 device.Get(),
-                *swapchain.PGetImageViews()
+                swapchain.PGetImageViews()->size()
             );
 
             descriptorPoolForImgui.CreateDescriptorPool(
                 device.Get(),
-                *swapchain.PGetImageViews()
+                swapchain.PGetImageViews()->size()
             );
 
             descriptorPoolForCubemapObjects.CreateDescriptorPool(
                 device.Get(),
-                *swapchain.PGetImageViews()
+                swapchain.PGetImageViews()->size()
             );
 
             syncObjects.CreateSyncObjects(device.Get());
 
+
+            setLayoutForShadowMap.CreateDescriptorSetLayout(device.Get());
+
+            descriptorPoolForShadowMap.CreateDescriptorPool(device.Get(), swapchain.PGetImageViews()->size());
+
+            offscreenRenderpass.CreateRenderPass(device.Get(),
+                swapchain.GetInfo(),
+                depthImage.GetDepthFormat());
+
+            graphicsPipelineForShadowMap.CreateGraphicsPipeline(
+                device.Get(),
+                swapchain.GetInfo(),
+                setLayoutForShadowMap.Get(),
+                offscreenRenderpass.GetRenderPass()
+            );
+
+            depthImageShadowMap.CreateDepthBuffer(
+                device.Get(),
+                device.GetGraphicsQueue(),
+                physicalDevice.Get(),
+                commandPool.Get(),
+                swapchain.PGetImageViews()->size(),
+                descriptorPoolForShadowMap.Get(),
+                setLayoutForShadowMap.pGet()
+            );
+
+            offscreenFramebuffers = createOffscreenFramebuffers(
+                device.Get(),
+                offscreenRenderpass.GetRenderPass(),
+                swapchain.PGetImageViews()->size(),
+                depthImageShadowMap.GetImageView(),
+                depthImageShadowMap.GetShadowMapDimensions()
+            );
         }
 
         void recreateSwapchain() {
@@ -266,9 +338,7 @@ namespace Engine {
                     swapchain.GetInfo().imageExtent
                 )
             );
-
             rendererScissors.extent = swapchain.GetInfo().imageExtent;
-
         }   
 
         void DrawScene(ImDrawData* drawData, Scene* scene, Camera camera){
@@ -308,11 +378,89 @@ namespace Engine {
             }
 
 
+            std::vector<DataTypes::MVP_t> MVPs;
+            for (size_t i = 0; i < entities->size(); i++)
+            {
+                if (entities->at(i)->GetEntityType() == ENTITY_TYPE_GAME_OBJECT)
+                {
+                    if (((GameObject*)entities->at(i))->pGetComponent<Mesh*>()!= nullptr)
+                    {
+                        MVPs.push_back(*((GameObject*)entities->at(i))->pGetComponent<Mesh*>()->pGetMVP());
+                    }
+                }
+            }
+
+            if (scene->pGetVectorOfSpotlightAttributes()->size() != 0)
+            {
+                depthImageShadowMap.UpdateUniformBuffers(imageIndex, device.Get(), scene->pGetVectorOfSpotlightAttributes()->at(0)->lightPosition, MVPs);
+            }
+            else {
+                depthImageShadowMap.UpdateUniformBuffers(imageIndex, device.Get(), glm::vec3(0, 0, 0), MVPs);
+            }
+
+            drawCommandBuffer.AllocateCommandBuffer(device.Get(), commandPool.Get());
+            drawCommandBuffer.BeginCommandBuffer();
+
+            //-------------------------------------------------------------------
+            VkClearValue clVal = { 1.f,0 };
+            VkClearValue values[] = { clVal };
+
+            VkRenderPassBeginInfo renderPassBeginInfo = {VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
+            renderPassBeginInfo.renderPass = offscreenRenderpass.GetRenderPass();
+            renderPassBeginInfo.framebuffer = offscreenFramebuffers[imageIndex];
+            renderPassBeginInfo.renderArea.extent.width = depthImageShadowMap.GetShadowMapDimensions();
+            renderPassBeginInfo.renderArea.extent.height = depthImageShadowMap.GetShadowMapDimensions();
+            renderPassBeginInfo.clearValueCount = 1;
+            renderPassBeginInfo.pClearValues = values;
+
+            vkCmdBeginRenderPass(drawCommandBuffer.Get(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+
+            VkViewport viewport{};
+            viewport.height = depthImageShadowMap.GetShadowMapDimensions();
+            viewport.width = depthImageShadowMap.GetShadowMapDimensions();
+            viewport.minDepth = 0;
+            viewport.maxDepth = 1;
+            vkCmdSetViewport(drawCommandBuffer.Get(), 0, 1, &viewport);
+
+
+            VkRect2D rect{};
+            rect.extent.height = depthImageShadowMap.GetShadowMapDimensions();
+            rect.extent.width = depthImageShadowMap.GetShadowMapDimensions();
+            rect.offset.x = 0;
+            rect.offset.y = 0;
+
+            vkCmdSetScissor(drawCommandBuffer.Get(), 0, 1, &rect);
+
+            vkCmdSetDepthBias(
+                drawCommandBuffer.Get(),
+                5.05f,
+                0.0f,
+                1.75f);
+
+
+            for (size_t j = 0 ,i = 0; i < entities->size(); i++) {
+                if (entities->at(i)->GetEntityType() == ENTITY_TYPE_GAME_OBJECT)
+                {
+                    std::vector<VkDescriptorSet> descriptorSets = depthImageShadowMap.GetDescriptorSetsByIndex(j);
+                    ((GameObject*)entities->at(i))->DrawShadowMaps(
+                        drawCommandBuffer.Get(),
+                        imageIndex,
+                        descriptorSets
+                    );
+                    j++;
+                }
+            }
+
+            vkCmdEndRenderPass(drawCommandBuffer.Get());
+            //------------------------------------------------------------------------------------
+
+
             VkPipelineStageFlags stages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
             VkSemaphore waitSemaphores[] = { syncObjects.GetImageAvailableSemaphores()[currentFrame] };
             VkSemaphore signalSemaphores[] = { syncObjects.GetImageRenderedSemaphores()[currentFrame] };
 
-            VkRenderPassBeginInfo renderPassBeginInfo = {};
+            renderPassBeginInfo = {};
             renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
             renderPassBeginInfo.renderPass = renderPass.GetRenderPass();
             renderPassBeginInfo.renderArea.extent = swapchain.GetInfo().imageExtent;
@@ -328,10 +476,6 @@ namespace Engine {
 
             renderPassBeginInfo.pClearValues = clearColors;
             renderPassBeginInfo.clearValueCount = 3;
-
-            drawCommandBuffer.AllocateCommandBuffer(device.Get(), commandPool.Get());
-            drawCommandBuffer.BeginCommandBuffer();
-
             vkCmdBeginRenderPass(drawCommandBuffer.Get(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
             for (size_t i = 0; i < entities->size(); i++) {
@@ -391,20 +535,29 @@ namespace Engine {
 
         void clear() {
             //drawCommandBuffer.FreeCommandBuffer(device.Get(), commandPool.Get());
+            for (int i = 0; i < offscreenFramebuffers.size(); i++)
+            {
+                vkDestroyFramebuffer(device.Get(), offscreenFramebuffers[i], nullptr);
+            }
+            depthImageShadowMap.Destroy(device.Get(),descriptorPoolForShadowMap.Get());
+            setLayoutForShadowMap.Destroy(device.Get());
             setLayoutForMesh.Destroy(device.Get());
             setLayoutForCubemapObjects.Destroy(device.Get());
             setLayoutForRigidBodyMesh.Destroy(device.Get());
             depthImage.Destroy(device.Get());
+            descriptorPoolForShadowMap.Destroy(device.Get());
             descriptorPoolForMesh.Destroy(device.Get());
             descriptorPoolForRigidBodyMesh.Destroy(device.Get());
             descriptorPoolForImgui.Destroy(device.Get());
             descriptorPoolForCubemapObjects.Destroy(device.Get());
             syncObjects.DestroySyncObjects(device.Get());
+            offscreenRenderpass.Destroy(device.Get());
             renderPass.Destroy(device.Get());
             multisamplingBuffer.Destroy(device.Get());
             graphicsPipelineForMesh.DestroyPipelineObjects(device.Get());
             graphicsPipelineForCubemapObjects.DestroyPipelineObjects(device.Get());
-            gGraphicsPipelineForRigidBodyMesh.DestroyPipelineObjects(device.Get());
+            graphicsPipelineForRigidBodyMesh.DestroyPipelineObjects(device.Get());
+            graphicsPipelineForShadowMap.DestroyPipelineObjects(device.Get());
             commandPool.Destroy(device.Get());
             swapchain.DestroySwapchainObjects(device.Get());
             surface.Destroy(instance.get());

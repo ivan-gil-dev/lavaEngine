@@ -193,6 +193,8 @@ namespace Engine{
 
 		void Draw(VkCommandBuffer commandBuffer, int imageIndex) override;
 
+		void DrawShadowMaps(VkCommandBuffer commandBuffer, int imageIndex, std::vector<VkDescriptorSet>& pDescriptorSets);
+
 		void ApplyPhysicsToEntity();
 	
 		void ApplyEntityTransformToRigidbody();

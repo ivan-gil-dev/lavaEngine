@@ -136,6 +136,21 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 		}
 	}
 
+	std::vector<glm::vec3> positions;
+	for (size_t i = 0; i < Vertices.size(); i++)
+	{
+		positions.push_back(Vertices[i].pos);
+	}
+
+	ShadowMapBuffer.CreateVertexBuffer(
+		renderer.physicalDevice.Get(),
+		renderer.device.Get(),
+		renderer.device.GetGraphicsQueue(),
+		renderer.commandPool.Get(),
+		positions.data(),
+		sizeof(glm::vec3)* positions.size()
+	);
+
     VertexBuffer.CreateVertexBuffer(renderer.physicalDevice.Get(),
         renderer.device.Get(),
         renderer.device.GetGraphicsQueue(),
@@ -191,6 +206,22 @@ void Engine::Mesh::CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout d
         mvpWriteDescriptorSet.dstArrayElement = 0;
         mvpWriteDescriptorSet.pBufferInfo = &bufferInfo;
         writeDescriptorSets.push_back(mvpWriteDescriptorSet);
+
+        VkDescriptorBufferInfo bufferInfo8{};
+		bufferInfo8.buffer = UniformBuffersLightSpace_b1[i].Get();
+		bufferInfo8.offset = 0;
+		bufferInfo8.range = sizeof(DataTypes::LightSpace_t);
+
+        VkWriteDescriptorSet lightSpaceDescriptorSet{};
+		lightSpaceDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		lightSpaceDescriptorSet.descriptorCount = 1;
+		lightSpaceDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+		lightSpaceDescriptorSet.dstSet = DescriptorSets[i];
+		lightSpaceDescriptorSet.dstBinding = 8;
+		lightSpaceDescriptorSet.dstArrayElement = 0;
+		lightSpaceDescriptorSet.pBufferInfo = &bufferInfo8;
+        writeDescriptorSets.push_back(lightSpaceDescriptorSet);
+
 		
 		std::vector<VkDescriptorImageInfo> diffuseImageInfos;
 		for (int j = 0; j < DiffuseTextures_b1.size(); j++)
@@ -200,6 +231,11 @@ void Engine::Mesh::CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout d
                 textureInfo.imageView = DiffuseTextures_b1[j].GetImageView();
                 textureInfo.sampler = DiffuseTextures_b1[j].GetImageSampler();
                 textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+
+				//textureInfo.imageView = renderer.depthImageShadowMap.GetImageView();
+				//textureInfo.sampler = renderer.depthImageShadowMap.GetImageSampler();
+				//textureInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+
                 diffuseImageInfos.push_back(textureInfo);
 			}
 			else {
@@ -313,11 +349,33 @@ void Engine::Mesh::CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout d
 		DirectionalLightWriteDescriptorSet.pBufferInfo = &bufferInfo5;
         writeDescriptorSets.push_back(DirectionalLightWriteDescriptorSet);
 		
+
+        VkDescriptorImageInfo shadowMapTextureInfo{};
+        shadowMapTextureInfo.imageView = renderer.depthImageShadowMap.GetImageView();
+        shadowMapTextureInfo.sampler = renderer.depthImageShadowMap.GetImageSampler();
+        shadowMapTextureInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
+
+
+        VkWriteDescriptorSet shadowMapWriteDescriptorSet{};
+        shadowMapWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        shadowMapWriteDescriptorSet.descriptorCount = 1;
+        shadowMapWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        shadowMapWriteDescriptorSet.dstSet = DescriptorSets[i];
+        shadowMapWriteDescriptorSet.dstBinding = 7;
+        shadowMapWriteDescriptorSet.dstArrayElement = 0;
+        shadowMapWriteDescriptorSet.pImageInfo = &shadowMapTextureInfo;
+        writeDescriptorSets.push_back(shadowMapWriteDescriptorSet);
+
 		vkUpdateDescriptorSets(device, (uint32_t)writeDescriptorSets.size(), writeDescriptorSets.data(), 0, nullptr);
 		writeDescriptorSets.resize(0);
 	}
 
     
+}
+
+Engine::DataTypes::MVP_t *Engine::Mesh::pGetMVP()
+{
+	return &MVP;
 }
 
 std::string Engine::Mesh::pGetMeshPath() {
@@ -336,13 +394,13 @@ void Engine::Mesh::SetMaterial(DataTypes::Material_t mat) {
 	Material = mat;
 }
 
-void Engine::Mesh::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
+void Engine::Mesh::Draw(VkCommandBuffer commandBuffer, int imageIndex, VkPipeline pipeline) {
 	if (IsCreated)
 	{
         vkCmdBindPipeline(
             commandBuffer,
             VK_PIPELINE_BIND_POINT_GRAPHICS,
-            renderer.graphicsPipelineForMesh.Get()
+			pipeline
         );
 
         if (ENABLE_DYNAMIC_VIEWPORT) {
@@ -360,7 +418,6 @@ void Engine::Mesh::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
 
         for (size_t i = 0; i < Faces.size(); i++)
         {
-
             DataTypes::PushConstants constants;
             constants.diffuseMapId = Faces[i].MatID;
 
@@ -371,6 +428,31 @@ void Engine::Mesh::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
             vkCmdDrawIndexed(commandBuffer, (uint32_t)Faces[i].indexes.size(), 1, 0, 0, 0);
         }
 	}
+}
+
+void Engine::Mesh::DrawShadowMaps(VkCommandBuffer commandBuffer, int imageIndex, std::vector<VkDescriptorSet> &pDescriptorSets)
+{
+    if (IsCreated)
+    {
+		vkCmdBindPipeline(
+			commandBuffer,
+			VK_PIPELINE_BIND_POINT_GRAPHICS,
+			renderer.graphicsPipelineForShadowMap.Get()
+        );
+
+        VkBuffer buffers[] = { ShadowMapBuffer.Get() };
+        VkDeviceSize offsets[] = { 0 };
+
+        vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, renderer.graphicsPipelineForShadowMap.GetPipelineLayout(),
+            0, 1, &pDescriptorSets[imageIndex], 0, nullptr);
+
+        for (size_t i = 0; i < Faces.size(); i++)
+        {
+            vkCmdBindIndexBuffer(commandBuffer, Faces[i].indexBuffer.Get(), 0, VK_INDEX_TYPE_UINT32);
+            vkCmdDrawIndexed(commandBuffer, (uint32_t)Faces[i].indexes.size(), 1, 0, 0,0);
+        }
+    }
 }
 
 void Engine::Mesh::CreateMesh(std::string modelPath) {
@@ -407,20 +489,10 @@ void Engine::Mesh::CreateMesh(std::string modelPath) {
 						renderer.device.GetGraphicsQueue(),
 						renderer.commandPool.Get(), Faces[i].specularMapPath);
 				}
-				/*else{
-					DiffuseTextures_b1[i].CreateTexture(renderer.physicalDevice.Get(),
-						renderer.device.Get(),
-						renderer.device.GetGraphicsQueue(),
-						renderer.commandPool.Get(), "");
-
-					SpecularTextures_b6[i].CreateTexture(renderer.physicalDevice.Get(),
-						renderer.device.Get(),
-						renderer.device.GetGraphicsQueue(),
-						renderer.commandPool.Get(), "");
-				}*/
 			}
 
 			UniformBuffersMVP_b0.resize(renderer.swapchain.PGetImageViews()->size());
+			UniformBuffersLightSpace_b1.resize(renderer.swapchain.PGetImageViews()->size());
 			UniformBuffersSpotLightAttributes_b2.resize(renderer.swapchain.PGetImageViews()->size());
 			UniformBuffersDebugCameraPos_b3.resize(renderer.swapchain.PGetImageViews()->size());
 			UniformBuffersMaterial_b4.resize(renderer.swapchain.PGetImageViews()->size());
@@ -428,12 +500,15 @@ void Engine::Mesh::CreateMesh(std::string modelPath) {
 
 			for (size_t i = 0; i < renderer.swapchain.PGetImageViews()->size(); i++) {
 				UniformBuffersMVP_b0[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::MVP_t));
+				UniformBuffersLightSpace_b1[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::LightSpace_t));
+
 				UniformBuffersDebugCameraPos_b3[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::CameraPos_t));
 				UniformBuffersMaterial_b4[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::Material_t));
 				UniformBuffersSpotLightAttributes_b2[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(),
 					sizeof(DataTypes::PointLightAttributes_t) * MAX_SPOTLIGHTS);
 				UniformBuffersDirectionalLightAttributes_b5[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(),
 					sizeof(DataTypes::DirectionalLightAttributes_t) * MAX_DLIGHTS);
+
 			}
 		}
 
@@ -450,8 +525,8 @@ void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec
 	std::vector <DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes) {
 	
 	MVP.model = TransformMatrixProduct;
-	MVP.view = viewProjection.view;
-	MVP.proj = viewProjection.projection;
+	MVP.view  = viewProjection.view;
+	MVP.proj  = viewProjection.projection;
 
 	MVP.proj[1][1] *= -1;
 
@@ -459,6 +534,24 @@ void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec
 	vkMapMemory(device, UniformBuffersMVP_b0[imageIndex].GetDeviceMemory(), 0, sizeof(MVP), 0, &data);
 	memcpy(data, &MVP, sizeof(MVP));
 	vkUnmapMemory(device, UniformBuffersMVP_b0[imageIndex].GetDeviceMemory());
+
+	DataTypes::MVP_t lightMvp{};
+	if (spotlightAttributes.size()!=0)
+	{
+        lightMvp.proj = glm::perspective(glm::radians(45.f), 1.0f, 1.0f, 96.f);
+        lightMvp.view = glm::lookAt(spotlightAttributes[0]->lightPosition, glm::vec3(0.0f), glm::vec3(0, 1, 0));
+	}
+	else {
+        lightMvp.proj = glm::perspective(glm::radians(45.f), 1.0f, 1.0f, 96.f);
+        lightMvp.view = glm::lookAt(glm::vec3(0,0,0), glm::vec3(0.0f), glm::vec3(0, 1, 0));
+	}
+    
+	DataTypes::LightSpace_t lightSpace{};
+	lightSpace.lightSpace = lightMvp.proj * lightMvp.view;
+	
+    vkMapMemory(device, UniformBuffersLightSpace_b1[imageIndex].GetDeviceMemory(), 0, sizeof(lightSpace), 0, &data);
+    memcpy(data, &lightSpace, sizeof(lightSpace));
+    vkUnmapMemory(device, UniformBuffersLightSpace_b1[imageIndex].GetDeviceMemory());
 
 	vkMapMemory(device, UniformBuffersMaterial_b4[imageIndex].GetDeviceMemory(), 0, sizeof(DataTypes::Material_t), 0, &data);
 	memcpy(data, &Material, sizeof(DataTypes::Material_t));
@@ -487,7 +580,6 @@ void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec
 
 	buffer_SpotlightAttributes.clear();
 
-
 	DataTypes::CameraPos_t cameraPos;
 	cameraPos.pos = cameraPosition;
 
@@ -506,8 +598,8 @@ void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec
 			buffer_DirectionalLightAttributes[i].lightDirection = glm::vec3(0, 0, 0);
         }
     }
-	//spdlog::info("Debug 1: {:6.2f}", buffer_DirectionalLightAttributes[0].lightColor.r);
-	vkMapMemory(device, UniformBuffersDirectionalLightAttributes_b5[imageIndex].GetDeviceMemory(), 0, 
+
+    vkMapMemory(device, UniformBuffersDirectionalLightAttributes_b5[imageIndex].GetDeviceMemory(), 0,
 		buffer_DirectionalLightAttributes.size()*sizeof(DataTypes::DirectionalLightAttributes_t) , 0, &data);
     memcpy(data, buffer_DirectionalLightAttributes.data(), buffer_DirectionalLightAttributes.size() * sizeof(DataTypes::DirectionalLightAttributes_t));
     vkUnmapMemory(device, UniformBuffersDirectionalLightAttributes_b5[imageIndex].GetDeviceMemory());
@@ -518,16 +610,16 @@ void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec
 void Engine::Mesh::Destroy() {
 	if (IsCreated)
 	{
+		Vertices.clear();
         Blank.DestroyTexture(renderer.device.Get());
-        for (size_t i = 0; i < DiffuseTextures_b1.size(); i++)
-        {
+
+        for (size_t i = 0; i < DiffuseTextures_b1.size(); i++){
             DiffuseTextures_b1[i].DestroyTexture(renderer.device.Get());
         }
-        for (size_t i = 0; i < SpecularTextures_b6.size(); i++)
-        {
+
+        for (size_t i = 0; i < SpecularTextures_b6.size(); i++){
             SpecularTextures_b6[i].DestroyTexture(renderer.device.Get());
         }
-
 
         vkFreeDescriptorSets(renderer.device.Get(), renderer.descriptorPoolForMesh.Get(),
             (uint32_t)DescriptorSets.size(), DescriptorSets.data());
@@ -538,13 +630,15 @@ void Engine::Mesh::Destroy() {
             UniformBuffersMaterial_b4[i].Destroy(renderer.device.Get());
             UniformBuffersDirectionalLightAttributes_b5[i].Destroy(renderer.device.Get());
             UniformBuffersSpotLightAttributes_b2[i].Destroy(renderer.device.Get());
-
         }
+
+		ShadowMapBuffer.Destroy(renderer.device.Get());
         VertexBuffer.Destroy(renderer.device.Get());
-        for (size_t i = 0; i < Faces.size(); i++)
-        {
+		
+        for (size_t i = 0; i < Faces.size(); i++){
             Faces[i].indexBuffer.Destroy(renderer.device.Get());
         }
+
         IsCreated = false;
 	}
 }
@@ -631,11 +725,11 @@ Engine::WireframeMesh::WireframeMesh() {
 
 }
 
-void Engine::WireframeMesh::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
+void Engine::WireframeMesh::Draw(VkCommandBuffer commandBuffer, int imageIndex, VkPipeline pipeline) {
 	vkCmdBindPipeline(
 		commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
-		renderer.gGraphicsPipelineForRigidBodyMesh.Get()
+		pipeline
 	);
 
 	VkBuffer buffers[] = { VertexBuffer.Get() };
@@ -649,7 +743,7 @@ void Engine::WireframeMesh::Draw(VkCommandBuffer commandBuffer, int imageIndex) 
 
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 
-	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, renderer.gGraphicsPipelineForRigidBodyMesh.GetPipelineLayout(),
+	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, renderer.graphicsPipelineForRigidBodyMesh.GetPipelineLayout(),
 		0, 1, &DescriptorSets[imageIndex], 0, nullptr);
 
 	vkCmdBindIndexBuffer(commandBuffer, IndexBuffer.Get(), 0, VK_INDEX_TYPE_UINT32);
@@ -871,11 +965,11 @@ void Engine::CubemapMesh::CreateCubemapMesh(std::vector<std::string> paths) {
 		sizeof(Indexes[0]) * Indexes.size());
 }
 
-void Engine::CubemapMesh::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
+void Engine::CubemapMesh::Draw(VkCommandBuffer commandBuffer, int imageIndex, VkPipeline pipeline) {
 	vkCmdBindPipeline(
 		commandBuffer,
 		VK_PIPELINE_BIND_POINT_GRAPHICS,
-		renderer.graphicsPipelineForCubemapObjects.Get()
+		pipeline
 	);
 
 	if (ENABLE_DYNAMIC_VIEWPORT) {

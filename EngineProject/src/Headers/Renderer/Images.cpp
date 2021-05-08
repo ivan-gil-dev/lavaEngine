@@ -24,6 +24,7 @@ void Engine::Img_Func_CreateImage(VkPhysicalDevice physicalDevice, VkDevice devi
 		imageCreateInfo.queueFamilyIndexCount = (uint32_t)0;
 		imageCreateInfo.pQueueFamilyIndices = VK_NULL_HANDLE;
 		imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		
 	}
 	
 
@@ -180,6 +181,8 @@ void Engine::Img_func_CopyBufferToCubemap(VkDevice device, VkQueue copyBufferQue
 	commandBuffer.FreeCommandBuffer(device, commandPool);
 }
 
+
+
 void Engine::DepthImage::CreateDepthImageView(VkDevice device) {
 	VkImageViewCreateInfo ImageViewCreateInfo{};
 	ImageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -216,7 +219,7 @@ void Engine::DepthImage::CreateDepthBuffer(VkDevice logicalDevice, VkQueue comma
 		VK_IMAGE_TILING_OPTIMAL,
 		VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
 		DepthFormat,
-		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT,
+		VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
 		Globals::gMSAAsamples,
 		(uint32_t)1,
 		VK_NULL_HANDLE
@@ -240,6 +243,8 @@ void Engine::DepthImage::CreateDepthBuffer(VkDevice logicalDevice, VkQueue comma
 		VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
 		subresourceRange
 	);
+
+
 }
 
 void Engine::DepthImage::Destroy(VkDevice device) {
@@ -255,6 +260,7 @@ VkFormat Engine::DepthImage::GetDepthFormat() {
 VkImage Engine::DepthImage::GetDepthImage() {
 	return vDepthImage;
 }
+
 
 VkImageView Engine::DepthImage::GetImageView() {
 	return DepthImageView;
@@ -644,4 +650,230 @@ void Engine::CubemapTexture::DestroyTexture(VkDevice device) {
 	vkDestroyImage(device, Image, nullptr);
 	vkDestroyImageView(device, ImageView, nullptr);
 	vkFreeMemory(device, ImageTextureMemory, nullptr);
+}
+
+void Engine::DepthImageShadowMap::CreateImageSampler(VkDevice device)
+{
+    VkSamplerCreateInfo samplerInfo{};
+    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+    samplerInfo.magFilter = VK_FILTER_NEAREST;
+    samplerInfo.minFilter = VK_FILTER_NEAREST;
+    samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+    samplerInfo.maxAnisotropy = 1.0f;
+    samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_WHITE;
+    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+    samplerInfo.mipLodBias = 0.0f;
+    samplerInfo.minLod = 0.0f;
+    samplerInfo.maxLod = 1.0f;
+
+
+    if (vkCreateSampler(device, &samplerInfo, nullptr, &DepthSampler) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create texture sampler!");
+    }
+}
+
+void Engine::DepthImageShadowMap::CreateDepthImageView(VkDevice device)
+{
+    VkImageViewCreateInfo ImageViewCreateInfo{};
+    ImageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    ImageViewCreateInfo.format = DepthFormat;
+    ImageViewCreateInfo.image = vDepthImage;
+    ImageViewCreateInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    ImageViewCreateInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+    ImageViewCreateInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+    ImageViewCreateInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+    ImageViewCreateInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+    ImageViewCreateInfo.subresourceRange.baseMipLevel = 0;
+    ImageViewCreateInfo.subresourceRange.levelCount = 1;
+    ImageViewCreateInfo.subresourceRange.baseArrayLayer = 0;
+    ImageViewCreateInfo.subresourceRange.layerCount = 1;
+    ImageViewCreateInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+
+    if (vkCreateImageView(device, &ImageViewCreateInfo, nullptr, &DepthImageView) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create Image View");
+    }
+}
+
+
+
+void Engine::DepthImageShadowMap::CreateDepthBuffer(VkDevice logicalDevice, VkQueue commandBufferQueue, 
+	VkPhysicalDevice physicalDevice, VkCommandPool commandPool, int swapchainImageViewCount, VkDescriptorPool pool, VkDescriptorSetLayout * pSetLayout)
+{
+
+	DescriptorSets.resize(100);
+	for (size_t i = 0; i < DescriptorSets.size(); i++)
+	{
+		DescriptorSets[i].resize(swapchainImageViewCount);
+
+		std::vector<VkDescriptorSetLayout> layouts(swapchainImageViewCount, *pSetLayout);
+
+
+		VkDescriptorSetAllocateInfo allocateInfo{};
+		allocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+		allocateInfo.descriptorPool = pool;
+		allocateInfo.descriptorSetCount = (uint32_t)layouts.size();
+		allocateInfo.pSetLayouts = layouts.data();
+
+
+		VkResult result = vkAllocateDescriptorSets(logicalDevice, &allocateInfo, DescriptorSets[i].data());
+		if (result != VK_SUCCESS) {
+			std::cout << result << std::endl;
+			throw std::runtime_error("Failed to allocate descriptor sets");
+		}
+	}
+        
+
+	b0_MVP.resize(100);
+	for (size_t i = 0; i < b0_MVP.size(); i++){
+
+		b0_MVP[i].resize(swapchainImageViewCount);
+
+		for (size_t j = 0; j < swapchainImageViewCount; j++){
+			b0_MVP[i][j].CreateUniformBuffer(physicalDevice, logicalDevice, sizeof(DataTypes::MVP_t));
+		}
+		
+	}
+
+	for (size_t i = 0; i < DescriptorSets.size(); i++)
+	{
+        std::vector<VkWriteDescriptorSet> writeDescriptorSets;
+        for (size_t j = 0; j < DescriptorSets[i].size(); j++)
+        {
+            std::vector<VkDescriptorBufferInfo> bufferInfos;
+
+            VkDescriptorBufferInfo bufferInfo{};
+            bufferInfo.buffer = b0_MVP[i][j].Get();
+            bufferInfo.offset = 0;
+            bufferInfo.range = sizeof(DataTypes::MVP_t);
+            bufferInfos.push_back(bufferInfo);
+
+
+            VkWriteDescriptorSet mvpWriteDescriptorSet{};
+            mvpWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+            mvpWriteDescriptorSet.descriptorCount = 1;
+            mvpWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            mvpWriteDescriptorSet.dstSet = DescriptorSets[i][j];
+            mvpWriteDescriptorSet.dstBinding = 0;
+            mvpWriteDescriptorSet.dstArrayElement = 0;
+            mvpWriteDescriptorSet.pBufferInfo = bufferInfos.data();
+
+            writeDescriptorSets.push_back(mvpWriteDescriptorSet);
+
+            vkUpdateDescriptorSets(logicalDevice, (uint32_t)writeDescriptorSets.size(), writeDescriptorSets.data(), 0, nullptr);
+            writeDescriptorSets.resize(0);
+        }
+	}
+
+    DepthFormat = VK_FORMAT_D16_UNORM;
+	ShadowMapDimensions = 2048;
+
+    Img_Func_CreateImage(
+        physicalDevice,
+        logicalDevice,
+        vDepthImage,
+        DepthImageMemory,
+		ShadowMapDimensions,
+		ShadowMapDimensions,
+        VK_IMAGE_TILING_OPTIMAL,
+        VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
+        DepthFormat,
+        VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_SAMPLED_BIT,
+        VK_SAMPLE_COUNT_1_BIT,
+        (uint32_t)1,
+        VK_NULL_HANDLE
+    );
+
+    CreateDepthImageView(logicalDevice);
+
+    VkImageSubresourceRange subresourceRange{};
+    subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
+    subresourceRange.baseArrayLayer = 0;
+    subresourceRange.baseMipLevel = 0;
+    subresourceRange.layerCount = 1;
+    subresourceRange.levelCount = 1;
+	
+
+    Img_Func_TransitionImageLayout(
+        logicalDevice,
+        commandBufferQueue,
+        commandPool,
+        vDepthImage,
+        VK_IMAGE_LAYOUT_UNDEFINED,
+        VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL,
+        subresourceRange
+    );
+
+    CreateImageSampler(logicalDevice);
+}
+
+void Engine::DepthImageShadowMap::UpdateDescriptorSets(VkDevice device, std::vector<VulkanBuffers::UniformBuffer> UniformBuffers)
+{
+    
+}
+
+void Engine::DepthImageShadowMap::Destroy(VkDevice device,VkDescriptorPool pool)
+{
+	for (size_t i = 0; i < DescriptorSets.size(); i++){
+		vkFreeDescriptorSets(device, pool, DescriptorSets[i].size(), DescriptorSets[i].data());
+	}
+	
+	for (size_t i = 0; i < b0_MVP.size(); i++){
+		for (size_t j = 0; j < b0_MVP[i].size(); j++){
+			b0_MVP[i][j].Destroy(device);
+		}		
+	}
+    vkDestroySampler(device, DepthSampler, nullptr);
+    vkDestroyImage(device, vDepthImage, nullptr);
+    vkFreeMemory(device, DepthImageMemory, nullptr);
+    vkDestroyImageView(device, DepthImageView, nullptr);
+}
+
+void Engine::DepthImageShadowMap::UpdateUniformBuffers(uint32_t imageIndex, VkDevice device, glm::vec3 lightPos, std::vector<DataTypes::MVP_t> MVPs)
+{
+        DataTypes::MVP_t mvp{};
+        void* data;
+        for (size_t i = 0; i < MVPs.size(); i++)
+        {
+            UpdateDescriptorSets(device, b0_MVP[i]);
+            vkMapMemory(device, b0_MVP[i][imageIndex].GetDeviceMemory(), 0, sizeof(DataTypes::MVP_t), 0, &data);
+            mvp.proj = glm::perspective(glm::radians(45.f), 1.0f, 1.0f, 96.f);
+            mvp.view = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0, 1, 0));
+            mvp.model = MVPs[i].model;
+            memcpy(data, &mvp, sizeof(DataTypes::MVP_t));
+            vkUnmapMemory(device, b0_MVP[i][imageIndex].GetDeviceMemory());
+		}
+}
+
+std::vector<VkDescriptorSet> Engine::DepthImageShadowMap::GetDescriptorSetsByIndex(int index)
+{
+	return DescriptorSets[index];
+}
+
+
+
+VkFormat Engine::DepthImageShadowMap::GetDepthFormat()
+{
+	return DepthFormat;
+}
+
+VkImage Engine::DepthImageShadowMap::GetDepthImage()
+{
+	return vDepthImage;
+}
+
+VkSampler Engine::DepthImageShadowMap::GetImageSampler()
+{
+	return DepthSampler;
+}
+
+VkImageView Engine::DepthImageShadowMap::GetImageView()
+{
+	return DepthImageView;
+}
+
+int Engine::DepthImageShadowMap::GetShadowMapDimensions()
+{
+	return ShadowMapDimensions;
 }

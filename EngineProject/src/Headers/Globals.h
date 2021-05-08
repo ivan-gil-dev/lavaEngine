@@ -57,8 +57,8 @@ namespace Engine{
         extern BulletPhysicsGlobalObjects bulletPhysicsGlobalObjects;
 
 
-		#define MAX_SPOTLIGHTS 10
-		#define MAX_DLIGHTS 5
+		#define MAX_SPOTLIGHTS 100
+		#define MAX_DLIGHTS 20
 		#define MAX_FRAMES 2
 
 		extern bool  gToggleFullscreen;

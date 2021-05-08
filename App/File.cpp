@@ -23,34 +23,69 @@ void Engine::Scene::Demo(){
 	entities.push_back(cubemapObject);
 
     for (size_t i = 1; i < 40; i++) {
-        GameObject* box = new GameObject;
-        box->AddComponent<Mesh>();
-        box->AddComponent<RigidBody>();
 
-        mesh = box->pGetComponent<Mesh*>();
-        rigidBody = box->pGetComponent<RigidBody*>();
+        if (i == 1)
+        {
+            GameObject* box = new GameObject;
+            box->AddComponent<Mesh>();
+            box->AddComponent<RigidBody>();
 
-        mesh->CreateMesh("CoreAssets/AtlasCube.obj");
+            mesh = box->pGetComponent<Mesh*>();
+            rigidBody = box->pGetComponent<RigidBody*>();
 
-        rigidBody->CreateRigidBody(
-            RIGIDBODY_SHAPE_TYPE_CUBE,
-            Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
-            (int)box
-        );
+            mesh->CreateMesh("CoreAssets/sphere.obj");
 
-        rigidBody->SetRestitution(2.0f);
-        rigidBody->SetRigidbodyScale(glm::vec3(1.5f, 1.5f, 1.5f));
+            rigidBody->CreateRigidBody(
+                RIGIDBODY_SHAPE_TYPE_SPHERE,
+                Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
+                (int)box
+            );
 
-        box->Transform.Translate(glm::vec3(i * 3, i * 3, i * 3));
-        box->Transform.Rotate(glm::vec3(0.1f, 90.1f, 15.1f));
+            rigidBody->SetRestitution(2.0f);
+            rigidBody->SetRigidbodyScale(glm::vec3(1.5f, 1.5f, 1.5f));
 
-        box->SetID((int)box);
-        box->SetName("box1");
+            box->Transform.Translate(glm::vec3(i * 3, i * 3, i * 3));
+            box->Transform.Rotate(glm::vec3(0.1f, 90.1f, 15.1f));
 
-        box->Transform.Scale(glm::vec3(1.5f, 1.5f, 1.5f));
+            box->SetID((int)box);
+            box->SetName("box1");
 
-        box->ApplyEntityTransformToRigidbody();
-        entities.push_back(box);
+            box->Transform.Scale(glm::vec3(1.5f, 1.5f, 1.5f));
+
+            box->ApplyEntityTransformToRigidbody();
+            entities.push_back(box);
+        }
+        else {
+            GameObject* box = new GameObject;
+            box->AddComponent<Mesh>();
+            box->AddComponent<RigidBody>();
+
+            mesh = box->pGetComponent<Mesh*>();
+            rigidBody = box->pGetComponent<RigidBody*>();
+
+            mesh->CreateMesh("CoreAssets/AtlasCube.obj");
+
+            rigidBody->CreateRigidBody(
+                RIGIDBODY_SHAPE_TYPE_CUBE,
+                Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
+                (int)box
+            );
+
+            rigidBody->SetRestitution(2.0f);
+            rigidBody->SetRigidbodyScale(glm::vec3(1.5f, 1.5f, 1.5f));
+
+            box->Transform.Translate(glm::vec3(i * 3, i * 3, i * 3));
+            box->Transform.Rotate(glm::vec3(0.1f, 90.1f, 15.1f));
+
+            box->SetID((int)box);
+            box->SetName("box1");
+
+            box->Transform.Scale(glm::vec3(1.5f, 1.5f, 1.5f));
+
+            box->ApplyEntityTransformToRigidbody();
+            entities.push_back(box);
+        }
+       
     }
 
     GameObject* gameObject2 = new Floor;
@@ -69,7 +104,7 @@ void Engine::Scene::Demo(){
     gameObject2->SetID((int)gameObject2);
     gameObject2->SetName("Arena");
 
-    gameObject2->Transform.Scale(glm::vec3(70.0f,70.0f, 70.0f));
+    gameObject2->Transform.Scale(glm::vec3(25.0f,25.0f, 25.0f));
 
     rigidBody->SetMass(0.0f);
     rigidBody->SetRigidbodyScale(gameObject2->Transform.GetScaleValue());
@@ -104,7 +139,7 @@ void Engine::Scene::Demo(){
 	directionalLightAttributes.push_back(dlight2->pGetDirectionalLightUniformData());
 
     PointLightObject* pointLight = new PointLightObject;
-    pointLight->Transform.Translate(glm::vec3(-50.0f, 3.0f, 2.0f));
+    pointLight->Transform.Translate(glm::vec3(1.0f, 77.0f, 0.0f));
     pointLight->SetID((int)pointLight);
     entities.push_back(pointLight);
 

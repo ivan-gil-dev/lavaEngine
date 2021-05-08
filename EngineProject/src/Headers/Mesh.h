@@ -33,6 +33,8 @@ namespace Engine{
 		std::unordered_map<DataTypes::MeshVertex_t, uint32_t> UniqueVertices{};
 
 		VulkanBuffers::VertexBuffer					    VertexBuffer;
+		VulkanBuffers::VertexBuffer						ShadowMapBuffer;
+
 
 		DataTypes::MVP_t								MVP{};
 
@@ -41,6 +43,7 @@ namespace Engine{
 		std::vector<VkDescriptorSet>				    DescriptorSets;
 	private:
 		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMVP_b0;
+		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersLightSpace_b1;
 
 		std::vector<Texture>							DiffuseTextures_b1;
 		std::vector<Texture>							SpecularTextures_b6;
@@ -57,6 +60,8 @@ namespace Engine{
 			VkDescriptorPool descriptorPoolForGameObjects, std::vector<VkImageView> swapchainImageViews);
 
 		public:
+
+			
 		bool IsMeshCreated() {
 			return IsCreated;
 		}
@@ -64,6 +69,8 @@ namespace Engine{
 		bool IsMaterialsFound() {
 				return MaterialsFound;
 		}
+
+		DataTypes::MVP_t *pGetMVP();
 
 		std::string pGetMeshPath();
 
@@ -73,7 +80,9 @@ namespace Engine{
 
 		void SetMaterial(DataTypes::Material_t mat);
 	
-		void Draw(VkCommandBuffer commandBuffer, int imageIndex);
+		void Draw(VkCommandBuffer commandBuffer, int imageIndex, VkPipeline pipeline);
+
+		void DrawShadowMaps(VkCommandBuffer commandBuffer, int imageIndex, std::vector<VkDescriptorSet>& pDescriptorSets);
 
 		void CreateMesh(std::string modelPath);
 
@@ -110,7 +119,7 @@ namespace Engine{
 
 		Transform Transform;
 
-		void Draw(VkCommandBuffer commandBuffer, int imageIndex);
+		void Draw(VkCommandBuffer commandBuffer, int imageIndex, VkPipeline pipeline);
 
 		std::vector<DataTypes::WireframeMeshVertex_t> GetVertices();
 
@@ -145,7 +154,7 @@ namespace Engine{
 
 		void CreateCubemapMesh(std::vector<std::string> paths);
 
-		void Draw(VkCommandBuffer commandBuffer, int imageIndex);
+		void Draw(VkCommandBuffer commandBuffer, int imageIndex, VkPipeline pipeline);
 
 		void UpdateUniforms(uint32_t imageIndex, VkDevice device, DataTypes::ViewProjection_t viewProjection);
 
