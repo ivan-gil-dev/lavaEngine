@@ -7,7 +7,6 @@ namespace Engine{
 	//Буфер для хранения команд
 	class CommandBuffer{
 		VkCommandBuffer vCommandBuffer;
-		bool free = false;
 		public:
 		void AllocateCommandBuffer(VkDevice device, VkCommandPool commandPool){ 
 			VkCommandBufferAllocateInfo allocInfo{};
@@ -54,18 +53,19 @@ namespace Engine{
 
 		void FreeCommandBuffer(VkDevice device, VkCommandPool commandPool){ //<Освободить буфер>
 		
-			if (!free)
+			if (vCommandBuffer!=VK_NULL_HANDLE)
 			{
 				vkFreeCommandBuffers(device, commandPool, 1, &vCommandBuffer);
+				vCommandBuffer = VK_NULL_HANDLE;
 			}
-			free = true;
+			
 		}
 
 		void EndCommandBuffer() {
 			if (vkEndCommandBuffer(vCommandBuffer) != VK_SUCCESS) {
 				throw std::runtime_error("Failed to record command buffer");
 			}
-			free = false;
+			
 		}
 
 	public:
