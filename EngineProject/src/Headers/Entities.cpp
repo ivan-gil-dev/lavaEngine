@@ -139,6 +139,20 @@ Engine::EditorCamera::EditorCamera()
     }
 }
 
+void Engine::EditorCamera::Reset()
+{
+    CameraPos = glm::vec3(0.0f, 6.0f, -15.0f);
+    CameraFront = glm::vec3(0.0f, -2.0f, -1.0f);
+    CameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+    Yaw = 90.0f;
+    Pitch = -30.0f;
+    glm::vec3 direction;
+    direction.x = glm::cos(glm::radians((float)Yaw)) * glm::cos(glm::radians((float)Pitch));
+    direction.y = glm::sin(glm::radians((float)Pitch));
+    direction.z = glm::sin(glm::radians((float)Yaw)) * glm::cos(glm::radians((float)Pitch));
+    CameraFront = glm::normalize(direction);
+}
+
 void Engine::EditorCamera::Update()
 {
     MouseUpdate();

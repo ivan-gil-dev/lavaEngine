@@ -80,7 +80,7 @@ namespace Engine{
 		struct PointLightAttributes_t {
 			glm::vec3 lightPosition;
 			alignas(16) glm::vec3 lightColor;
-			alignas(32) float ambient;
+			alignas(32)float ambient;
 			
 			float diffuse;
 			float specular;
@@ -96,6 +96,9 @@ namespace Engine{
 
 		struct Material_t {
 			float shininess;
+            float metallic;
+            float roughness;
+            float ao;
 		};
 
 		struct ViewProjection_t {

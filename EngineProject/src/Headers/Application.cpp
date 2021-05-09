@@ -1,7 +1,7 @@
 #include "Application.h"
 #include <shobjidl.h> 
 #include <algorithm>
-
+#include "Renderer/Renderer.h"
 #include <Shlwapi.h>
 //Подготовка ImGui
 
@@ -150,6 +150,91 @@ std::string WinApiSaveDialog() {
 	return result;
 }
 
+LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+    //Обработка оконных событий в ImGui
+    if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam))
+        return true;
+
+    switch (msg) {
+    case WM_SYSKEYDOWN:
+
+        if ((HIWORD(lparam) & 0x4000) == 0) {
+            Engine::Globals::keyPressedEventHandler.ProcessKeyDownEvent(wparam, lparam);
+        }
+
+        MSG m;
+        m = {};
+        m.hwnd = hwnd;
+        m.message = msg;
+
+        PeekMessage(&m, NULL, WM_SYSCHAR, WM_SYSCHAR, PM_REMOVE);
+
+        return ::DefWindowProc(hwnd, msg, wparam, lparam);
+        break;
+
+    case WM_SYSKEYUP:
+        Engine::Globals::keyPressedEventHandler.ProcessKeyUpEvent(wparam, lparam);
+        return true;
+        break;
+
+    case WM_KEYDOWN:
+        if ((HIWORD(lparam) & 0x4000) == 0) {
+            Engine::Globals::keyPressedEventHandler.ProcessKeyDownEvent(wparam, lparam);
+        }
+
+        return true;
+        break;
+
+    case WM_CHAR:
+        if (wparam == VK_RETURN) {
+            return 0;
+        }
+        break;
+
+    case WM_KEYUP:
+        Engine::Globals::keyPressedEventHandler.ProcessKeyUpEvent(wparam, lparam);
+        return true;
+        break;
+
+    case WM_SIZE:
+        //std::cout << "CALL TO WM_SIZE" << wparam << std::endl;
+
+        if (Engine::renderer.device.Get() != VK_NULL_HANDLE) {
+            Engine::renderer.recreateSwapchain();
+        }
+
+        return true;
+        break;
+
+        /*	case WM_MOVING:
+                    if (Engine::renderer.device.Get() != VK_NULL_HANDLE) {
+                        Engine::renderer.recreateSwapchain();
+                    }
+                    break;*/
+
+    case WM_SIZING:
+        if (Engine::renderer.device.Get() != VK_NULL_HANDLE) {
+            Engine::renderer.recreateSwapchain();
+        }
+
+        return true;
+
+        break;
+
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        return 0;
+        break;
+
+    case WM_MOUSEMOVE:
+        Engine::Globals::mouseMoveEventHandler.SetCursorPos(LOWORD(lparam), HIWORD(lparam));
+        return true;
+        break;
+
+    }
+    return ::DefWindowProc(hwnd, msg, wparam, lparam);
+}
 
 void SceneEditor::InitEditor(HWND hwnd) {
 
@@ -236,18 +321,21 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 				{
 					SelectedItem_ID = -1;
 					Engine::Globals::gScene->New();
+					editorCamera.Reset();
 				}
 
 
 				ImGui::MenuItem(u8"Open", "", &OpenFileDialog);
 				if (OpenFileDialog){
 					SelectedItem_ID = -1;
+					Engine::renderer.FlushDrawingBuffer();
 					std::string path = WinApiOpenDialog();
                     if (path!="")
                     {
                         spdlog::info("Loading...");
                         std::cout << path << std::endl;
                         Engine::Globals::gScene->Load(path);
+						editorCamera.Reset();
                         spdlog::info("Done!");
                     }
 					
@@ -339,6 +427,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 				ImGui::MenuItem(u8"Skybox", "", &Engine::Globals::gShowSkybox);
 				ImGui::MenuItem(u8"Mesh", "", &Engine::Globals::gShowMeshes);
 				ImGui::MenuItem(u8"Rigidbody Mesh", "", &Engine::Globals::gShowRigidbodyMeshes);
+				ImGui::MenuItem(u8"Draw Shadows", "", &Engine::Globals::gDrawShadows);
 				ImGui::EndMenu(); //Конец меню
 			}
 		ImGui::EndMainMenuBar(); //Конец менюбара
@@ -374,7 +463,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 				}
 
 				if (ImGui::IsItemClicked()) {
-					SelectedItem_ID = i;
+					SelectedItem_ID = (int)i;
 					spdlog::info("Object with ID {:08d} is selected", Entities.at(i)->GetID());
 
 					//Получение ID выбранного объекта
@@ -383,7 +472,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 				}
 				if (ImGui::IsItemClicked(1))
 				{
-					SelectedItem_ID = i;
+					SelectedItem_ID = (int)i;
 					ImGui::OpenPopup("Popup");
 				}
 			}
@@ -531,7 +620,8 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                     float mass;
                     float friction;
                     float restitution;
-					
+					Engine::DataTypes::Material_t mat;
+
 					std::string name;
 					name = Entities.at(SelectedItem_ID)->GetName();
 					
@@ -566,7 +656,15 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 
                    if (((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>() != nullptr)
                    {
+					   mat = ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>()->GetMaterial();
 					   if (ImGui::CollapsingHeader(u8"Mesh")) {
+                           ImGui::DragFloat("Shininess", (float*)&mat.shininess, 0.1f, min, max);
+                           ImGui::DragFloat("Metallic", (float*)&mat.metallic, 0.1f, min, max);
+                           ImGui::DragFloat("Roughness", (float*)&mat.roughness, 0.1f, min, max);
+                           ImGui::DragFloat("Occlusion", (float*)&mat.ao, 0.1f, min, max);
+                           
+
+
                            if (((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>()->pGetMeshPath() != "")
                            {
                                ImGui::TextWrapped(((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>()->pGetMeshPath().c_str());
@@ -609,6 +707,10 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 							((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->SetRestitution(restitution);
                             ((Engine::GameObject*)Entities.at(SelectedItem_ID))->ApplyEntityTransformToRigidbody();
                         }
+						if (((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>() != nullptr)
+						{
+							((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>()->SetMaterial(mat);
+						}
                     }
 
 					if (((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>() == nullptr)

@@ -97,6 +97,8 @@ namespace Engine{
     public:
         EditorCamera();
 
+		void Reset();
+
         void Update();
     };
 

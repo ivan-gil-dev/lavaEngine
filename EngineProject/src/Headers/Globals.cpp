@@ -17,7 +17,7 @@ namespace Engine {
 		KeyPressedEventHandler keyPressedEventHandler;
 		MouseMoveEventHandler mouseMoveEventHandler;
 		ShowCursorEventHandler showCursorEventHandler;
-
+		bool  gDrawShadows = true;
 		bool  gToggleFullscreen = false;
 		bool  gShowMeshes = true;
 		bool  gShowRigidbodyMeshes = true;

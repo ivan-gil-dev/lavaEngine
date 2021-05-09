@@ -1,7 +1,6 @@
 {
  "Entities": [
   {
-   "Id": 0,
    "Name": "CubemapObect",
    "Type": "Cubemap",
    "CubemapPaths": [
@@ -31,11 +30,14 @@
    }
   },
   {
-   "Id": 1,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -67,11 +69,14 @@
    }
   },
   {
-   "Id": 2,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -103,11 +108,14 @@
    }
   },
   {
-   "Id": 3,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -139,11 +147,14 @@
    }
   },
   {
-   "Id": 4,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -175,11 +186,14 @@
    }
   },
   {
-   "Id": 5,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -211,11 +225,14 @@
    }
   },
   {
-   "Id": 6,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -247,11 +264,14 @@
    }
   },
   {
-   "Id": 7,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -283,11 +303,14 @@
    }
   },
   {
-   "Id": 8,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -319,11 +342,14 @@
    }
   },
   {
-   "Id": 9,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -355,11 +381,14 @@
    }
   },
   {
-   "Id": 10,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -391,11 +420,14 @@
    }
   },
   {
-   "Id": 11,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -427,11 +459,14 @@
    }
   },
   {
-   "Id": 12,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -463,11 +498,14 @@
    }
   },
   {
-   "Id": 13,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -499,11 +537,14 @@
    }
   },
   {
-   "Id": 14,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -535,11 +576,14 @@
    }
   },
   {
-   "Id": 15,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -571,11 +615,14 @@
    }
   },
   {
-   "Id": 16,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -607,11 +654,14 @@
    }
   },
   {
-   "Id": 17,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -643,11 +693,14 @@
    }
   },
   {
-   "Id": 18,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -679,11 +732,14 @@
    }
   },
   {
-   "Id": 19,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -715,11 +771,14 @@
    }
   },
   {
-   "Id": 20,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -751,11 +810,14 @@
    }
   },
   {
-   "Id": 21,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -787,11 +849,14 @@
    }
   },
   {
-   "Id": 22,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -823,11 +888,14 @@
    }
   },
   {
-   "Id": 23,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -859,11 +927,14 @@
    }
   },
   {
-   "Id": 24,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -895,11 +966,14 @@
    }
   },
   {
-   "Id": 25,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -931,11 +1005,14 @@
    }
   },
   {
-   "Id": 26,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -967,11 +1044,14 @@
    }
   },
   {
-   "Id": 27,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1003,11 +1083,14 @@
    }
   },
   {
-   "Id": 28,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1039,11 +1122,14 @@
    }
   },
   {
-   "Id": 29,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1075,11 +1161,14 @@
    }
   },
   {
-   "Id": 30,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1111,11 +1200,14 @@
    }
   },
   {
-   "Id": 31,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1147,11 +1239,14 @@
    }
   },
   {
-   "Id": 32,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1183,11 +1278,14 @@
    }
   },
   {
-   "Id": 33,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1219,11 +1317,14 @@
    }
   },
   {
-   "Id": 34,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1255,11 +1356,14 @@
    }
   },
   {
-   "Id": 35,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1291,11 +1395,14 @@
    }
   },
   {
-   "Id": 36,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1327,11 +1434,14 @@
    }
   },
   {
-   "Id": 37,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1363,11 +1473,14 @@
    }
   },
   {
-   "Id": 38,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1399,11 +1512,14 @@
    }
   },
   {
-   "Id": 39,
    "Name": "box1",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/AtlasCube.obj"
+    "Path": "CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
    },
    "Rigidbody": {
     "Mass": 1.0,
@@ -1435,11 +1551,14 @@
    }
   },
   {
-   "Id": 40,
    "Name": "Arena",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/ceramic.obj"
+    "Path": "CoreAssets/ceramic.obj",
+    "Shininess": 32.0,
+    "Roughness": 3.799999952316284,
+    "Metallic": 2.5,
+    "Occlusion": 0.0
    },
    "Rigidbody": {
     "Mass": 0.0,
@@ -1471,7 +1590,6 @@
    }
   },
   {
-   "Id": 41,
    "Name": "Directional Light",
    "Type": "DirectionalLight",
    "Direction": {
@@ -1506,7 +1624,6 @@
    }
   },
   {
-   "Id": 42,
    "Name": "Directional Light",
    "Type": "DirectionalLight",
    "Direction": {
@@ -1541,12 +1658,11 @@
    }
   },
   {
-   "Id": 43,
    "Name": "PointLight",
    "Type": "PointLight",
    "LightPosition": {
-    "X": -50.0,
-    "Y": 3.0,
+    "X": 0.0,
+    "Y": 472.0,
     "Z": 2.0
    },
    "LightColor": {
@@ -1562,8 +1678,8 @@
    "Specular": 1.0,
    "Transform": {
     "Position": {
-     "X": -50.0,
-     "Y": 3.0,
+     "X": 0.0,
+     "Y": 472.0,
      "Z": 2.0
     },
     "Scale": {
@@ -1579,7 +1695,6 @@
    }
   },
   {
-   "Id": 44,
    "Name": "PointLight",
    "Type": "PointLight",
    "LightPosition": {
@@ -1617,7 +1732,6 @@
    }
   },
   {
-   "Id": 45,
    "Name": "PointLight",
    "Type": "PointLight",
    "LightPosition": {
@@ -1655,7 +1769,6 @@
    }
   },
   {
-   "Id": 46,
    "Name": "PointLight",
    "Type": "PointLight",
    "LightPosition": {

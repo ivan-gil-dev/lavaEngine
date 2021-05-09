@@ -6,7 +6,8 @@
 namespace Engine{
 	//Буфер для хранения команд
 	class CommandBuffer{
-		VkCommandBuffer CommandBuffer;
+		VkCommandBuffer vCommandBuffer;
+		bool free = false;
 		public:
 		void AllocateCommandBuffer(VkDevice device, VkCommandPool commandPool){ 
 			VkCommandBufferAllocateInfo allocInfo{};
@@ -18,7 +19,7 @@ namespace Engine{
 			}
 
 			//Выделить командный буфер из пула
-			vkAllocateCommandBuffers(device, &allocInfo, &CommandBuffer);
+			vkAllocateCommandBuffers(device, &allocInfo, &vCommandBuffer);
 			
 		}
 
@@ -31,14 +32,14 @@ namespace Engine{
 			}
 
 			
-			if (vkBeginCommandBuffer(CommandBuffer, &beginInfo) != VK_SUCCESS) {
+			if (vkBeginCommandBuffer(vCommandBuffer, &beginInfo) != VK_SUCCESS) {
 				throw std::runtime_error("Failed to begin command buffer");
 			}
 		}
 
 		//Отправить буфер в очередь
 		void SubmitCommandBuffer(VkQueue queue){ 
-			VkCommandBuffer pCommandBuffers[] = { CommandBuffer };
+			VkCommandBuffer pCommandBuffers[] = { vCommandBuffer };
 			VkSubmitInfo submitInfo{};
 			{
 				submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -52,21 +53,24 @@ namespace Engine{
 		}
 
 		void FreeCommandBuffer(VkDevice device, VkCommandPool commandPool){ //<Освободить буфер>
-			if (CommandBuffer != VK_NULL_HANDLE){
-				vkFreeCommandBuffers(device, commandPool, 1, &CommandBuffer);
+		
+			if (!free)
+			{
+				vkFreeCommandBuffers(device, commandPool, 1, &vCommandBuffer);
 			}
-			
+			free = true;
 		}
 
 		void EndCommandBuffer() {
-			if (vkEndCommandBuffer(CommandBuffer) != VK_SUCCESS) {
+			if (vkEndCommandBuffer(vCommandBuffer) != VK_SUCCESS) {
 				throw std::runtime_error("Failed to record command buffer");
 			}
+			free = false;
 		}
 
 	public:
 		VkCommandBuffer Get() {
-			return CommandBuffer;
+			return vCommandBuffer;
 		}
 	};
 }

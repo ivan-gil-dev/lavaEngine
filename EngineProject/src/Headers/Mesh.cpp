@@ -33,7 +33,7 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 	auto& attrib = reader.GetAttrib();
 	auto& shapes = reader.GetShapes();
 	auto& materials = reader.GetMaterials();
-
+	
 	if (materials.size() == 0)
 	{
 		MaterialsFound = false;
@@ -50,7 +50,7 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
         {
 			Faces[i].diffuseMapPath = reader_config.mtl_search_path + materials[i].diffuse_texname;
 			Faces[i].specularMapPath = reader_config.mtl_search_path + materials[i].specular_texname;
-			Faces[i].MatID = i;
+			Faces[i].MatID = (short)i;
 		}
 	}
 	else {
@@ -355,7 +355,6 @@ void Engine::Mesh::CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout d
         shadowMapTextureInfo.sampler = renderer.depthImageShadowMap.GetImageSampler();
         shadowMapTextureInfo.imageLayout = VK_IMAGE_LAYOUT_DEPTH_STENCIL_READ_ONLY_OPTIMAL;
 
-
         VkWriteDescriptorSet shadowMapWriteDescriptorSet{};
         shadowMapWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         shadowMapWriteDescriptorSet.descriptorCount = 1;
@@ -458,7 +457,8 @@ void Engine::Mesh::DrawShadowMaps(VkCommandBuffer commandBuffer, int imageIndex,
 void Engine::Mesh::CreateMesh(std::string modelPath) {
 	if (!IsCreated)
 	{
-		Material = { 32.f };
+		Material = { 32.f, 1.0f,1.0f,0.05f };
+		
 		MeshPath = modelPath;
 
 		LoadModel(modelPath);
@@ -610,6 +610,7 @@ void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec
 void Engine::Mesh::Destroy() {
 	if (IsCreated)
 	{
+
 		Vertices.clear();
         Blank.DestroyTexture(renderer.device.Get());
 
@@ -626,6 +627,7 @@ void Engine::Mesh::Destroy() {
 
         for (size_t i = 0; i < UniformBuffersMVP_b0.size(); i++) {
             UniformBuffersMVP_b0[i].Destroy(renderer.device.Get());
+			UniformBuffersLightSpace_b1[i].Destroy(renderer.device.Get());
             UniformBuffersDebugCameraPos_b3[i].Destroy(renderer.device.Get());
             UniformBuffersMaterial_b4[i].Destroy(renderer.device.Get());
             UniformBuffersDirectionalLightAttributes_b5[i].Destroy(renderer.device.Get());

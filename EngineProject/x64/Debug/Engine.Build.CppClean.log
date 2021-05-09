@@ -19,13 +19,8 @@ g:\dev\cpp\winapi branch\engineproject\x64\debug\application.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\entrypoint.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\renderer.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\volk.obj
+g:\dev\cpp\winapi branch\engineproject\x64\debug\pipelines.obj
 g:\dev\cpp\winapi branch\x64\debug\engine.lib
-g:\dev\cpp\winapi branch\engineproject\x64\debug\application.new.obj.enc
-g:\dev\cpp\winapi branch\engineproject\x64\debug\entities.new.obj.enc
-g:\dev\cpp\winapi branch\engineproject\x64\debug\entrypoint.new.obj.enc
-g:\dev\cpp\winapi branch\engineproject\x64\debug\globals.new.obj.enc
-g:\dev\cpp\winapi branch\engineproject\x64\debug\mesh.new.obj.enc
-g:\dev\cpp\winapi branch\engineproject\x64\debug\renderer.new.obj.enc
 g:\dev\cpp\winapi branch\engineproject\x64\debug\engine.tlog\cl.command.1.tlog
 g:\dev\cpp\winapi branch\engineproject\x64\debug\engine.tlog\cl.read.1.tlog
 g:\dev\cpp\winapi branch\engineproject\x64\debug\engine.tlog\cl.write.1.tlog

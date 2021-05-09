@@ -811,7 +811,7 @@ void Engine::DepthImageShadowMap::UpdateDescriptorSets(VkDevice device, std::vec
 void Engine::DepthImageShadowMap::Destroy(VkDevice device,VkDescriptorPool pool)
 {
 	for (size_t i = 0; i < DescriptorSets.size(); i++){
-		vkFreeDescriptorSets(device, pool, DescriptorSets[i].size(), DescriptorSets[i].data());
+		vkFreeDescriptorSets(device, pool, (uint32_t)DescriptorSets[i].size(), DescriptorSets[i].data());
 	}
 	
 	for (size_t i = 0; i < b0_MVP.size(); i++){

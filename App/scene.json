@@ -1,0 +1,403 @@
+{
+ "Entities": [
+  {
+   "Name": "CubemapObect",
+   "Type": "Cubemap",
+   "CubemapPaths": [
+    "CoreAssets/skybox/right.jpg",
+    "CoreAssets/skybox/left.jpg",
+    "CoreAssets/skybox/top.jpg",
+    "CoreAssets/skybox/bottom.jpg",
+    "CoreAssets/skybox/front.jpg",
+    "CoreAssets/skybox/back.jpg"
+   ],
+   "Transform": {
+    "Position": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Name": "Plane",
+   "Type": "GameObject",
+   "Mesh": {
+    "Path": "CoreAssets/plane.obj",
+    "Shininess": 32.0,
+    "Roughness": 0.20000000298023224,
+    "Metallic": 13.0,
+    "Occlusion": 0.10000000149011612
+   },
+   "Rigidbody": {
+    "Mass": 0.0,
+    "Restitution": 0.5,
+    "Friction": 0.5,
+    "Scale": {
+     "X": 70.0,
+     "Y": 70.0,
+     "Z": 70.0
+    },
+    "ShapeType": "Plane"
+   },
+   "Transform": {
+    "Position": {
+     "X": 0.0,
+     "Y": -3.0,
+     "Z": 0.0
+    },
+    "Scale": {
+     "X": 70.0,
+     "Y": 70.0,
+     "Z": 70.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Name": "Directional Light",
+   "Type": "DirectionalLight",
+   "Direction": {
+    "X": 1.0,
+    "Y": -1.0,
+    "Z": 1.0
+   },
+   "Color": {
+    "R": 1.0,
+    "G": 1.0,
+    "B": 1.0
+   },
+   "Ambient": 1.0,
+   "Diffuse": 1.0,
+   "Specular": 1.0,
+   "Transform": {
+    "Position": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Name": "PointLight",
+   "Type": "PointLight",
+   "LightPosition": {
+    "X": 2.0,
+    "Y": 120.0,
+    "Z": 5.0
+   },
+   "LightColor": {
+    "R": 1.0,
+    "G": 1.0,
+    "B": 1.0
+   },
+   "Constant": 1.0,
+   "Linear": 0.09000000357627869,
+   "Quadrantic": 0.03200000151991844,
+   "Ambient": 16.0,
+   "Diffuse": 1.0,
+   "Specular": 1.0,
+   "Transform": {
+    "Position": {
+     "X": 2.0,
+     "Y": 120.0,
+     "Z": 5.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Name": "Game Object",
+   "Type": "GameObject",
+   "Mesh": {
+    "Path": "",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 1.0
+   },
+   "Transform": {
+    "Position": {
+     "X": -13.0,
+     "Y": 13.0,
+     "Z": 0.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Name": "Sphere",
+   "Type": "GameObject",
+   "Mesh": {
+    "Path": "./CoreAssets/sphere.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 0.10000000149011612
+   },
+   "Rigidbody": {
+    "Mass": 3.0,
+    "Restitution": 0.5,
+    "Friction": 0.5,
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "ShapeType": "Sphere"
+   },
+   "Transform": {
+    "Position": {
+     "X": 4.0,
+     "Y": 26.0,
+     "Z": 12.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Name": "Game Object",
+   "Type": "GameObject",
+   "Mesh": {
+    "Path": "",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 0.10000000149011612
+   },
+   "Rigidbody": {
+    "Mass": 0.0,
+    "Restitution": 0.5,
+    "Friction": 0.5,
+    "Scale": {
+     "X": 20.0,
+     "Y": 21.100000381469727,
+     "Z": 1.0
+    },
+    "ShapeType": "Cube"
+   },
+   "Transform": {
+    "Position": {
+     "X": -4.0,
+     "Y": 5.0,
+     "Z": 3.0
+    },
+    "Scale": {
+     "X": 20.0,
+     "Y": 21.100000381469727,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": -38.0,
+     "Y": 180.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Name": "Game Object",
+   "Type": "GameObject",
+   "Mesh": {
+    "Path": "",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 0.10000000149011612
+   },
+   "Rigidbody": {
+    "Mass": 1.0,
+    "Restitution": 0.5,
+    "Friction": 0.5,
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "ShapeType": "Cube"
+   },
+   "Transform": {
+    "Position": {
+     "X": 4.0,
+     "Y": -1.0,
+     "Z": -25.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Name": "Game Object",
+   "Type": "GameObject",
+   "Mesh": {
+    "Path": "./CoreAssets/AtlasCube.obj",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 0.10000000149011612
+   },
+   "Rigidbody": {
+    "Mass": 1.0,
+    "Restitution": 0.5,
+    "Friction": 3.0999999046325684,
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "ShapeType": "Cube"
+   },
+   "Transform": {
+    "Position": {
+     "X": 4.0,
+     "Y": 3.0,
+     "Z": -25.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Name": "Game Object",
+   "Type": "GameObject",
+   "Mesh": {
+    "Path": "",
+    "Shininess": 32.0,
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 0.10000000149011612
+   },
+   "Rigidbody": {
+    "Mass": 0.0,
+    "Restitution": 1.600000023841858,
+    "Friction": 4.5,
+    "Scale": {
+     "X": 14.0,
+     "Y": 1.0,
+     "Z": 11.0
+    },
+    "ShapeType": "Cube"
+   },
+   "Transform": {
+    "Position": {
+     "X": -3.0,
+     "Y": -1.0,
+     "Z": -6.0
+    },
+    "Scale": {
+     "X": 14.0,
+     "Y": 1.0,
+     "Z": 11.0
+    },
+    "Rotation": {
+     "X": -25.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Name": "PointLight",
+   "Type": "PointLight",
+   "LightPosition": {
+    "X": 48.0,
+    "Y": 0.0,
+    "Z": 0.0
+   },
+   "LightColor": {
+    "R": 1.0,
+    "G": 1.0,
+    "B": 1.0
+   },
+   "Constant": 1.0,
+   "Linear": 0.09000000357627869,
+   "Quadrantic": 0.03200000151991844,
+   "Ambient": 1.0,
+   "Diffuse": 1.0,
+   "Specular": 1.0,
+   "Transform": {
+    "Position": {
+     "X": 48.0,
+     "Y": 0.0,
+     "Z": 0.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  }
+ ]
+}

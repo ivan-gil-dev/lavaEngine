@@ -72,6 +72,9 @@
     <ClCompile Include="src\Headers\Scene.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="src\Headers\Renderer\Pipelines.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="vendor\volk.h">

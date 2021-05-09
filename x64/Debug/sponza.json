@@ -1,7 +1,6 @@
 {
  "Entities": [
   {
-   "Id": 0,
    "Name": "CubemapObect",
    "Type": "Cubemap",
    "CubemapPaths": [
@@ -31,11 +30,14 @@
    }
   },
   {
-   "Id": 1,
    "Name": "sponza",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/sponza/sponza.obj"
+    "Path": "CoreAssets/sponza/sponza.obj",
+    "Shininess": 32.0,
+    "Roughness": 0.4000000059604645,
+    "Metallic": 36.5,
+    "Occlusion": 0.009999999776482582
    },
    "Transform": {
     "Position": {
@@ -56,81 +58,10 @@
    }
   },
   {
-   "Id": 2,
-   "Name": "Directional Light",
-   "Type": "DirectionalLight",
-   "Direction": {
-    "X": 1.0,
-    "Y": -1.0,
-    "Z": 1.0
-   },
-   "Color": {
-    "R": 1.0,
-    "G": 1.0,
-    "B": 1.0
-   },
-   "Ambient": 1.0,
-   "Diffuse": 1.0,
-   "Specular": 1.0,
-   "Transform": {
-    "Position": {
-     "X": 0.0,
-     "Y": 0.0,
-     "Z": 0.0
-    },
-    "Scale": {
-     "X": 1.0,
-     "Y": 1.0,
-     "Z": 1.0
-    },
-    "Rotation": {
-     "X": 0.0,
-     "Y": 0.0,
-     "Z": 0.0
-    }
-   }
-  },
-  {
-   "Id": 3,
-   "Name": "Directional Light",
-   "Type": "DirectionalLight",
-   "Direction": {
-    "X": 0.25,
-    "Y": -1.0,
-    "Z": 0.25
-   },
-   "Color": {
-    "R": 0.20000000298023224,
-    "G": 0.20000000298023224,
-    "B": 0.20000000298023224
-   },
-   "Ambient": 1.0,
-   "Diffuse": 1.0,
-   "Specular": 1.0,
-   "Transform": {
-    "Position": {
-     "X": 0.0,
-     "Y": 0.0,
-     "Z": 0.0
-    },
-    "Scale": {
-     "X": 1.0,
-     "Y": 1.0,
-     "Z": 1.0
-    },
-    "Rotation": {
-     "X": 0.0,
-     "Y": 0.0,
-     "Z": 0.0
-    }
-   }
-  },
-  {
-   "Id": 4,
    "Name": "PointLight",
    "Type": "PointLight",
    "LightPosition": {
-    "X": 13.0,
+    "X": -223.0,
     "Y": 464.0,
     "Z": -460.0
    },
@@ -142,12 +73,12 @@
    "Constant": 1.0,
    "Linear": 0.0010000000474974513,
    "Quadrantic": 0.03200000151991844,
-   "Ambient": 297.0,
-   "Diffuse": 1.0,
-   "Specular": 1.0,
+   "Ambient": 4.0,
+   "Diffuse": 6.0,
+   "Specular": 8.0,
    "Transform": {
     "Position": {
-     "X": 13.0,
+     "X": -223.0,
      "Y": 464.0,
      "Z": -460.0
     },
@@ -164,12 +95,11 @@
    }
   },
   {
-   "Id": 5,
    "Name": "PointLight",
    "Type": "PointLight",
    "LightPosition": {
-    "X": -227.0,
-    "Y": 353.0,
+    "X": -197.0,
+    "Y": 356.0,
     "Z": -210.0
    },
    "LightColor": {
@@ -180,13 +110,13 @@
    "Constant": 1.0,
    "Linear": 0.0010000000474974513,
    "Quadrantic": 0.03200000151991844,
-   "Ambient": 305.0,
+   "Ambient": 65.0,
    "Diffuse": 1.0,
    "Specular": 1.0,
    "Transform": {
     "Position": {
-     "X": -227.0,
-     "Y": 353.0,
+     "X": -197.0,
+     "Y": 356.0,
      "Z": -210.0
     },
     "Scale": {
@@ -202,7 +132,6 @@
    }
   },
   {
-   "Id": 6,
    "Name": "PointLight",
    "Type": "PointLight",
    "LightPosition": {
@@ -218,8 +147,8 @@
    "Constant": 1.0,
    "Linear": 0.0010000000474974513,
    "Quadrantic": 0.03200000151991844,
-   "Ambient": 303.0,
-   "Diffuse": 1.0,
+   "Ambient": 4.0,
+   "Diffuse": 159.0,
    "Specular": 1.0,
    "Transform": {
     "Position": {
@@ -240,7 +169,6 @@
    }
   },
   {
-   "Id": 7,
    "Name": "PointLight",
    "Type": "PointLight",
    "LightPosition": {
@@ -256,8 +184,8 @@
    "Constant": 1.0,
    "Linear": 9.999999747378752e-05,
    "Quadrantic": 0.03200000151991844,
-   "Ambient": 298.0,
-   "Diffuse": 1.0,
+   "Ambient": 35.0,
+   "Diffuse": 41.0,
    "Specular": 1.0,
    "Transform": {
     "Position": {

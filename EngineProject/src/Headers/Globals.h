@@ -65,6 +65,7 @@ namespace Engine{
 		extern bool  gShowMeshes;
 		extern bool  gShowRigidbodyMeshes;
 		extern bool  gShowSkybox;
+        extern bool  gDrawShadows;
 		extern int   gHeight,
 					 gWidth;
 		extern bool  gIsScenePlaying;

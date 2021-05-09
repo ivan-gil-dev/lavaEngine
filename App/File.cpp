@@ -38,9 +38,9 @@ void Engine::Scene::Demo(){
             rigidBody->CreateRigidBody(
                 RIGIDBODY_SHAPE_TYPE_SPHERE,
                 Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
-                (int)box
+                reinterpret_cast<int>(box)
             );
-
+            
             rigidBody->SetRestitution(2.0f);
             rigidBody->SetRigidbodyScale(glm::vec3(1.5f, 1.5f, 1.5f));
 
@@ -77,7 +77,7 @@ void Engine::Scene::Demo(){
             box->Transform.Translate(glm::vec3(i * 3, i * 3, i * 3));
             box->Transform.Rotate(glm::vec3(0.1f, 90.1f, 15.1f));
 
-            box->SetID((int)box);
+            box->SetID(reinterpret_cast<int>(box));
             box->SetName("box1");
 
             box->Transform.Scale(glm::vec3(1.5f, 1.5f, 1.5f));
@@ -98,10 +98,10 @@ void Engine::Scene::Demo(){
     mesh->CreateMesh("CoreAssets/ceramic.obj");
     rigidBody->CreateRigidBody(RIGIDBODY_SHAPE_TYPE_PLANE,
         Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
-        (int)gameObject2
+        reinterpret_cast<int>(gameObject2)
     );
 
-    gameObject2->SetID((int)gameObject2);
+    gameObject2->SetID(reinterpret_cast<int>(gameObject2));
     gameObject2->SetName("Arena");
 
     gameObject2->Transform.Scale(glm::vec3(228.0f,25.0f, 329.0f));
@@ -114,7 +114,7 @@ void Engine::Scene::Demo(){
     entities.push_back(gameObject2);
 
     GameObject* obj = new GameObject;
-    obj->SetID((int)obj);
+    obj->SetID(reinterpret_cast<int>(obj));
     obj->SetName("Test");
     entities.push_back(obj);
 
@@ -122,7 +122,7 @@ void Engine::Scene::Demo(){
     dlight->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(1, -1, 1);
     dlight->pGetDirectionalLightUniformData()->lightColor = glm::vec3(1, 1, 1);
 
-    dlight->SetID((int)dlight);
+    dlight->SetID(reinterpret_cast<int>(dlight));
     entities.push_back(dlight);
     directionalLightAttributes.push_back(dlight->pGetDirectionalLightUniformData());
 
@@ -131,7 +131,7 @@ void Engine::Scene::Demo(){
     dlight2->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(0.25, -1, 0.25);
     dlight2->pGetDirectionalLightUniformData()->lightColor = glm::vec3(0.2, 0.2, 0.2);
 
-    dlight2->SetID((int)dlight2);
+    dlight2->SetID(reinterpret_cast<int>(dlight2));
     entities.push_back(dlight2);
 
 
@@ -140,22 +140,22 @@ void Engine::Scene::Demo(){
 
     PointLightObject* pointLight = new PointLightObject;
     pointLight->Transform.Translate(glm::vec3(1.0f, 585.0f, 0.0f));
-    pointLight->SetID((int)pointLight);
+    pointLight->SetID(reinterpret_cast<int>(pointLight));
     entities.push_back(pointLight);
 
     PointLightObject* pointLight2 = new PointLightObject;
     pointLight2->Transform.Translate(glm::vec3(25.0f, 3.0f, 13.0f));
-    pointLight2->SetID((int)pointLight2);
+    pointLight2->SetID(reinterpret_cast<int>(pointLight2));
     entities.push_back(pointLight2);
 
     PointLightObject* pointLight3 = new PointLightObject;
     pointLight3->Transform.Translate(glm::vec3(50.0f, 3.0f, 13.0f));
-    pointLight3->SetID((int)pointLight3);
+    pointLight3->SetID(reinterpret_cast<int>(pointLight3));
     entities.push_back(pointLight3);
 
     PointLightObject* pointLight4 = new PointLightObject;
     pointLight4->Transform.Translate(glm::vec3(70.0f, 3.0f, 13.0f));
-    pointLight4->SetID((int)pointLight4);
+    pointLight4->SetID(reinterpret_cast<int>(pointLight4));
     entities.push_back(pointLight4);
 
 	pointLightAttributes.push_back(pointLight->pGetPointLightUniformData());

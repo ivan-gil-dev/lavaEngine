@@ -148,6 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Headers\Renderer\Pipelines.cpp" />
     <ClCompile Include="src\Headers\Renderer\Renderer.cpp" />
     <ClCompile Include="src\EntryPoint.cpp" />
     <ClCompile Include="src\Headers\Application.cpp" />

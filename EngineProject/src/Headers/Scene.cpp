@@ -1,5 +1,5 @@
 #include "Scene.h"
-
+#include "Renderer/Renderer.h"
 std::string Engine::Scene::GetScenePath()
 {
     return scenePath;
@@ -7,6 +7,7 @@ std::string Engine::Scene::GetScenePath()
 
 void Engine::Scene::Load(std::string path)
 {
+
     for (size_t i = 0; i < entities.size(); i++) {
         delete entities[i];
     }
@@ -45,6 +46,12 @@ void Engine::Scene::Load(std::string path)
                 ((GameObject*)entity)->AddComponent<Mesh>();
                 Mesh* mesh = ((GameObject*)entity)->pGetComponent<Mesh*>();
                 mesh->CreateMesh(entityJson["Mesh"]["Path"]);
+                DataTypes::Material_t mat;
+                mat.shininess = entityJson["Mesh"].value("Shininess", 80.0f);
+                mat.roughness = entityJson["Mesh"].value("Roughness", 1.0f);
+                mat.metallic = entityJson["Mesh"].value("Metallic", 1.0f);
+                mat.ao = entityJson["Mesh"].value("Occlusion", 1.0f);
+                mesh->SetMaterial(mat);
             }
 
             if (entityJson.count("Rigidbody") != 0) {
@@ -253,6 +260,11 @@ void Engine::Scene::SaveAs(std::string path)
             Mesh* mesh = ((GameObject*)entities[i])->pGetComponent<Mesh*>();
             if (mesh != nullptr) {
                 sceneJson["Entities"][i]["Mesh"]["Path"] = mesh->pGetMeshPath();
+                DataTypes::Material_t mat = mesh->GetMaterial();
+                sceneJson["Entities"][i]["Mesh"]["Shininess"] = mat.shininess;
+                sceneJson["Entities"][i]["Mesh"]["Roughness"] = mat.roughness;
+                sceneJson["Entities"][i]["Mesh"]["Metallic"]  = mat.metallic;
+                sceneJson["Entities"][i]["Mesh"]["Occlusion"] = mat.ao;
             }
             RigidBody* rigidBody = ((GameObject*)entities[i])->pGetComponent<RigidBody*>();
             if (rigidBody != nullptr) {

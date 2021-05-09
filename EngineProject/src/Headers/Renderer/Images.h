@@ -12,7 +12,7 @@
 #include	"CommandBuffer.h"
 
 namespace Engine{
-	#define MAX_MATERIALS 64
+	#define MAX_MATERIALS 256
 
 	//Создание изображения
 	void Img_Func_CreateImage(VkPhysicalDevice physicalDevice, VkDevice device, VkImage& image,
