@@ -320,6 +320,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 				if (ImGui::MenuItem("New"))
 				{
 					SelectedItem_ID = -1;
+					Engine::renderer.FlushDrawingBuffer();
 					Engine::Globals::gScene->New();
 					editorCamera.Reset();
 				}
