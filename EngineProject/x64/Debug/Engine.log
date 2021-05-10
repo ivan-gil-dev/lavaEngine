@@ -1,13 +1,13 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(519,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (Lava.vcxproj).  Это может привести к ошибкам очистки и перестроения.
   Application.cpp
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(550,40): warning C4311: приведение типов: усечение указателя из "Engine::GameObject *" в "int"
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(550,40): warning C4302: приведение типов: усечение из "Engine::GameObject *" к "int"
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(555,81): warning C4316: "Engine::PointLightObject": объект, размещенный в куче, может не быть выровнен 32
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(557,40): warning C4311: приведение типов: усечение указателя из "Engine::PointLightObject *" в "int"
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(557,40): warning C4302: приведение типов: усечение из "Engine::PointLightObject *" к "int"
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(564,93): warning C4316: "Engine::DirectionalLightObject": объект, размещенный в куче, может не быть выровнен 32
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(569,40): warning C4311: приведение типов: усечение указателя из "Engine::DirectionalLightObject *" в "int"
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(569,40): warning C4302: приведение типов: усечение из "Engine::DirectionalLightObject *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(553,40): warning C4311: приведение типов: усечение указателя из "Engine::GameObject *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(553,40): warning C4302: приведение типов: усечение из "Engine::GameObject *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(558,81): warning C4316: "Engine::PointLightObject": объект, размещенный в куче, может не быть выровнен 32
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(560,40): warning C4311: приведение типов: усечение указателя из "Engine::PointLightObject *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(560,40): warning C4302: приведение типов: усечение из "Engine::PointLightObject *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(567,93): warning C4316: "Engine::DirectionalLightObject": объект, размещенный в куче, может не быть выровнен 32
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(572,40): warning C4311: приведение типов: усечение указателя из "Engine::DirectionalLightObject *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(572,40): warning C4302: приведение типов: усечение из "Engine::DirectionalLightObject *" к "int"
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\include\xstring(2468,23): warning C4244: аргумент: преобразование "wchar_t" в "const _Elem", возможна потеря данных
           with
           [

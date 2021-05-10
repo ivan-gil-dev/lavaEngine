@@ -320,6 +320,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 				if (ImGui::MenuItem("New"))
 				{
 					SelectedItem_ID = -1;
+					vkQueueWaitIdle(Engine::renderer.device.GetGraphicsQueue());
 					Engine::renderer.FlushDrawingBuffer();
 					Engine::Globals::gScene->New();
 					editorCamera.Reset();
@@ -329,6 +330,8 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 				ImGui::MenuItem(u8"Open", "", &OpenFileDialog);
 				if (OpenFileDialog){
 					SelectedItem_ID = -1;
+
+					vkQueueWaitIdle(Engine::renderer.device.GetGraphicsQueue());
 					Engine::renderer.FlushDrawingBuffer();
 					std::string path = WinApiOpenDialog();
                     if (path!="")
