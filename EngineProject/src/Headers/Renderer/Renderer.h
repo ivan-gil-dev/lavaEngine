@@ -55,7 +55,7 @@ namespace Engine {
         Swapchain swapchain;
         SyncObjects syncObjects;
         CommandPool commandPool;
-        std::vector<VkFence> imagesInFlight;
+        //std::vector<VkFence> imagesInFlight;
     public:
         RenderPass renderPass;
         GraphicsPipelineForMesh graphicsPipelineForMesh;
@@ -86,7 +86,7 @@ namespace Engine {
 
 #define MAX_FRAMES 2
         //  Буфер с коммандами для отрисовки сцены
-        CommandBuffer drawCommandBuffer;
+        std::vector<CommandBuffer> drawCommandBuffer;
 
         uint32_t imageIndex;
         uint32_t currentFrame = 0;

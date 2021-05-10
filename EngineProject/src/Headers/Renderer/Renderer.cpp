@@ -94,9 +94,6 @@ namespace Engine {
 
         swapchain.CreateImageViews(device.Get());
 
-        imagesInFlight.resize(swapchain.PGetImageViews()->size());
-
-
         commandPool.CreateCommandPool(physicalDevice.GetQueueIndices(),
             device.Get());
 
@@ -215,6 +212,12 @@ namespace Engine {
             depthImageShadowMap.GetImageView(),
             depthImageShadowMap.GetShadowMapDimensions()
         );
+
+        drawCommandBuffer.resize(swapchain.PGetImageViews()->size());
+        for (size_t i = 0; i < drawCommandBuffer.size(); i++)
+        {
+            drawCommandBuffer[i].AllocateCommandBuffer(device.Get(), commandPool.Get());
+        }
     }
 
     void Renderer::recreateSwapchain()
@@ -261,27 +264,22 @@ namespace Engine {
     void Renderer::DrawScene(ImDrawData* drawData, Scene* scene, Camera camera)
     {
         newNumberOfEntities = (int)scene->pGetVectorOfEntities()->size();
-
-        vkWaitForFences(device.Get(), 1, &syncObjects.GetFences()[currentFrame], VK_TRUE, UINT16_MAX);
+        vkWaitForFences(device.Get(), 1, &syncObjects.GetFences()[currentFrame], VK_TRUE, UINT64_MAX);
+        vkResetFences(device.Get(), 1, &syncObjects.GetFences()[currentFrame]);
+       
 
         VkResult result;
         result = vkAcquireNextImageKHR(
             device.Get(),
             swapchain.Get(),
-            UINT16_MAX,
+            UINT64_MAX,
             syncObjects.GetImageAvailableSemaphores()[currentFrame],
             VK_NULL_HANDLE,
             &imageIndex
         );
+        
 
-        if (imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
-            vkWaitForFences(device.Get(), 1, &imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
-            drawCommandBuffer.FreeCommandBuffer(device.Get(), commandPool.Get());
-        }
-
-        imagesInFlight[imageIndex] = syncObjects.GetFences()[currentFrame];
-
-        if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+        if (result == VK_ERROR_OUT_OF_DATE_KHR) { 
             recreateSwapchain();
             return;
         }
@@ -322,8 +320,8 @@ namespace Engine {
             depthImageShadowMap.UpdateUniformBuffers(imageIndex, device.Get(), glm::vec3(0, 0, 0), MVPs);
         }
 
-        drawCommandBuffer.AllocateCommandBuffer(device.Get(), commandPool.Get());
-        drawCommandBuffer.BeginCommandBuffer();
+        //drawCommandBuffer.AllocateCommandBuffer(device.Get(), commandPool.Get());
+        drawCommandBuffer[currentFrame].BeginCommandBuffer();
 
         //--------shadowmapping---------
         {
@@ -339,7 +337,7 @@ namespace Engine {
             renderPassBeginInfo.clearValueCount = 1;
             renderPassBeginInfo.pClearValues = values;
 
-            vkCmdBeginRenderPass(drawCommandBuffer.Get(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+            vkCmdBeginRenderPass(drawCommandBuffer[currentFrame].Get(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 
             VkViewport viewport{};
@@ -347,7 +345,7 @@ namespace Engine {
             viewport.width = (float)depthImageShadowMap.GetShadowMapDimensions();
             viewport.minDepth = 0;
             viewport.maxDepth = 1;
-            vkCmdSetViewport(drawCommandBuffer.Get(), 0, 1, &viewport);
+            vkCmdSetViewport(drawCommandBuffer[currentFrame].Get(), 0, 1, &viewport);
 
 
             VkRect2D rect{};
@@ -356,10 +354,10 @@ namespace Engine {
             rect.offset.x = 0;
             rect.offset.y = 0;
 
-            vkCmdSetScissor(drawCommandBuffer.Get(), 0, 1, &rect);
+            vkCmdSetScissor(drawCommandBuffer[currentFrame].Get(), 0, 1, &rect);
 
             vkCmdSetDepthBias(
-                drawCommandBuffer.Get(),
+                drawCommandBuffer[currentFrame].Get(),
                 5.05f,
                 0.0f,
                 1.75f);
@@ -375,7 +373,7 @@ namespace Engine {
                         {
                             std::vector<VkDescriptorSet> descriptorSets = depthImageShadowMap.GetDescriptorSetsByIndex((int)j);
                             ((GameObject*)entities->at(i))->DrawShadowMaps(
-                                drawCommandBuffer.Get(),
+                                drawCommandBuffer[currentFrame].Get(),
                                 imageIndex,
                                 descriptorSets
                             );
@@ -386,7 +384,7 @@ namespace Engine {
             }
 
 
-            vkCmdEndRenderPass(drawCommandBuffer.Get());
+            vkCmdEndRenderPass(drawCommandBuffer[currentFrame].Get());
             MVPs.clear();
             //-----------------------------------------------------------------------------------
         }
@@ -412,24 +410,24 @@ namespace Engine {
 
         renderPassBeginInfo.pClearValues = clearColors;
         renderPassBeginInfo.clearValueCount = 3;
-        vkCmdBeginRenderPass(drawCommandBuffer.Get(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+        vkCmdBeginRenderPass(drawCommandBuffer[currentFrame].Get(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
 
         for (size_t i = 0; i < entities->size(); i++) {
             entities->at(i)->Draw(
-                drawCommandBuffer.Get(),
+                drawCommandBuffer[currentFrame].Get(),
                 imageIndex
             );
         }
 
         if (ENABLE_IMGUI) {
-            ImGui_ImplVulkan_RenderDrawData(drawData, drawCommandBuffer.Get());
+            ImGui_ImplVulkan_RenderDrawData(drawData, drawCommandBuffer[currentFrame].Get());
         }
 
-        vkCmdEndRenderPass(drawCommandBuffer.Get());
+        vkCmdEndRenderPass(drawCommandBuffer[currentFrame].Get());
 
-        drawCommandBuffer.EndCommandBuffer();
+        drawCommandBuffer[currentFrame].EndCommandBuffer();
 
-        VkCommandBuffer commandBuffers[] = { drawCommandBuffer.Get() };
+        VkCommandBuffer commandBuffers[] = { drawCommandBuffer[currentFrame].Get() };
 
         VkSubmitInfo submitInfo = {};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
@@ -441,15 +439,15 @@ namespace Engine {
         submitInfo.signalSemaphoreCount = 1;
         submitInfo.pWaitDstStageMask = stages;
 
-        vkResetFences(device.Get(), 1, &syncObjects.GetFences()[currentFrame]);
-
-        if (vkQueueSubmit(device.GetGraphicsQueue(), 1, &submitInfo, syncObjects.GetFences()[currentFrame]) != VK_SUCCESS) {
-            throw std::runtime_error("Failed to submit info");
-        }
-
         
 
-       
+        if (vkQueueSubmit(device.GetGraphicsQueue(), 1, &submitInfo, syncObjects.GetFences()[currentFrame]) != VK_SUCCESS) {
+            
+            spdlog::warn(("Failed to submit info while drawing!"));
+            return;
+        }
+
+       // vkWaitForFences(device.Get(), 1, &syncObjects.GetFences()[currentFrame], VK_TRUE, UINT64_MAX);
 
         VkPresentInfoKHR presentInfo = {};
         presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -473,16 +471,25 @@ namespace Engine {
 
     void Renderer::FlushDrawingBuffer()
     {
+        imageIndex = 0;
+        currentFrame = 0;
 
-        vkWaitForFences(device.Get(), 1, &imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
-        drawCommandBuffer.FreeCommandBuffer(device.Get(), commandPool.Get());
+        vkWaitForFences(device.Get(), (uint32_t)syncObjects.GetFences().size(), syncObjects.GetFences().data(), VK_TRUE, UINT64_MAX);
+        //drawCommandBuffer.FreeCommandBuffer(device.Get(), commandPool.Get());
+
+       
+ 
         
     }
 
     void Renderer::clear()
-    {
-        //drawCommandBuffer.FreeCommandBuffer(device.Get(), commandPool.Get());
-        renderer.FlushDrawingBuffer();
+    {   
+        for (size_t i = 0; i < drawCommandBuffer.size(); i++)
+        {
+            drawCommandBuffer[i].FreeCommandBuffer(device.Get(), commandPool.Get());
+        }
+        
+        
         for (int i = 0; i < offscreenFramebuffers.size(); i++)
         {
             vkDestroyFramebuffer(device.Get(), offscreenFramebuffers[i], nullptr);
