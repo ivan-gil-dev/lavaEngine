@@ -2,6 +2,9 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
+      <FullPath>G:\dev\cpp\WinAPI Branch\x64\Debug\Engine.dll</FullPath>
+    </ProjectOutput>
+    <ProjectOutput>
       <FullPath>G:\dev\cpp\WinAPI Branch\x64\Debug\App.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>

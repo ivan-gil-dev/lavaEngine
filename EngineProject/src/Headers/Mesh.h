@@ -1,3 +1,6 @@
+#  pragma warning( push )
+#  pragma warning( disable: 4251 )
+
 #ifndef mesh_h
 #define mesh_h
 
@@ -9,7 +12,12 @@
 
 #include "Renderer/Images.h"
 #include "../../vendor/tiny_obj_loader.h"
+
+
+
 namespace Engine{
+	
+
 	struct Face {
 		std::vector<uint32_t> indexes;
 		VulkanBuffers::IndexBuffer indexBuffer;
@@ -19,7 +27,7 @@ namespace Engine{
 
 	};
 
-	class Mesh {
+	class __declspec(dllexport) Mesh {
 	private:
 		std::string										MeshPath;
 
@@ -165,3 +173,4 @@ namespace Engine{
 
 
 #endif
+#  pragma warning( pop )

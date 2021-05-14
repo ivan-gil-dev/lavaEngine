@@ -74,8 +74,8 @@ void Engine::EditorCamera::MouseUpdate()
     if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_ALT)) {
         Globals::showCursorEventHandler.HideCursor();
 
-        double xpos = Globals::mouseMoveEventHandler.GetCursorPos().x,
-            ypos = Globals::mouseMoveEventHandler.GetCursorPos().y;
+        double xpos = Globals::cursorPosition.GetCursorPos().x,
+            ypos = Globals::cursorPosition.GetCursorPos().y;
 
 
         if (CursorFirstMouse) {

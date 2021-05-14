@@ -361,7 +361,9 @@ Engine::Scene::Scene()
     #ifdef DemoFromFile
         Load("demo.json");
     #endif
-    
+    entities.resize(0);
+    directionalLightAttributes.resize(0);
+    pointLightAttributes.resize(0);
 }
 
 std::vector<Engine::DataTypes::DirectionalLightAttributes_t*>* Engine::Scene::pGetVectorOfDirectionalLightAttributes()

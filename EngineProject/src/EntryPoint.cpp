@@ -1,10 +1,12 @@
 #define TINYOBJLOADER_IMPLEMENTATION
+#  pragma warning( push )
+#  pragma warning( disable: 4099 )
 #include	"Headers/Application.h"
 #include <spdlog/sinks/basic_file_sink.h>
 
 
 
-int main() {
+__declspec(dllexport) int main() {
 
 	try {
 		Engine::Globals::App.Init();
@@ -24,4 +26,5 @@ int main() {
 }
 
 
+#  pragma warning( pop )
 

@@ -15,7 +15,7 @@ namespace Engine {
 	namespace Globals {
 
 		KeyPressedEventHandler keyPressedEventHandler;
-		MouseMoveEventHandler mouseMoveEventHandler;
+		CursorPosition cursorPosition;
 		ShowCursorEventHandler showCursorEventHandler;
 		bool  gDrawShadows = true;
 		bool  gToggleFullscreen = false;
@@ -25,18 +25,21 @@ namespace Engine {
 		int   gHeight = 1366,
 			  gWidth = 768;
 
-		BulletPhysicsGlobalObjects bulletPhysicsGlobalObjects;
+		
 
 		std::shared_ptr<spdlog::logger> gLogger = spdlog::basic_logger_mt("file", "logs/log.txt",true);
 
-		bool  gIsScenePlaying = false;
+		EngineAPI_GlobalVar BulletPhysicsGlobalObjects bulletPhysicsGlobalObjects;
+		EngineAPI_GlobalVar bool  gIsScenePlaying = false;
+		EngineAPI_GlobalVar double  DeltaTime;
+
 		const int gmax_frames = 2;
 
 		VkSampleCountFlagBits gMSAAsamples = VK_SAMPLE_COUNT_4_BIT;
 
 		Application App;
 
-		double DeltaTime;
+		
 
 		Scene* gScene;
 	}

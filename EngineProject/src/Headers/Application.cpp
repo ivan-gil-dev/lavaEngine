@@ -3,6 +3,16 @@
 #include <algorithm>
 #include "Renderer/Renderer.h"
 #include <Shlwapi.h>
+
+
+typedef void (*DemoFunc)(
+	std::vector<Engine::Entity*>*,
+	std::vector<Engine::DataTypes::DirectionalLightAttributes_t*>*,
+	std::vector<Engine::DataTypes::PointLightAttributes_t*>*,
+	btDynamicsWorld* 
+    );
+DemoFunc demo;
+
 //Подготовка ImGui
 
 struct InputTextCallback_UserData
@@ -228,7 +238,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         break;
 
     case WM_MOUSEMOVE:
-        Engine::Globals::mouseMoveEventHandler.SetCursorPos(LOWORD(lparam), HIWORD(lparam));
+        Engine::Globals::cursorPosition.SetCursorPosFromWinAPI(LOWORD(lparam), HIWORD(lparam));
         return true;
         break;
 
@@ -867,6 +877,9 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 	}
 }
 
+
+
+
 //Первоначальная настройка приложения
 void Application::Init() {
 	WindowWidth = 1366;
@@ -939,8 +952,15 @@ void Application::Init() {
 
 	
 	Engine::Globals::gScene = new Engine::Scene;
-	
-	Engine::Globals::gScene->Demo();//Имплементация Demo() вне библиотеки
+
+	demo = (DemoFunc)GetProcAddress(GetModuleHandle(NULL), "DemoExe");
+
+	demo(
+		Engine::Globals::gScene->pGetVectorOfEntities(),
+		Engine::Globals::gScene->pGetVectorOfDirectionalLightAttributes(),
+		Engine::Globals::gScene->pGetVectorOfSpotlightAttributes(),
+		Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld
+	);
 
 
 	if (ENABLE_IMGUI) {

@@ -1,3 +1,175 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(519,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (Lava.vcxproj).  Это может привести к ошибкам очистки и перестроения.
+  EntryPoint.cpp
+  Application.cpp
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(560,40): warning C4311: приведение типов: усечение указателя из "Engine::GameObject *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(560,40): warning C4302: приведение типов: усечение из "Engine::GameObject *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(565,81): warning C4316: "Engine::PointLightObject": объект, размещенный в куче, может не быть выровнен 32
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(567,40): warning C4311: приведение типов: усечение указателя из "Engine::PointLightObject *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(567,40): warning C4302: приведение типов: усечение из "Engine::PointLightObject *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(574,93): warning C4316: "Engine::DirectionalLightObject": объект, размещенный в куче, может не быть выровнен 32
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(579,40): warning C4311: приведение типов: усечение указателя из "Engine::DirectionalLightObject *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(579,40): warning C4302: приведение типов: усечение из "Engine::DirectionalLightObject *" к "int"
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\include\xstring(2468,23): warning C4244: аргумент: преобразование "wchar_t" в "const _Elem", возможна потеря данных
+          with
+          [
+              _Elem=char
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\include\xstring(2479): message : выполняется компиляция ссылки на экземпляр шаблон функции "void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct<wchar_t*>(_Iter,const _Iter,std::input_iterator_tag)"
+          with
+          [
+              _Iter=wchar_t *
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\include\xstring(2479): message : выполняется компиляция ссылки на экземпляр шаблон функции "void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct<wchar_t*>(_Iter,const _Iter,std::input_iterator_tag)"
+          with
+          [
+              _Iter=wchar_t *
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\include\xstring(2459): message : выполняется компиляция ссылки на экземпляр шаблон функции "void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct<wchar_t*>(const _Iter,const _Iter,std::forward_iterator_tag)"
+          with
+          [
+              _Iter=wchar_t *
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\include\xstring(2459): message : выполняется компиляция ссылки на экземпляр шаблон функции "void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct<wchar_t*>(const _Iter,const _Iter,std::forward_iterator_tag)"
+          with
+          [
+              _Iter=wchar_t *
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(79): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(79): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+  Entities.cpp
+  Globals.cpp
+  Mesh.cpp
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Mesh.cpp(133,33): warning C4834: отмена возвращаемого значения функции с атрибутом "nodiscard"
+  Images.cpp
+  Pipelines.cpp
   Renderer.cpp
-  Engine.vcxproj -> G:\dev\cpp\WinAPI Branch\x64\Debug\Engine.lib
+  Swapchain.cpp
+  SyncObjects.cpp
+  RigidBody.cpp
+  Scene.cpp
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(67,35): warning C4311: <function-style-cast>: усечение указателя из "Engine::Entity *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(67,35): warning C4302: <function-style-cast>: усечение из "Engine::Entity *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(74,35): warning C4311: <function-style-cast>: усечение указателя из "Engine::Entity *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(74,35): warning C4302: <function-style-cast>: усечение из "Engine::Entity *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(81,35): warning C4311: <function-style-cast>: усечение указателя из "Engine::Entity *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(81,35): warning C4302: <function-style-cast>: усечение из "Engine::Entity *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(100,42): warning C4316: "Engine::PointLightObject": объект, размещенный в куче, может не быть выровнен 32
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(120,47): warning C4244: =: преобразование "ValueType" в "float", возможна потеря данных
+          with
+          [
+              ValueType=int
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(121,47): warning C4244: =: преобразование "ValueType" в "float", возможна потеря данных
+          with
+          [
+              ValueType=int
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(122,48): warning C4244: =: преобразование "ValueType" в "float", возможна потеря данных
+          with
+          [
+              ValueType=int
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(129,48): warning C4316: "Engine::DirectionalLightObject": объект, размещенный в куче, может не быть выровнен 32
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(140,47): warning C4244: =: преобразование "ValueType" в "float", возможна потеря данных
+          with
+          [
+              ValueType=int
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(141,47): warning C4244: =: преобразование "ValueType" в "float", возможна потеря данных
+          with
+          [
+              ValueType=int
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(142,48): warning C4244: =: преобразование "ValueType" в "float", возможна потеря данных
+          with
+          [
+              ValueType=int
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(162,34): warning C4311: приведение типов: усечение указателя из "Engine::Entity *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(162,34): warning C4302: приведение типов: усечение из "Engine::Entity *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(226,40): warning C4311: приведение типов: усечение указателя из "Engine::GameObject *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(226,40): warning C4302: приведение типов: усечение из "Engine::GameObject *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(233,64): warning C4316: "Engine::DirectionalLightObject": объект, размещенный в куче, может не быть выровнен 32
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(237,30): warning C4311: приведение типов: усечение указателя из "Engine::DirectionalLightObject *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(237,30): warning C4302: приведение типов: усечение из "Engine::DirectionalLightObject *" к "int"
+  imgui_impl_vulkan.cpp
+  Создание кода...
+LINK : warning LNK4075: не учитывается "/INCREMENTAL" из-за спецификации "/FORCE"
+     Создается библиотека G:\dev\cpp\WinAPI Branch\x64\Debug\Engine.lib и объект G:\dev\cpp\WinAPI Branch\x64\Debug\Engine.exp
+LINK : warning LNK4098: библиотека по умолчанию "MSVCRT" конфликтует с использованием других библиотек; используйте /NODEFAULTLIB:library
+LinearMath_Debug.lib(btAlignedAllocator.obj) : warning LNK4099: "LinearMath.pdb" PDB не найден с "LinearMath_Debug.lib(btAlignedAllocator.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\LinearMath.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+LinearMath_Debug.lib(btConvexHullComputer.obj) : warning LNK4099: "LinearMath.pdb" PDB не найден с "LinearMath_Debug.lib(btConvexHullComputer.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\LinearMath.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+LinearMath_Debug.lib(btGeometryUtil.obj) : warning LNK4099: "LinearMath.pdb" PDB не найден с "LinearMath_Debug.lib(btGeometryUtil.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\LinearMath.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+LinearMath_Debug.lib(btQuickprof.obj) : warning LNK4099: "LinearMath.pdb" PDB не найден с "LinearMath_Debug.lib(btQuickprof.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\LinearMath.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletDynamics_Debug.lib(btConeTwistConstraint.obj) : warning LNK4099: "BulletDynamics.pdb" PDB не найден с "BulletDynamics_Debug.lib(btConeTwistConstraint.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletDynamics.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletDynamics_Debug.lib(btGeneric6DofConstraint.obj) : warning LNK4099: "BulletDynamics.pdb" PDB не найден с "BulletDynamics_Debug.lib(btGeneric6DofConstraint.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletDynamics.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletDynamics_Debug.lib(btSequentialImpulseConstraintSolver.obj) : warning LNK4099: "BulletDynamics.pdb" PDB не найден с "BulletDynamics_Debug.lib(btSequentialImpulseConstraintSolver.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletDynamics.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletDynamics_Debug.lib(btTypedConstraint.obj) : warning LNK4099: "BulletDynamics.pdb" PDB не найден с "BulletDynamics_Debug.lib(btTypedConstraint.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletDynamics.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletDynamics_Debug.lib(btDiscreteDynamicsWorld.obj) : warning LNK4099: "BulletDynamics.pdb" PDB не найден с "BulletDynamics_Debug.lib(btDiscreteDynamicsWorld.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletDynamics.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletDynamics_Debug.lib(btRigidBody.obj) : warning LNK4099: "BulletDynamics.pdb" PDB не найден с "BulletDynamics_Debug.lib(btRigidBody.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletDynamics.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btCollisionAlgorithm.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btCollisionAlgorithm.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btDbvt.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btDbvt.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btDbvtBroadphase.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btDbvtBroadphase.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btDispatcher.obj) : warning LNK4099: "" PDB не найден с "BulletCollision_Debug.lib(btDispatcher.obj)" или на ""; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btOverlappingPairCache.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btOverlappingPairCache.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btQuantizedBvh.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btQuantizedBvh.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btActivatingCollisionAlgorithm.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btActivatingCollisionAlgorithm.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btBoxBoxCollisionAlgorithm.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btBoxBoxCollisionAlgorithm.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btBoxBoxDetector.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btBoxBoxDetector.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btCollisionDispatcher.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btCollisionDispatcher.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btCollisionObject.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btCollisionObject.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btCollisionWorld.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btCollisionWorld.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btCompoundCollisionAlgorithm.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btCompoundCollisionAlgorithm.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btCompoundCompoundCollisionAlgorithm.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btCompoundCompoundCollisionAlgorithm.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btConvexConcaveCollisionAlgorithm.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btConvexConcaveCollisionAlgorithm.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btConvexConvexAlgorithm.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btConvexConvexAlgorithm.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btConvexPlaneCollisionAlgorithm.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btConvexPlaneCollisionAlgorithm.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btDefaultCollisionConfiguration.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btDefaultCollisionConfiguration.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btEmptyCollisionAlgorithm.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btEmptyCollisionAlgorithm.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btHashedSimplePairCache.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btHashedSimplePairCache.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btManifoldResult.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btManifoldResult.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btSimulationIslandManager.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btSimulationIslandManager.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btSphereSphereCollisionAlgorithm.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btSphereSphereCollisionAlgorithm.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btSphereTriangleCollisionAlgorithm.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btSphereTriangleCollisionAlgorithm.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btUnionFind.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btUnionFind.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(SphereTriangleDetector.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(SphereTriangleDetector.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btBvhTriangleMeshShape.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btBvhTriangleMeshShape.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btCollisionShape.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btCollisionShape.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btConcaveShape.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btConcaveShape.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btConvexHullShape.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btConvexHullShape.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btConvexInternalShape.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btConvexInternalShape.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btConvexPolyhedron.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btConvexPolyhedron.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btConvexShape.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btConvexShape.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btHeightfieldTerrainShape.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btHeightfieldTerrainShape.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btMiniSDF.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btMiniSDF.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btOptimizedBvh.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btOptimizedBvh.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btPolyhedralConvexShape.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btPolyhedralConvexShape.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btSdfCollisionShape.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btSdfCollisionShape.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btSphereShape.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btSphereShape.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btTriangleCallback.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btTriangleCallback.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btTriangleMeshShape.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btTriangleMeshShape.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btContinuousConvexCollision.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btContinuousConvexCollision.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btConvexCast.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btConvexCast.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btGjkConvexCast.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btGjkConvexCast.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btGjkEpa2.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btGjkEpa2.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btGjkEpaPenetrationDepthSolver.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btGjkEpaPenetrationDepthSolver.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btGjkPairDetector.obj) : warning LNK4099: "" PDB не найден с "BulletCollision_Debug.lib(btGjkPairDetector.obj)" или на ""; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btMinkowskiPenetrationDepthSolver.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btMinkowskiPenetrationDepthSolver.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btPersistentManifold.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btPersistentManifold.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btRaycastCallback.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btRaycastCallback.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btSubSimplexConvexCast.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btSubSimplexConvexCast.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btVoronoiSimplexSolver.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btVoronoiSimplexSolver.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btPolyhedralContactClipping.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btPolyhedralContactClipping.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+  Engine.vcxproj -> G:\dev\cpp\WinAPI Branch\x64\Debug\Engine.dll

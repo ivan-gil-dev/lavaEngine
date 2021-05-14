@@ -74,11 +74,11 @@ namespace Engine{
 	
 	};
 
-	//Обработчик движения мышью
-	class MouseMoveEventHandler{
+	//Позиция курсора
+	class CursorPosition{
 	glm::vec2 cursorPos;
 	public:
-		void SetCursorPos(double X, double Y){
+		void SetCursorPosFromWinAPI(double X, double Y){
 			cursorPos.x = float(X);
 			cursorPos.y = float(Y);
 		}
@@ -105,12 +105,13 @@ namespace Engine{
 				IsShowing = false;
 			}
 		}
-
 	};
+
+
 
 	namespace Globals{
 		extern KeyPressedEventHandler keyPressedEventHandler;
-		extern MouseMoveEventHandler  mouseMoveEventHandler;
+		extern CursorPosition  cursorPosition;
 		extern ShowCursorEventHandler showCursorEventHandler;
 	}
 	

@@ -1,3 +1,5 @@
+#  pragma warning( push )
+#  pragma warning( disable: 4251 )
 #ifndef scene_h
 #define scene_h
 
@@ -14,7 +16,7 @@ namespace Engine{
 
 	
 
-	class Scene {
+	class __declspec(dllexport) Scene {
 		std::vector<DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes;
 
 		std::vector<DataTypes::PointLightAttributes_t*> pointLightAttributes;
@@ -44,8 +46,6 @@ namespace Engine{
 
 		std::vector<DataTypes::PointLightAttributes_t*>* pGetVectorOfSpotlightAttributes();
 
-		void Demo();
-
 		void CleanScene();
 	};
 
@@ -55,3 +55,4 @@ namespace Engine{
 }
 
 #endif
+#  pragma warning( pop )

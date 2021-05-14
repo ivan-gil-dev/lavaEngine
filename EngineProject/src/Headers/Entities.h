@@ -1,3 +1,7 @@
+#  pragma warning( push )
+#  pragma warning( disable: 4251 )
+
+
 #pragma once
 #include "../../vendor/volk.h"
 #include "../../vendor/glm/glm.hpp"
@@ -31,7 +35,7 @@ namespace Engine{
 		COMPONENT_TYPE_MESH
 	};
 
-	class Entity {  
+	class __declspec(dllexport) Entity {
 		protected :
 			EntityType Type;
 			int ID;
@@ -102,7 +106,7 @@ namespace Engine{
         void Update();
     };
 
-	class DirectionalLightObject : public Entity{
+	class __declspec(dllexport) DirectionalLightObject : public Entity{
         DataTypes::DirectionalLightAttributes_t directionalLightSettings;
         Mesh* pDebugMesh;
 
@@ -118,7 +122,7 @@ namespace Engine{
 		
 	};
 
-	class PointLightObject : public Entity {
+	class __declspec(dllexport) PointLightObject : public Entity {
 		DataTypes::PointLightAttributes_t pointLightSettings;
 		Mesh	  *pDebugMesh;
 	public:
@@ -130,7 +134,7 @@ namespace Engine{
 		DataTypes::PointLightAttributes_t *pGetPointLightUniformData();	
 	};
 
-	class GameObject : public Entity{
+	class __declspec(dllexport) GameObject : public Entity{
 
         RigidBody* pRigidBody;
         Mesh* pMesh;
@@ -203,7 +207,7 @@ namespace Engine{
 		
 	};
 
-	class CubemapObject : public Entity{
+	class __declspec(dllexport) CubemapObject : public Entity{
 		CubemapMesh *pMesh;
 		std::vector<std::string> cubemapPaths;
 		public:
@@ -220,3 +224,4 @@ namespace Engine{
 	};
 
 }
+#  pragma warning( pop )

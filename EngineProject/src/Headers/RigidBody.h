@@ -1,3 +1,5 @@
+#  pragma warning( push )
+#  pragma warning( disable: 4251 )
 #ifndef rigidbody_h
 #define rigidbody_h
 
@@ -14,7 +16,7 @@ namespace Engine{
 		RIGIDBODY_SHAPE_TYPE_SPHERE
 	};
 
-	class RigidBody	{
+	class __declspec(dllexport) RigidBody	{
 		RigidBodyShapeType    ShapeType;
 		btConvexShape *       pShape;
 		btRigidBody *		  pRigidBody;
@@ -72,3 +74,4 @@ namespace Engine{
 }
 
 #endif
+#  pragma warning( pop )
