@@ -35,7 +35,7 @@ namespace Engine{
 		COMPONENT_TYPE_MESH
 	};
 
-	class __declspec(dllexport) Entity {
+	class EngineAPI_Export Entity {
 		protected :
 			EntityType Type;
 			int ID;
@@ -106,7 +106,7 @@ namespace Engine{
         void Update();
     };
 
-	class __declspec(dllexport) DirectionalLightObject : public Entity{
+	class EngineAPI_Export DirectionalLightObject : public Entity{
         DataTypes::DirectionalLightAttributes_t directionalLightSettings;
         Mesh* pDebugMesh;
 
@@ -122,7 +122,7 @@ namespace Engine{
 		
 	};
 
-	class __declspec(dllexport) PointLightObject : public Entity {
+	class EngineAPI_Export PointLightObject : public Entity {
 		DataTypes::PointLightAttributes_t pointLightSettings;
 		Mesh	  *pDebugMesh;
 	public:
@@ -134,7 +134,7 @@ namespace Engine{
 		DataTypes::PointLightAttributes_t *pGetPointLightUniformData();	
 	};
 
-	class __declspec(dllexport) GameObject : public Entity{
+	class EngineAPI_Export GameObject : public Entity{
 
         RigidBody* pRigidBody;
         Mesh* pMesh;
@@ -207,7 +207,7 @@ namespace Engine{
 		
 	};
 
-	class __declspec(dllexport) CubemapObject : public Entity{
+	class EngineAPI_Export CubemapObject : public Entity{
 		CubemapMesh *pMesh;
 		std::vector<std::string> cubemapPaths;
 		public:

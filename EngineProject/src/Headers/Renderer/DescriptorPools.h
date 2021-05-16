@@ -47,7 +47,7 @@ namespace Engine{
             poolSizes.push_back(diffuseTextureSamplerPoolSize);
 			
 			VkDescriptorPoolSize pointLightAttributesPoolSize{};
-            pointLightAttributesPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000 * MAX_SPOTLIGHTS;
+            pointLightAttributesPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
             pointLightAttributesPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             poolSizes.push_back(pointLightAttributesPoolSize);
 			
@@ -62,7 +62,7 @@ namespace Engine{
             poolSizes.push_back(materialPoolSize);
 			
             VkDescriptorPoolSize directionalLightAttributesPoolSize{};
-			directionalLightAttributesPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000 * MAX_DLIGHTS;
+			directionalLightAttributesPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
 			directionalLightAttributesPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             poolSizes.push_back(directionalLightAttributesPoolSize);
 
@@ -75,6 +75,17 @@ namespace Engine{
 			shadowMapPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
 			shadowMapPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
             poolSizes.push_back(shadowMapPoolSize);
+
+            VkDescriptorPoolSize roughnessTextureSamplerPoolSize{};
+			roughnessTextureSamplerPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000 * MAX_MATERIALS;
+			roughnessTextureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            poolSizes.push_back(roughnessTextureSamplerPoolSize);
+
+            VkDescriptorPoolSize metallicTextureSamplerPoolSize{};
+			metallicTextureSamplerPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000 * MAX_MATERIALS;
+			metallicTextureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            poolSizes.push_back(metallicTextureSamplerPoolSize);
+
 
 			VkDescriptorPoolCreateInfo createInfo{};
             createInfo.pPoolSizes = poolSizes.data();

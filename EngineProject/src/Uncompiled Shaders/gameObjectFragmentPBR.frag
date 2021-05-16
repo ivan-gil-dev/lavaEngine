@@ -60,11 +60,13 @@ layout( push_constant ) uniform constants
 
 } PushConstants;
 
-#define MAX_MATERIALS 256
+#define MAX_MATERIALS 64
 layout(binding = 1) uniform sampler2D diffuseColorMaps[MAX_MATERIALS];
 layout(binding = 6) uniform sampler2D specularColorMaps[MAX_MATERIALS];
 layout(binding = 7) uniform sampler2D shadowMap;
 
+layout(binding = 9) uniform sampler2D roughnessColorMaps[MAX_MATERIALS];
+layout(binding = 10) uniform sampler2D metallicColorMaps[MAX_MATERIALS];
 
 layout(location = 0) in vec3 frag_Color;
 layout(location = 1) in vec2 frag_UVmap;
@@ -98,8 +100,13 @@ vec3 CalculateSpotlight(Spotlight_t spotlight_p, vec3 normals_p, vec3 viewDir_p)
             discard;
         }
 
+
+        vec3 albedo = pow(texture(diffuseColorMaps[PushConstants.MaterialID],frag_UVmap).rgb,vec3(2.2));
+        float metallic = texture(metallicColorMaps[PushConstants.MaterialID],frag_UVmap).r * material.material.metallic;
+        float roughness = texture(roughnessColorMaps[PushConstants.MaterialID],frag_UVmap).r * material.material.roughness;
+
         vec3 F0 = vec3(0.04);
-        F0 = mix(F0, vec3(diffuseColor), material.material.metallic);
+        F0 = mix(F0, albedo, metallic);
         vec3 L0 = vec3(0.0);
 
         //Radiance
@@ -110,13 +117,13 @@ vec3 CalculateSpotlight(Spotlight_t spotlight_p, vec3 normals_p, vec3 viewDir_p)
         vec3 radiance = spotlight_p.Color * attenuation;
 
         //Cook-Torrance brdf
-        float NDF = DistributionGGX(normals_p,H,material.material.roughness);
-        float G = GeometrySmith(normals_p,viewDir_p,L,material.material.roughness);
+        float NDF = DistributionGGX(normals_p,H,roughness);
+        float G = GeometrySmith(normals_p,viewDir_p,L,roughness);
         vec3 F = fresnelSchlick(max(dot(H,viewDir_p),0.0),F0);
 
         vec3 kS = F;
         vec3 kD = vec3(1.0) - kS;
-        kD *= 1.0 - material.material.metallic;
+        kD *= 1.0 - metallic;
 
         vec3 numerator = NDF * G * F;
         float denominator = 4.0 * max(dot(normals_p,viewDir_p),0.0) 
@@ -127,7 +134,7 @@ vec3 CalculateSpotlight(Spotlight_t spotlight_p, vec3 normals_p, vec3 viewDir_p)
         specular *= material.material.shininess * vec3(texture(specularColorMaps[PushConstants.MaterialID],frag_UVmap));
         
         float NdotL = max(dot(normals_p,L),0.0);
-        L0 += (kD * vec3(diffuseColor) * spotlight_p.Diffuse / PI + specular * spotlight_p.Specular) * radiance * NdotL;
+        L0 += (kD * albedo * spotlight_p.Diffuse / PI + specular * spotlight_p.Specular) * radiance * NdotL;
 
 	    float shadow = CalculateShadow(frag_PosLightSpace);
 
@@ -140,32 +147,50 @@ vec3 CalculateSpotlight(Spotlight_t spotlight_p, vec3 normals_p, vec3 viewDir_p)
 
 vec3 CalculateDirectionalLight(DirectionalLight_t directionalLight_p, vec3 normals_p, vec3 viewDir_p){
     if(directionalLight_p.Color != vec3(0,0,0)){
-        vec3 ambient = directionalLight_p.Ambient * directionalLight_p.Color;
-        vec3 lightDir = normalize(-directionalLight_p.Direction);
-
-        float diff = max(dot(normals_p,lightDir), 0.0);
-        vec3 diffuse = diff * directionalLight_p.Color * directionalLight_p.Diffuse;
-
-        vec3 reflectDir = reflect(-lightDir,normals_p);
-
-        float spec = pow(max(dot(viewDir_p,reflectDir),0.0),material.material.shininess);
-        vec3 specular = directionalLight_p.Specular * spec * directionalLight_p.Color;
-
+          
         vec4 diffuseColor = texture(diffuseColorMaps[PushConstants.MaterialID],frag_UVmap);
-        //float diffuseColor = texture(shadowMap,frag_UVmap).r;
-
         if(diffuseColor.a<0.5){
             discard;
         }
+
+        vec3 albedo = pow(texture(diffuseColorMaps[PushConstants.MaterialID],frag_UVmap).rgb,vec3(2.2));
+        float metallic = texture(metallicColorMaps[PushConstants.MaterialID],frag_UVmap).r * material.material.metallic;
+        float roughness = texture(roughnessColorMaps[PushConstants.MaterialID],frag_UVmap).r * material.material.roughness;
+
+        vec3 F0 = vec3(0.04);
+        F0 = mix(F0, albedo, metallic);
+        vec3 L0 = vec3(0.0);
+
+        //Radiance
+        vec3 L = normalize(-directionalLight_p.Direction);
+        vec3 H = normalize(viewDir_p + L);
+        float distance = length(directionalLight_p.Direction);
+        float attenuation = 1.0/(distance*distance);
+        vec3 radiance = directionalLight_p.Color * attenuation;
+
+        //Cook-Torrance brdf
+        float NDF = DistributionGGX(normals_p,H,roughness);
+        float G = GeometrySmith(normals_p,viewDir_p,L,roughness);
+        vec3 F = fresnelSchlick(max(dot(H,viewDir_p),0.0),F0);
+
+        vec3 kS = F;
+        vec3 kD = vec3(1.0) - kS;
+        kD *= 1.0 - metallic;
+
+        vec3 numerator = NDF * G * F;
+        float denominator = 4.0 * max(dot(normals_p,viewDir_p),0.0) 
+                                * max(dot(normals_p,L), 0.0);
+
+        vec3 specular = numerator / max(denominator, 0.001);
+
+        specular *= material.material.shininess * vec3(texture(specularColorMaps[PushConstants.MaterialID],frag_UVmap));
         
+        float NdotL = max(dot(normals_p,L),0.0);
+        L0 += (kD * albedo * directionalLight_p.Diffuse / PI + specular * directionalLight_p.Specular) * radiance * NdotL;
 
-        ambient *= vec3(diffuseColor);
-        diffuse *= vec3(diffuseColor);
-        specular *= vec3(texture(specularColorMaps[PushConstants.MaterialID],frag_UVmap));
+	    float shadow = CalculateShadow(frag_PosLightSpace);
 
-        float shadow = CalculateShadow(frag_PosLightSpace);
-
-        return (ambient + shadow*diffuse + specular);
+        return  (shadow)*L0;
     }else{
         return vec3(0,0,0);
     }
@@ -184,16 +209,15 @@ void main(){
         result += CalculateSpotlight(light.spotlight[i],norm,viewDir);
     }
     
+    for (int i = 0; i < MAX_DLIGHTS; i++){
+       result += CalculateDirectionalLight(directionalLight.directionalLight_t[i],norm,viewDir);
+    }
+
     vec3 ambient = material.material.ao * vec3(texture(diffuseColorMaps[PushConstants.MaterialID],frag_UVmap));
     result += ambient;
     result = result / (result + vec3(1.0));
     result = pow(result, vec3(1.0/2.2));  
 
-
-
-    for (int i = 0; i < MAX_DLIGHTS; i++){
-       result += CalculateDirectionalLight(directionalLight.directionalLight_t[i],norm,viewDir);
-    }
 
     outColor = vec4(result,1.0f);
     

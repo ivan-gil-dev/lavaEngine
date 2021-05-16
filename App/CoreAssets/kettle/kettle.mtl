@@ -1,0 +1,30 @@
+# Blender MTL File: 'kettle.blend'
+# Material Count: 2
+
+newmtl handle_mat
+Ns 179.999996
+Ka 1.000000 1.000000 1.000000
+Kd 0.500000 0.500000 0.500000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump textures\\Normal.png
+map_Kd textures\\Base_color.png
+map_Ns textures\\Roughness.png
+refl textures\\Metallic.png
+
+newmtl teapot_mat
+Ns 179.999996
+Ka 1.000000 1.000000 1.000000
+Kd 0.500000 0.500000 0.500000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Bump textures\\Normal.png
+map_Kd textures\\Base_color.png
+map_Ns textures\\Roughness.png
+refl textures\\Metallic.png

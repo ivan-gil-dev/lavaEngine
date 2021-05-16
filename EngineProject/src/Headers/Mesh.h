@@ -24,10 +24,11 @@ namespace Engine{
 		short MatID;
 		std::string diffuseMapPath;
 		std::string specularMapPath;
-
+		std::string metallicMapPath;
+		std::string roughnessMapPath;
 	};
 
-	class __declspec(dllexport) Mesh {
+	class EngineAPI_Export Mesh {
 	private:
 		std::string										MeshPath;
 
@@ -55,6 +56,8 @@ namespace Engine{
 
 		std::vector<Texture>							DiffuseTextures_b1;
 		std::vector<Texture>							SpecularTextures_b6;
+		std::vector<Texture>							RoughnessTextures_b9;
+		std::vector<Texture>							MetallicTextures_b10;
 		Texture											Blank;
 
 		std::vector<VulkanBuffers::UniformBuffer>   	UniformBuffersSpotLightAttributes_b2;

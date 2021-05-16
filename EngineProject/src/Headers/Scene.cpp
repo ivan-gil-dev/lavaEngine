@@ -251,7 +251,6 @@ void Engine::Scene::SaveAs(std::string path)
     std::ofstream outputJson(path);
     sceneJson.clear();
     for (int i = 0; i < entities.size(); i++) {
-
         sceneJson["Entities"][i]["Name"] = entities[i]->GetName();
 
         EntityType entityType = EntityType(entities[i]->GetEntityType());

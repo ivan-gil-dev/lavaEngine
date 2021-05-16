@@ -6,7 +6,6 @@
 
 void Engine::Mesh::LoadModel(std::string modelPath) {
     //std::vector<DataTypes::MeshVertex_t>	Vertices;
-    
 	size_t lastPos = modelPath.find_last_of("/");
 
 	tinyobj::ObjReaderConfig reader_config;
@@ -29,7 +28,6 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 		}
 	}
 
-
 	auto& attrib = reader.GetAttrib();
 	auto& shapes = reader.GetShapes();
 	auto& materials = reader.GetMaterials();
@@ -48,6 +46,8 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 		Faces.resize(materials.size());
 		for (size_t i = 0; i < Faces.size(); i++)
         {
+			Faces[i].metallicMapPath = reader_config.mtl_search_path + materials[i].reflection_texname;
+			Faces[i].roughnessMapPath = reader_config.mtl_search_path + materials[i].specular_highlight_texname;
 			Faces[i].diffuseMapPath = reader_config.mtl_search_path + materials[i].diffuse_texname;
 			Faces[i].specularMapPath = reader_config.mtl_search_path + materials[i].specular_texname;
 			Faces[i].MatID = (short)i;
@@ -55,6 +55,9 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 	}
 	else {
 		Faces.resize(1);
+		Faces[0].metallicMapPath = "";
+		Faces[0].roughnessMapPath = "";
+
 		Faces[0].diffuseMapPath = "";
 		Faces[0].specularMapPath = "";
 		Faces[0].MatID = 0;
@@ -82,7 +85,7 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
 					vy,
 					vz
 				};
-
+				
 				// Check if `normal_index` is zero or positive. negative = no normal data
 				if (idx.normal_index >= 0) {
 					tinyobj::real_t nx = attrib.normals[3 * size_t(idx.normal_index) + 0];
@@ -288,6 +291,65 @@ void Engine::Mesh::CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout d
 		specularMapWriteDescriptorSet.pImageInfo = specularImageInfos.data();
         writeDescriptorSets.push_back(specularMapWriteDescriptorSet);
 
+        std::vector<VkDescriptorImageInfo> roughnessImageInfos;
+        for (int j = 0; j < RoughnessTextures_b9.size(); j++)
+        {
+            if (j < Faces.size())
+            {
+                VkDescriptorImageInfo textureInfo{};
+                textureInfo.imageView = RoughnessTextures_b9[j].GetImageView();
+                textureInfo.sampler = RoughnessTextures_b9[j].GetImageSampler();
+                textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+				roughnessImageInfos.push_back(textureInfo);
+            }
+            else {
+                VkDescriptorImageInfo textureInfo{};
+                textureInfo.imageView = Blank.GetImageView();
+                textureInfo.sampler = Blank.GetImageSampler();
+                textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+				roughnessImageInfos.push_back(textureInfo);
+            }
+        }
+
+        VkWriteDescriptorSet roughnessMapWriteDescriptorSet{};
+		roughnessMapWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		roughnessMapWriteDescriptorSet.descriptorCount = MAX_MATERIALS;
+		roughnessMapWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		roughnessMapWriteDescriptorSet.dstSet = DescriptorSets[i];
+		roughnessMapWriteDescriptorSet.dstBinding = 9;
+		roughnessMapWriteDescriptorSet.dstArrayElement = 0;
+		roughnessMapWriteDescriptorSet.pImageInfo = roughnessImageInfos.data();
+		writeDescriptorSets.push_back(roughnessMapWriteDescriptorSet);
+
+        std::vector<VkDescriptorImageInfo> metallicImageInfos;
+        for (int j = 0; j < MetallicTextures_b10.size(); j++)
+        {
+            if (j < Faces.size())
+            {
+                VkDescriptorImageInfo textureInfo{};
+                textureInfo.imageView = MetallicTextures_b10[j].GetImageView();
+                textureInfo.sampler = MetallicTextures_b10[j].GetImageSampler();
+                textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+				metallicImageInfos.push_back(textureInfo);
+            }
+            else {
+                VkDescriptorImageInfo textureInfo{};
+                textureInfo.imageView = Blank.GetImageView();
+                textureInfo.sampler = Blank.GetImageSampler();
+                textureInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+				metallicImageInfos.push_back(textureInfo);
+            }
+        }
+
+        VkWriteDescriptorSet metallicMapWriteDescriptorSet{};
+		metallicMapWriteDescriptorSet.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+		metallicMapWriteDescriptorSet.descriptorCount = MAX_MATERIALS;
+		metallicMapWriteDescriptorSet.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+		metallicMapWriteDescriptorSet.dstSet = DescriptorSets[i];
+		metallicMapWriteDescriptorSet.dstBinding = 10;
+		metallicMapWriteDescriptorSet.dstArrayElement = 0;
+		metallicMapWriteDescriptorSet.pImageInfo = metallicImageInfos.data();
+        writeDescriptorSets.push_back(metallicMapWriteDescriptorSet);
 
 		VkDescriptorBufferInfo bufferInfo2{};
         bufferInfo2.buffer = UniformBuffersSpotLightAttributes_b2[i].Get();
@@ -469,6 +531,8 @@ void Engine::Mesh::CreateMesh(std::string modelPath) {
 
 			DiffuseTextures_b1.resize(MAX_MATERIALS);
 			SpecularTextures_b6.resize(MAX_MATERIALS);
+			RoughnessTextures_b9.resize(MAX_MATERIALS);
+			MetallicTextures_b10.resize(MAX_MATERIALS);
 
 			Blank.CreateTexture(
 				renderer.physicalDevice.Get(),
@@ -488,6 +552,16 @@ void Engine::Mesh::CreateMesh(std::string modelPath) {
 						renderer.device.Get(),
 						renderer.device.GetGraphicsQueue(),
 						renderer.commandPool.Get(), Faces[i].specularMapPath);
+
+                    RoughnessTextures_b9[i].CreateTexture(renderer.physicalDevice.Get(),
+                        renderer.device.Get(),
+                        renderer.device.GetGraphicsQueue(),
+                        renderer.commandPool.Get(), Faces[i].roughnessMapPath);
+
+                    MetallicTextures_b10[i].CreateTexture(renderer.physicalDevice.Get(),
+                        renderer.device.Get(),
+                        renderer.device.GetGraphicsQueue(),
+                        renderer.commandPool.Get(), Faces[i].metallicMapPath);
 				}
 			}
 
@@ -588,6 +662,7 @@ void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec
     vkUnmapMemory(device, UniformBuffersDebugCameraPos_b3[imageIndex].GetDeviceMemory());
 
 	std::vector<DataTypes::DirectionalLightAttributes_t> buffer_DirectionalLightAttributes(MAX_DLIGHTS);
+
     for (size_t i = 0; i < buffer_DirectionalLightAttributes.size(); i++) {
         if (i < directionalLightAttributes.size()) {
 			buffer_DirectionalLightAttributes[i] = *directionalLightAttributes[i];
@@ -596,6 +671,9 @@ void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec
         else {
 			buffer_DirectionalLightAttributes[i].lightColor = glm::vec3(0, 0, 0);
 			buffer_DirectionalLightAttributes[i].lightDirection = glm::vec3(0, 0, 0);
+			buffer_DirectionalLightAttributes[i].ambient = 0.0f;
+			buffer_DirectionalLightAttributes[i].diffuse = 0.0f;
+			buffer_DirectionalLightAttributes[i].specular = 0.0f;
         }
     }
 
@@ -620,6 +698,14 @@ void Engine::Mesh::Destroy() {
 
         for (size_t i = 0; i < SpecularTextures_b6.size(); i++){
             SpecularTextures_b6[i].DestroyTexture(renderer.device.Get());
+        }
+
+        for (size_t i = 0; i < RoughnessTextures_b9.size(); i++) {
+			RoughnessTextures_b9[i].DestroyTexture(renderer.device.Get());
+        }
+
+        for (size_t i = 0; i < MetallicTextures_b10.size(); i++) {
+			MetallicTextures_b10[i].DestroyTexture(renderer.device.Get());
         }
 
         vkFreeDescriptorSets(renderer.device.Get(), renderer.descriptorPoolForMesh.Get(),

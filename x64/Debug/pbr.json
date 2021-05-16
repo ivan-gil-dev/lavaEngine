@@ -33,22 +33,11 @@
    "Name": "Plane",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "./CoreAssets/ceramic.obj",
+    "Path": "CoreAssets/plane.obj",
     "Shininess": 32.0,
     "Roughness": 1.0,
     "Metallic": 1.0,
     "Occlusion": 0.05000000074505806
-   },
-   "Rigidbody": {
-    "Mass": 0.0,
-    "Restitution": 0.5,
-    "Friction": 0.5,
-    "Scale": {
-     "X": 70.0,
-     "Y": 70.0,
-     "Z": 70.0
-    },
-    "ShapeType": "Plane"
    },
    "Transform": {
     "Position": {
@@ -57,9 +46,9 @@
      "Z": 0.0
     },
     "Scale": {
-     "X": 70.0,
-     "Y": 70.0,
-     "Z": 70.0
+     "X": 1000.0,
+     "Y": 1000.0,
+     "Z": 1000.0
     },
     "Rotation": {
      "X": 0.0,
@@ -103,30 +92,56 @@
    }
   },
   {
-   "Name": "Game Object",
+   "Name": "Kettle",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "./CoreAssets/AtlasCube.obj",
-    "Shininess": 32.0,
-    "Roughness": 1.0,
-    "Metallic": 1.0,
-    "Occlusion": 0.05000000074505806
-   },
-   "Rigidbody": {
-    "Mass": 1.0,
-    "Restitution": 0.5,
-    "Friction": 0.5,
-    "Scale": {
-     "X": 1.0,
-     "Y": 1.0,
-     "Z": 1.0
-    },
-    "ShapeType": "Cube"
+    "Path": "./CoreAssets/kettle/kettle.obj",
+    "Shininess": 1.7999999523162842,
+    "Roughness": 6.099999904632568,
+    "Metallic": 3.299999952316284,
+    "Occlusion": 0.009999999776482582
    },
    "Transform": {
     "Position": {
      "X": 0.0,
-     "Y": 30.0,
+     "Y": 21.0,
+     "Z": 0.0
+    },
+    "Scale": {
+     "X": 70.0,
+     "Y": 70.0,
+     "Z": 70.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 373.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Name": "PointLight",
+   "Type": "PointLight",
+   "LightPosition": {
+    "X": -144.0,
+    "Y": 493.0,
+    "Z": 0.0
+   },
+   "LightColor": {
+    "R": 1.0,
+    "G": 1.0,
+    "B": 1.0
+   },
+   "Constant": 1.0,
+   "Linear": 0.09000000357627869,
+   "Quadrantic": 0.03200000151991844,
+   "Ambient": 1.0,
+   "Diffuse": 174.0,
+   "Specular": 1.0,
+   "Transform": {
+    "Position": {
+     "X": -144.0,
+     "Y": 493.0,
      "Z": 0.0
     },
     "Scale": {
@@ -145,9 +160,9 @@
    "Name": "PointLight",
    "Type": "PointLight",
    "LightPosition": {
-    "X": 6.0,
-    "Y": 210.0,
-    "Z": 0.0
+    "X": 4.0,
+    "Y": 71.0,
+    "Z": 35.0
    },
    "LightColor": {
     "R": 1.0,
@@ -157,14 +172,14 @@
    "Constant": 1.0,
    "Linear": 0.09000000357627869,
    "Quadrantic": 0.03200000151991844,
-   "Ambient": 1.0,
-   "Diffuse": 1.0,
+   "Ambient": 543.0,
+   "Diffuse": 546.0,
    "Specular": 1.0,
    "Transform": {
     "Position": {
-     "X": 6.0,
-     "Y": 210.0,
-     "Z": 0.0
+     "X": 4.0,
+     "Y": 71.0,
+     "Z": 35.0
     },
     "Scale": {
      "X": 1.0,

@@ -16,7 +16,7 @@ namespace Engine{
 		RIGIDBODY_SHAPE_TYPE_SPHERE
 	};
 
-	class __declspec(dllexport) RigidBody	{
+	class EngineAPI_Export RigidBody	{
 		RigidBodyShapeType    ShapeType;
 		btConvexShape *       pShape;
 		btRigidBody *		  pRigidBody;

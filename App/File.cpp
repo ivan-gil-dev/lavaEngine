@@ -132,7 +132,7 @@ extern "C" {
         directionalLightAttributes->push_back(dlight->pGetDirectionalLightUniformData());
 
 
-        DirectionalLightObject* dlight2 = new DirectionalLightObject;
+        /*DirectionalLightObject* dlight2 = new DirectionalLightObject;
         dlight2->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(0.25, -1, 0.25);
         dlight2->pGetDirectionalLightUniformData()->lightColor = glm::vec3(0.2, 0.2, 0.2);
 
@@ -140,7 +140,7 @@ extern "C" {
         entities->push_back(dlight2);
 
 
-        directionalLightAttributes->push_back(dlight2->pGetDirectionalLightUniformData());
+        directionalLightAttributes->push_back(dlight2->pGetDirectionalLightUniformData());*/
 
         PointLightObject* pointLight = new PointLightObject;
         pointLight->Transform.Translate(glm::vec3(1.0f, 585.0f, 0.0f));

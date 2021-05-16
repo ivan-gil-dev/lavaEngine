@@ -380,7 +380,7 @@ Engine::DirectionalLightObject::DirectionalLightObject()
     Name = "Directional Light";
     directionalLightSettings.lightColor = glm::vec3(255.0f, 255.0f, 255.0f);
     directionalLightSettings.lightDirection = glm::vec3(0.25, 1, 0.25);
-
+    
     directionalLightSettings.ambient = 1.0f;
     directionalLightSettings.diffuse = 1.0f;
     directionalLightSettings.specular = 1.0f;

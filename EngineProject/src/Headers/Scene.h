@@ -16,15 +16,17 @@ namespace Engine{
 
 	
 
-	class __declspec(dllexport) Scene {
-		std::vector<DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes;
+	class EngineAPI_Export Scene {
 
-		std::vector<DataTypes::PointLightAttributes_t*> pointLightAttributes;
-		std::vector<Entity*> entities;
+		std::vector<DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes;//Свойства направленных источников света
 
-		nlohmann::ordered_json sceneJson;
+		std::vector<DataTypes::PointLightAttributes_t*> pointLightAttributes;//Свойства точечных источников света
 
-		std::string scenePath;
+		std::vector<Entity*> entities;//Объекты в сцене
+
+		nlohmann::ordered_json sceneJson;//JSON парсер
+
+		std::string scenePath;//Путь к сцене
 
 	public:
 

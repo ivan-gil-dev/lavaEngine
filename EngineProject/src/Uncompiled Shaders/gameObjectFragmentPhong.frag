@@ -52,11 +52,12 @@ layout( push_constant ) uniform constants
 
 } PushConstants;
 
-#define MAX_MATERIALS 256
+#define MAX_MATERIALS 64
 layout(binding = 1) uniform sampler2D diffuseColorMaps[MAX_MATERIALS];
 layout(binding = 6) uniform sampler2D specularColorMaps[MAX_MATERIALS];
 layout(binding = 7) uniform sampler2D shadowMap;
-
+layout(binding = 9) uniform sampler2D roughnessMap[MAX_MATERIALS];
+layout(binding = 10) uniform sampler2D metallicMap[MAX_MATERIALS];
 
 layout(location = 0) in vec3 frag_Color;
 layout(location = 1) in vec2 frag_UVmap;
@@ -144,6 +145,10 @@ vec3 CalculateDirectionalLight(DirectionalLight_t directionalLight_p, vec3 norma
         specular *= vec3(texture(specularColorMaps[PushConstants.MaterialID],frag_UVmap));
 
         float shadow = CalculateShadow(frag_PosLightSpace);
+
+        if((ambient + shadow*diffuse + specular).r < 0){
+            return vec3(255,255,255);
+        }
 
         return (ambient + shadow*diffuse + specular);
     }else{

@@ -105,6 +105,23 @@ namespace Engine{
 			shadowMapBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
             setLayoutBindings.push_back(shadowMapBinding);
 
+            VkDescriptorSetLayoutBinding roughnessMapBinding{};
+			roughnessMapBinding.binding = 9;
+			roughnessMapBinding.descriptorCount = MAX_MATERIALS;
+			roughnessMapBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			roughnessMapBinding.pImmutableSamplers = nullptr;
+			roughnessMapBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+            setLayoutBindings.push_back(roughnessMapBinding);
+
+            VkDescriptorSetLayoutBinding metallicMapBinding{};
+			metallicMapBinding.binding = 10;
+			metallicMapBinding.descriptorCount = MAX_MATERIALS;
+			metallicMapBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+			metallicMapBinding.pImmutableSamplers = nullptr;
+			metallicMapBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
+            setLayoutBindings.push_back(metallicMapBinding);
+
+
 
 			CreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
 			CreateInfo.pBindings = setLayoutBindings.data();

@@ -35,8 +35,8 @@
    "Mesh": {
     "Path": "CoreAssets/sponza/sponza.obj",
     "Shininess": 32.0,
-    "Roughness": 0.4000000059604645,
-    "Metallic": 36.5,
+    "Roughness": 0.8999999761581421,
+    "Metallic": 1.399999976158142,
     "Occlusion": 0.009999999776482582
    },
    "Transform": {
@@ -98,8 +98,8 @@
    "Name": "PointLight",
    "Type": "PointLight",
    "LightPosition": {
-    "X": -197.0,
-    "Y": 356.0,
+    "X": -374.0,
+    "Y": 56.0,
     "Z": -210.0
    },
    "LightColor": {
@@ -111,12 +111,12 @@
    "Linear": 0.0010000000474974513,
    "Quadrantic": 0.03200000151991844,
    "Ambient": 65.0,
-   "Diffuse": 1.0,
+   "Diffuse": 371.0,
    "Specular": 1.0,
    "Transform": {
     "Position": {
-     "X": -197.0,
-     "Y": 356.0,
+     "X": -374.0,
+     "Y": 56.0,
      "Z": -210.0
     },
     "Scale": {
@@ -148,7 +148,7 @@
    "Linear": 0.0010000000474974513,
    "Quadrantic": 0.03200000151991844,
    "Ambient": 4.0,
-   "Diffuse": 159.0,
+   "Diffuse": 178.0,
    "Specular": 1.0,
    "Transform": {
     "Position": {
@@ -185,13 +185,47 @@
    "Linear": 9.999999747378752e-05,
    "Quadrantic": 0.03200000151991844,
    "Ambient": 35.0,
-   "Diffuse": 41.0,
+   "Diffuse": 534.0,
    "Specular": 1.0,
    "Transform": {
     "Position": {
      "X": 129.0,
      "Y": 473.0,
      "Z": 453.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Name": "Directional Light",
+   "Type": "DirectionalLight",
+   "Direction": {
+    "X": 1.0,
+    "Y": -1.0,
+    "Z": 1.0
+   },
+   "Color": {
+    "R": 1.0,
+    "G": 1.0,
+    "B": 1.0
+   },
+   "Ambient": 1.0,
+   "Diffuse": 0.30000001192092896,
+   "Specular": 1.0,
+   "Transform": {
+    "Position": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
     },
     "Scale": {
      "X": 1.0,
