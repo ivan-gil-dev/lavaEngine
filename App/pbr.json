@@ -30,14 +30,14 @@
    }
   },
   {
-   "Name": "sponza",
+   "Name": "Plane",
    "Type": "GameObject",
    "Mesh": {
-    "Path": "CoreAssets/sponza/sponza.obj",
+    "Path": "CoreAssets/plane.obj",
     "Shininess": 32.0,
-    "Roughness": 0.8999999761581421,
-    "Metallic": 1.399999976158142,
-    "Occlusion": 0.009999999776482582
+    "Roughness": 1.0,
+    "Metallic": 1.0,
+    "Occlusion": 0.05000000074505806
    },
    "Transform": {
     "Position": {
@@ -46,157 +46,9 @@
      "Z": 0.0
     },
     "Scale": {
-     "X": 1.0,
-     "Y": 1.0,
-     "Z": 1.0
-    },
-    "Rotation": {
-     "X": 0.0,
-     "Y": 0.0,
-     "Z": 0.0
-    }
-   }
-  },
-  {
-   "Name": "PointLight",
-   "Type": "PointLight",
-   "LightPosition": {
-    "X": -223.0,
-    "Y": 464.0,
-    "Z": -460.0
-   },
-   "LightColor": {
-    "R": 1.0,
-    "G": 1.0,
-    "B": 1.0
-   },
-   "Constant": 1.0,
-   "Linear": 0.0010000000474974513,
-   "Quadrantic": 0.03200000151991844,
-   "Ambient": 4.0,
-   "Diffuse": 6.0,
-   "Specular": 8.0,
-   "Transform": {
-    "Position": {
-     "X": -223.0,
-     "Y": 464.0,
-     "Z": -460.0
-    },
-    "Scale": {
-     "X": 1.0,
-     "Y": 1.0,
-     "Z": 1.0
-    },
-    "Rotation": {
-     "X": 0.0,
-     "Y": 0.0,
-     "Z": 0.0
-    }
-   }
-  },
-  {
-   "Name": "PointLight",
-   "Type": "PointLight",
-   "LightPosition": {
-    "X": -374.0,
-    "Y": 56.0,
-    "Z": -210.0
-   },
-   "LightColor": {
-    "R": 1.0,
-    "G": 1.0,
-    "B": 1.0
-   },
-   "Constant": 1.0,
-   "Linear": 0.0010000000474974513,
-   "Quadrantic": 0.03200000151991844,
-   "Ambient": 65.0,
-   "Diffuse": 371.0,
-   "Specular": 1.0,
-   "Transform": {
-    "Position": {
-     "X": -374.0,
-     "Y": 56.0,
-     "Z": -210.0
-    },
-    "Scale": {
-     "X": 1.0,
-     "Y": 1.0,
-     "Z": 1.0
-    },
-    "Rotation": {
-     "X": 0.0,
-     "Y": 0.0,
-     "Z": 0.0
-    }
-   }
-  },
-  {
-   "Name": "PointLight",
-   "Type": "PointLight",
-   "LightPosition": {
-    "X": 50.0,
-    "Y": 36.0,
-    "Z": 452.0
-   },
-   "LightColor": {
-    "R": 1.0,
-    "G": 1.0,
-    "B": 1.0
-   },
-   "Constant": 1.0,
-   "Linear": 0.0010000000474974513,
-   "Quadrantic": 0.03200000151991844,
-   "Ambient": 4.0,
-   "Diffuse": 178.0,
-   "Specular": 1.0,
-   "Transform": {
-    "Position": {
-     "X": 50.0,
-     "Y": 36.0,
-     "Z": 452.0
-    },
-    "Scale": {
-     "X": 1.0,
-     "Y": 1.0,
-     "Z": 1.0
-    },
-    "Rotation": {
-     "X": 0.0,
-     "Y": 0.0,
-     "Z": 0.0
-    }
-   }
-  },
-  {
-   "Name": "PointLight",
-   "Type": "PointLight",
-   "LightPosition": {
-    "X": 129.0,
-    "Y": 473.0,
-    "Z": 453.0
-   },
-   "LightColor": {
-    "R": 1.0,
-    "G": 1.0,
-    "B": 1.0
-   },
-   "Constant": 1.0,
-   "Linear": 9.999999747378752e-05,
-   "Quadrantic": 0.03200000151991844,
-   "Ambient": 35.0,
-   "Diffuse": 534.0,
-   "Specular": 1.0,
-   "Transform": {
-    "Position": {
-     "X": 129.0,
-     "Y": 473.0,
-     "Z": 453.0
-    },
-    "Scale": {
-     "X": 1.0,
-     "Y": 1.0,
-     "Z": 1.0
+     "X": 1000.0,
+     "Y": 1000.0,
+     "Z": 1000.0
     },
     "Rotation": {
      "X": 0.0,
@@ -219,13 +71,115 @@
     "B": 1.0
    },
    "Ambient": 1.0,
-   "Diffuse": 0.30000001192092896,
+   "Diffuse": 1.0,
    "Specular": 1.0,
    "Transform": {
     "Position": {
      "X": 0.0,
      "Y": 0.0,
      "Z": 0.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Name": "Kettle",
+   "Type": "GameObject",
+   "Mesh": {
+    "Path": "./CoreAssets/kettle/kettle.obj",
+    "Shininess": 1.7999999523162842,
+    "Roughness": 6.099999904632568,
+    "Metallic": 3.299999952316284,
+    "Occlusion": 0.009999999776482582
+   },
+   "Transform": {
+    "Position": {
+     "X": 0.0,
+     "Y": 21.0,
+     "Z": 0.0
+    },
+    "Scale": {
+     "X": 70.0,
+     "Y": 70.0,
+     "Z": 70.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 373.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Name": "PointLight",
+   "Type": "PointLight",
+   "LightPosition": {
+    "X": -144.0,
+    "Y": 493.0,
+    "Z": 0.0
+   },
+   "LightColor": {
+    "R": 1.0,
+    "G": 1.0,
+    "B": 1.0
+   },
+   "Constant": 1.0,
+   "Linear": 0.09000000357627869,
+   "Quadrantic": 0.03200000151991844,
+   "Ambient": 1.0,
+   "Diffuse": 174.0,
+   "Specular": 1.0,
+   "Transform": {
+    "Position": {
+     "X": -144.0,
+     "Y": 493.0,
+     "Z": 0.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Name": "PointLight",
+   "Type": "PointLight",
+   "LightPosition": {
+    "X": 4.0,
+    "Y": 71.0,
+    "Z": 35.0
+   },
+   "LightColor": {
+    "R": 1.0,
+    "G": 1.0,
+    "B": 1.0
+   },
+   "Constant": 1.0,
+   "Linear": 0.09000000357627869,
+   "Quadrantic": 0.03200000151991844,
+   "Ambient": 543.0,
+   "Diffuse": 546.0,
+   "Specular": 1.0,
+   "Transform": {
+    "Position": {
+     "X": 4.0,
+     "Y": 71.0,
+     "Z": 35.0
     },
     "Scale": {
      "X": 1.0,

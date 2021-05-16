@@ -35,8 +35,8 @@
    "Mesh": {
     "Path": "CoreAssets/plane.obj",
     "Shininess": 32.0,
-    "Roughness": 0.20000000298023224,
-    "Metallic": 13.0,
+    "Roughness": 0.4000000059604645,
+    "Metallic": 1.600000023841858,
     "Occlusion": 0.10000000149011612
    },
    "Rigidbody": {
@@ -81,9 +81,9 @@
     "G": 1.0,
     "B": 1.0
    },
-   "Ambient": 1.0,
-   "Diffuse": 1.0,
-   "Specular": 1.0,
+   "Ambient": 9.0,
+   "Diffuse": 3.0,
+   "Specular": 83.0,
    "Transform": {
     "Position": {
      "X": 0.0,

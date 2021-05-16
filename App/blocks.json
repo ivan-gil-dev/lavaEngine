@@ -1556,7 +1556,7 @@
    "Mesh": {
     "Path": "CoreAssets/ceramic.obj",
     "Shininess": 32.0,
-    "Roughness": 3.799999952316284,
+    "Roughness": 1.600000023841858,
     "Metallic": 2.5,
     "Occlusion": 0.0
    },
@@ -1601,40 +1601,6 @@
     "R": 1.0,
     "G": 1.0,
     "B": 1.0
-   },
-   "Ambient": 1.0,
-   "Diffuse": 1.0,
-   "Specular": 1.0,
-   "Transform": {
-    "Position": {
-     "X": 0.0,
-     "Y": 0.0,
-     "Z": 0.0
-    },
-    "Scale": {
-     "X": 1.0,
-     "Y": 1.0,
-     "Z": 1.0
-    },
-    "Rotation": {
-     "X": 0.0,
-     "Y": 0.0,
-     "Z": 0.0
-    }
-   }
-  },
-  {
-   "Name": "Directional Light",
-   "Type": "DirectionalLight",
-   "Direction": {
-    "X": 0.25,
-    "Y": -1.0,
-    "Z": 0.25
-   },
-   "Color": {
-    "R": 0.20000000298023224,
-    "G": 0.20000000298023224,
-    "B": 0.20000000298023224
    },
    "Ambient": 1.0,
    "Diffuse": 1.0,
