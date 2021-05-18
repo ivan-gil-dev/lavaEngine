@@ -37,9 +37,19 @@
 
 namespace Engine {
 
+    
+
+
     class Renderer
     {
     private:
+        struct Old {
+            VkRect2D   rendererScissors;
+            VkViewport rendererViewport;
+            int entityCount;
+            bool drawShadows;
+        }old;
+
         //  Настройка и создание фреймбуферов
         std::vector<VkFramebuffer> createFramebuffers(VkDevice device, VkRenderPass renderPass, std::vector<VkImageView> swapchainImageViews,
             VkImageView depthImageView, VkImageView multisamplingImageView, VkExtent2D swapchainExtent);
@@ -84,15 +94,17 @@ namespace Engine {
         VkRect2D   rendererScissors;
         VkViewport rendererViewport;
 
-#define MAX_FRAMES 2
+
         //  Буфер с коммандами для отрисовки сцены
         std::vector<CommandBuffer> drawCommandBuffer;
+        std::vector<CommandBuffer> drawCommandBufferForImgui;
+        std::vector<CommandPool> drawCommandPool;
+        std::vector<bool> checkBuild;
 
         uint32_t imageIndex;
         uint32_t currentFrame = 0;
+        int MAX_FRAMES;
 
-        int newNumberOfEntities = 0;
-        int oldNumberOfEntities = 0;
 
         //  Инициализация объектов Vulkan
         void initVulkan(HWND hwnd, HINSTANCE hInstance);
@@ -100,6 +112,8 @@ namespace Engine {
         void recreateSwapchain();   
 
         void DrawScene(ImDrawData* drawData, Scene* scene, Camera camera);
+
+        void BuildCommandBuffers(ImDrawData* drawData, Scene* scene);
 
       
         void FlushDrawingBuffer();

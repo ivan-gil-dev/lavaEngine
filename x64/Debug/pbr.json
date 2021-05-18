@@ -96,9 +96,9 @@
    "Type": "GameObject",
    "Mesh": {
     "Path": "./CoreAssets/kettle/kettle.obj",
-    "Shininess": 1.7999999523162842,
-    "Roughness": 6.099999904632568,
-    "Metallic": 3.299999952316284,
+    "Shininess": 13.600000381469727,
+    "Roughness": 0.8999999761581421,
+    "Metallic": 3.700000047683716,
     "Occlusion": 0.009999999776482582
    },
    "Transform": {

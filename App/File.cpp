@@ -152,7 +152,7 @@ extern "C" {
         pointLight2->SetID(reinterpret_cast<int>(pointLight2));
         entities->push_back(pointLight2);
 
-        PointLightObject* pointLight3 = new PointLightObject;
+        /*PointLightObject* pointLight3 = new PointLightObject;
         pointLight3->Transform.Translate(glm::vec3(50.0f, 3.0f, 13.0f));
         pointLight3->SetID(reinterpret_cast<int>(pointLight3));
         entities->push_back(pointLight3);
@@ -160,12 +160,12 @@ extern "C" {
         PointLightObject* pointLight4 = new PointLightObject;
         pointLight4->Transform.Translate(glm::vec3(70.0f, 3.0f, 13.0f));
         pointLight4->SetID(reinterpret_cast<int>(pointLight4));
-        entities->push_back(pointLight4);
+        entities->push_back(pointLight4);*/
 
         pointLightAttributes->push_back(pointLight->pGetPointLightUniformData());
         pointLightAttributes->push_back(pointLight2->pGetPointLightUniformData());
-        pointLightAttributes->push_back(pointLight3->pGetPointLightUniformData());
-        pointLightAttributes->push_back(pointLight4->pGetPointLightUniformData());
+    /*    pointLightAttributes->push_back(pointLight3->pGetPointLightUniformData());
+        pointLightAttributes->push_back(pointLight4->pGetPointLightUniformData());*/
     }
 
 }

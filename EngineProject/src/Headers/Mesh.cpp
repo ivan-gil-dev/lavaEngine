@@ -464,10 +464,7 @@ void Engine::Mesh::Draw(VkCommandBuffer commandBuffer, int imageIndex, VkPipelin
 			pipeline
         );
 
-        if (ENABLE_DYNAMIC_VIEWPORT) {
-            vkCmdSetViewport(commandBuffer, 0, 1, &renderer.rendererViewport);
-            vkCmdSetScissor(commandBuffer, 0, 1, &renderer.rendererScissors);
-        }
+        
 
         VkBuffer buffers[] = { VertexBuffer.Get() };
         VkDeviceSize offsets[] = { 0 };
@@ -824,10 +821,10 @@ void Engine::WireframeMesh::Draw(VkCommandBuffer commandBuffer, int imageIndex, 
 
 	VkDeviceSize offsets[] = { 0 };
 
-	if (ENABLE_DYNAMIC_VIEWPORT) {
+	/*if (ENABLE_DYNAMIC_VIEWPORT) {
 		vkCmdSetViewport(commandBuffer, 0, 1, &renderer.rendererViewport);
 		vkCmdSetScissor(commandBuffer, 0, 1, &renderer.rendererScissors);
-	}
+	}*/
 
 	vkCmdBindVertexBuffers(commandBuffer, 0, 1, buffers, offsets);
 

@@ -47,6 +47,7 @@ void Engine::Swapchain::CreateSwapchain(VkPhysicalDevice physicalDevice, VkDevic
 	CreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 	CreateInfo.minImageCount = surfaceCapabilities.minImageCount + 1;
 	CreateInfo.preTransform = surfaceCapabilities.currentTransform;
+	
 	CreateInfo.clipped = VK_FALSE;
 	CreateInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
 	CreateInfo.imageArrayLayers = 1;

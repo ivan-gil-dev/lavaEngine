@@ -315,7 +315,7 @@ void SceneEditor::InitEditor(HWND hwnd) {
 void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) {
 	if (enableEditor) {
 		
-		ImGui::ShowDemoWindow(&DemoWindowActive);//Демо ImGui
+		//ImGui::ShowDemoWindow(&DemoWindowActive);//Демо ImGui
 		
 		ImGui::BeginMainMenuBar();//Менюбар
 
@@ -995,7 +995,7 @@ void Application::Execute() {
 			LastFrameTime = Time;
 		}
 
-		//spdlog::info("DeltaTime ", DeltaTime);
+		//std::cout << Engine::Globals::DeltaTime << std::endl;
 		
 		
 
@@ -1032,6 +1032,8 @@ void Application::Execute() {
 		//Вывод сцены и редактора (Или вывод без редактора)
 		//if (!Engine::Globals::gIsScenePlaying){
             sceneEditor.editorCamera.Update();
+
+
             Engine::renderer.DrawScene(
                 ImguiDrawData,
                 Engine::Globals::gScene,

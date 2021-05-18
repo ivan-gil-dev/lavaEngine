@@ -16,7 +16,7 @@ namespace Engine{
 			surfaceCreateInfo.hinstance = hInstance;
 			surfaceCreateInfo.hwnd = hwnd;
 			surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
-
+			
 			if (vkCreateWin32SurfaceKHR(instance, &surfaceCreateInfo, nullptr, &vSurface) != VK_SUCCESS) {
 				throw std::runtime_error("Failed to create Win32 surface");
 			}

@@ -35,7 +35,7 @@ namespace Engine {
 
 		const int gmax_frames = 2;
 
-		VkSampleCountFlagBits gMSAAsamples = VK_SAMPLE_COUNT_4_BIT;
+		VkSampleCountFlagBits gMSAAsamples = VK_SAMPLE_COUNT_2_BIT;
 
 		Application App;
 

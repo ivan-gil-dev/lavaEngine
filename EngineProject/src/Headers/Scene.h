@@ -28,6 +28,8 @@ namespace Engine{
 
 		std::string scenePath;//ѕуть к сцене
 
+		std::vector<Camera*> cameras;
+
 	public:
 
 		std::string GetScenePath();
@@ -43,6 +45,8 @@ namespace Engine{
 		std::vector<Entity*>* pGetVectorOfEntities();
 
 		Scene();
+
+		std::vector<Camera*>* pGetVectorOfCameras();
 
 		std::vector<DataTypes::DirectionalLightAttributes_t*>* pGetVectorOfDirectionalLightAttributes();
 

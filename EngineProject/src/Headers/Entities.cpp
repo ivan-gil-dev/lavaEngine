@@ -3,6 +3,21 @@
 #include "Renderer/Renderer.h"
 
 
+void Engine::Camera::SetActive()
+{
+    Active = true;
+}
+
+void Engine::Camera::SetPassive()
+{
+    Active = false;
+}
+
+bool Engine::Camera::IsActive()
+{
+    return Active;
+}
+
 Engine::Camera::Camera()
 {
     CursorFirstMouse = true;
@@ -160,25 +175,25 @@ void Engine::EditorCamera::Update()
     //Перемещение камеры
     if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_ALT))
     {
-        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_A)) {
+        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_A) && !Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
             CameraPos -= glm::normalize(glm::cross(CameraFront, CameraUp)) * moveSpeed * (float)Engine::Globals::DeltaTime;
         }
         if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_A) && Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
             CameraPos -= glm::normalize(glm::cross(CameraFront, CameraUp)) * moveSpeed * (float)Engine::Globals::DeltaTime * sprintSpeed;
         }
-        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_D)) {
+        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_D) && !Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
             CameraPos += glm::normalize(glm::cross(CameraFront, CameraUp)) * moveSpeed * (float)Engine::Globals::DeltaTime;
         }
         if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_D) && Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
             CameraPos += glm::normalize(glm::cross(CameraFront, CameraUp)) * moveSpeed * (float)Engine::Globals::DeltaTime * sprintSpeed;
         }
-        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_W)) {
+        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_W) && !Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
             CameraPos += moveSpeed * CameraFront * (float)Engine::Globals::DeltaTime;
         }
         if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_W) && Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
             CameraPos += moveSpeed * CameraFront * (float)Engine::Globals::DeltaTime * sprintSpeed;
         }
-        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_S)) {
+        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_S) && !Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
             CameraPos -= moveSpeed * CameraFront * (float)Engine::Globals::DeltaTime;
         }
         if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_S) && Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {

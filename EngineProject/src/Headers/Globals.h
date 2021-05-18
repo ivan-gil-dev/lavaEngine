@@ -62,12 +62,9 @@ namespace Engine{
             }
 		};
 
-        
-
-
 		#define MAX_SPOTLIGHTS 100
 		#define MAX_DLIGHTS 20
-		#define MAX_FRAMES 2
+	
 
 		extern bool  gToggleFullscreen;
 		extern bool  gShowMeshes;

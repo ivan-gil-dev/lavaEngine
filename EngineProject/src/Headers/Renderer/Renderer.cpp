@@ -94,6 +94,8 @@ namespace Engine {
 
         swapchain.CreateImageViews(device.Get());
 
+        MAX_FRAMES = (int)swapchain.PGetImageViews()->size();
+
         commandPool.CreateCommandPool(physicalDevice.GetQueueIndices(),
             device.Get());
 
@@ -177,7 +179,7 @@ namespace Engine {
             (int)swapchain.PGetImageViews()->size()
         );
 
-        syncObjects.CreateSyncObjects(device.Get());
+        syncObjects.CreateSyncObjects(device.Get(), MAX_FRAMES);
 
 
         setLayoutForShadowMap.CreateDescriptorSetLayout(device.Get());
@@ -214,10 +216,23 @@ namespace Engine {
         );
 
         drawCommandBuffer.resize(swapchain.PGetImageViews()->size());
+        drawCommandBufferForImgui.resize(swapchain.PGetImageViews()->size());
+        drawCommandPool.resize(swapchain.PGetImageViews()->size());
+        checkBuild.resize(swapchain.PGetImageViews()->size());
         for (size_t i = 0; i < drawCommandBuffer.size(); i++)
         {
-            drawCommandBuffer[i].AllocateCommandBuffer(device.Get(), commandPool.Get());
+            drawCommandPool[i].CreateCommandPool(physicalDevice.GetQueueIndices(), device.Get());
+            drawCommandBuffer[i].AllocateCommandBuffer(device.Get(), drawCommandPool[i].Get());
+            drawCommandBufferForImgui[i].AllocateCommandBuffer(device.Get(), drawCommandPool[i].Get());
+            checkBuild[i] = false;
         }
+
+
+        old.rendererScissors = rendererScissors;
+        old.rendererViewport = rendererViewport;
+        old.entityCount = 0;
+        old.drawShadows = Globals::gDrawShadows;
+
     }
 
     void Renderer::recreateSwapchain()
@@ -263,7 +278,61 @@ namespace Engine {
 
     void Renderer::DrawScene(ImDrawData* drawData, Scene* scene, Camera camera)
     {
-        newNumberOfEntities = (int)scene->pGetVectorOfEntities()->size();
+        {
+            if (old.entityCount != (int)scene->pGetVectorOfEntities()->size())
+            {
+                std::cout << "Rebuild1" << std::endl;
+                for (size_t i = 0; i < checkBuild.size(); i++)
+                {
+                    checkBuild[i] = false;
+                }
+            }
+            else
+            if (old.rendererScissors.extent.height != rendererScissors.extent.height ||
+                old.rendererScissors.extent.width != rendererScissors.extent.width ||
+                old.rendererScissors.offset.x != rendererScissors.offset.x ||
+                old.rendererScissors.offset.y != rendererScissors.offset.y
+                )
+            {
+                old.rendererScissors = rendererScissors;
+                std::cout << "Rebuild2" << std::endl;
+                for (size_t i = 0; i < checkBuild.size(); i++)
+                {
+                    checkBuild[i] = false;
+                }
+            }
+
+            else
+            if (old.rendererViewport.height != rendererViewport.height ||
+                old.rendererViewport.width != rendererViewport.width ||
+                old.rendererViewport.x != rendererViewport.x ||
+                old.rendererViewport.y != rendererViewport.y
+                )
+            {
+                std::cout << "Rebuild3" << std::endl;
+                old.rendererViewport = rendererViewport;
+                for (size_t i = 0; i < checkBuild.size(); i++)
+                {
+                    checkBuild[i] = false;
+                }
+            }
+            else
+                if (old.drawShadows != Globals::gDrawShadows) {
+                    std::cout << "Rebuild4" << std::endl;
+                    old.drawShadows = Globals::gDrawShadows;
+                    for (size_t i = 0; i < checkBuild.size(); i++)
+                    {
+                        checkBuild[i] = false;
+                    }
+
+            }
+
+
+
+            old.entityCount = (int)scene->pGetVectorOfEntities()->size();
+        }
+        
+       
         vkWaitForFences(device.Get(), 1, &syncObjects.GetFences()[currentFrame], VK_TRUE, UINT64_MAX);
         vkResetFences(device.Get(), 1, &syncObjects.GetFences()[currentFrame]);
        
@@ -298,7 +367,7 @@ namespace Engine {
             }
         }
 
-        VkRenderPassBeginInfo renderPassBeginInfo = { VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO };
+        
 
         std::vector<DataTypes::MVP_t> MVPs;
         for (size_t i = 0; i < entities->size(); i++)
@@ -320,118 +389,46 @@ namespace Engine {
             depthImageShadowMap.UpdateUniformBuffers(imageIndex, device.Get(), glm::vec3(0, 0, 0), MVPs);
         }
 
-        //drawCommandBuffer.AllocateCommandBuffer(device.Get(), commandPool.Get());
-        drawCommandBuffer[currentFrame].BeginCommandBuffer();
+        MVPs.clear();
 
-        //--------shadowmapping---------
+        BuildCommandBuffers(drawData, scene);
+
+        if (ENABLE_IMGUI)
         {
+            drawCommandBufferForImgui[currentFrame].BeginCommandBuffer();
+            VkRenderPassBeginInfo renderPassBeginInfo;
+            renderPassBeginInfo = {};
+            renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+            renderPassBeginInfo.renderPass = renderPass.GetRenderPass();
+            renderPassBeginInfo.renderArea.extent = swapchain.GetInfo().imageExtent;
+            renderPassBeginInfo.renderArea.offset = { 0,0 };
+            renderPassBeginInfo.framebuffer = swapchain.GetSwapchainFramebuffers()[imageIndex];
 
-            VkClearValue clVal = { 1.f,0 };
-            VkClearValue values[] = { clVal };
+            VkClearValue clearColor = { 0.0f,0.0f,0.0f,1.0f };
+            VkClearValue depthClearColor = { 1.0,0.0f };
+            VkClearValue resolveColor = { 0.0f,0.0f,0.0f,1.0f };
+            VkClearValue clearColors[] = {
+                clearColor,depthClearColor,resolveColor
+            };
 
+            renderPassBeginInfo.pClearValues = clearColors;
+            renderPassBeginInfo.clearValueCount = 3;
 
-            renderPassBeginInfo.renderPass = offscreenRenderpass.GetRenderPass();
-            renderPassBeginInfo.framebuffer = offscreenFramebuffers[imageIndex];
-            renderPassBeginInfo.renderArea.extent.width = depthImageShadowMap.GetShadowMapDimensions();
-            renderPassBeginInfo.renderArea.extent.height = depthImageShadowMap.GetShadowMapDimensions();
-            renderPassBeginInfo.clearValueCount = 1;
-            renderPassBeginInfo.pClearValues = values;
-
-            vkCmdBeginRenderPass(drawCommandBuffer[currentFrame].Get(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-
-            VkViewport viewport{};
-            viewport.height = (float)depthImageShadowMap.GetShadowMapDimensions();
-            viewport.width = (float)depthImageShadowMap.GetShadowMapDimensions();
-            viewport.minDepth = 0;
-            viewport.maxDepth = 1;
-            vkCmdSetViewport(drawCommandBuffer[currentFrame].Get(), 0, 1, &viewport);
-
-
-            VkRect2D rect{};
-            rect.extent.height = depthImageShadowMap.GetShadowMapDimensions();
-            rect.extent.width = depthImageShadowMap.GetShadowMapDimensions();
-            rect.offset.x = 0;
-            rect.offset.y = 0;
-
-            vkCmdSetScissor(drawCommandBuffer[currentFrame].Get(), 0, 1, &rect);
-
-            vkCmdSetDepthBias(
-                drawCommandBuffer[currentFrame].Get(),
-                5.05f,
-                0.0f,
-                1.75f);
-
-            if (Globals::gDrawShadows)
-            {
-                for (size_t j = 0, i = 0; i < entities->size(); i++) {
+            vkCmdBeginRenderPass(drawCommandBufferForImgui[currentFrame].Get(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+            ImGui_ImplVulkan_RenderDrawData(drawData, drawCommandBufferForImgui[currentFrame].Get());
+            vkCmdEndRenderPass(drawCommandBufferForImgui[currentFrame].Get());
 
 
-                    if (entities->at(i)->GetEntityType() == ENTITY_TYPE_GAME_OBJECT)
-                    {
-                        if (((GameObject*)entities->at(i))->pGetComponent<Mesh*>() != nullptr)
-                        {
-                            std::vector<VkDescriptorSet> descriptorSets = depthImageShadowMap.GetDescriptorSetsByIndex((int)j);
-                            ((GameObject*)entities->at(i))->DrawShadowMaps(
-                                drawCommandBuffer[currentFrame].Get(),
-                                imageIndex,
-                                descriptorSets
-                            );
-                            j++;
-                        }
-                    }
-                }
-            }
-
-
-            vkCmdEndRenderPass(drawCommandBuffer[currentFrame].Get());
-            MVPs.clear();
-            //-----------------------------------------------------------------------------------
+            drawCommandBufferForImgui[currentFrame].EndCommandBuffer();
         }
-
-
+        
+        VkCommandBuffer commandBuffers[] = { drawCommandBuffer[currentFrame].Get(), drawCommandBufferForImgui[currentFrame].Get()};
         VkPipelineStageFlags stages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
         VkSemaphore waitSemaphores[] = { syncObjects.GetImageAvailableSemaphores()[currentFrame] };
         VkSemaphore signalSemaphores[] = { syncObjects.GetImageRenderedSemaphores()[currentFrame] };
-
-        renderPassBeginInfo = {};
-        renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-        renderPassBeginInfo.renderPass = renderPass.GetRenderPass();
-        renderPassBeginInfo.renderArea.extent = swapchain.GetInfo().imageExtent;
-        renderPassBeginInfo.renderArea.offset = { 0,0 };
-        renderPassBeginInfo.framebuffer = swapchain.GetSwapchainFramebuffers()[imageIndex];
-
-        VkClearValue clearColor = { 0.0f,0.0f,0.0f,1.0f };
-        VkClearValue depthClearColor = { 1.0,0.0f };
-        VkClearValue resolveColor = { 0.0f,0.0f,0.0f,1.0f };
-        VkClearValue clearColors[] = {
-            clearColor, depthClearColor, resolveColor
-        };
-
-        renderPassBeginInfo.pClearValues = clearColors;
-        renderPassBeginInfo.clearValueCount = 3;
-        vkCmdBeginRenderPass(drawCommandBuffer[currentFrame].Get(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-        for (size_t i = 0; i < entities->size(); i++) {
-            entities->at(i)->Draw(
-                drawCommandBuffer[currentFrame].Get(),
-                imageIndex
-            );
-        }
-
-        if (ENABLE_IMGUI) {
-            ImGui_ImplVulkan_RenderDrawData(drawData, drawCommandBuffer[currentFrame].Get());
-        }
-
-        vkCmdEndRenderPass(drawCommandBuffer[currentFrame].Get());
-
-        drawCommandBuffer[currentFrame].EndCommandBuffer();
-
-        VkCommandBuffer commandBuffers[] = { drawCommandBuffer[currentFrame].Get() };
-
         VkSubmitInfo submitInfo = {};
         submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        submitInfo.commandBufferCount = (uint32_t)1;
+        submitInfo.commandBufferCount = (uint32_t)2;
         submitInfo.pCommandBuffers = commandBuffers;
         submitInfo.pSignalSemaphores = signalSemaphores;
         submitInfo.pWaitSemaphores = waitSemaphores;
@@ -439,15 +436,10 @@ namespace Engine {
         submitInfo.signalSemaphoreCount = 1;
         submitInfo.pWaitDstStageMask = stages;
 
-        
-
         if (vkQueueSubmit(device.GetGraphicsQueue(), 1, &submitInfo, syncObjects.GetFences()[currentFrame]) != VK_SUCCESS) {
-            
             spdlog::warn(("Failed to submit info while drawing!"));
             return;
         }
-
-       // vkWaitForFences(device.Get(), 1, &syncObjects.GetFences()[currentFrame], VK_TRUE, UINT64_MAX);
 
         VkPresentInfoKHR presentInfo = {};
         presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -469,6 +461,121 @@ namespace Engine {
         currentFrame = (currentFrame + 1) % MAX_FRAMES;
     }
 
+    void Renderer::BuildCommandBuffers(ImDrawData* drawData, Scene* scene)
+    {
+
+        if (!checkBuild[currentFrame])
+        {
+            //std::cout << "CheckBuild" << std::endl;
+            drawCommandBuffer[currentFrame].BeginCommandBuffer();
+            VkRenderPassBeginInfo renderPassBeginInfo = { VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO };
+            //--------shadowmapping---------
+            {
+
+                VkClearValue clVal = { 1.f,0 };
+                VkClearValue values[] = { clVal };
+
+
+                renderPassBeginInfo.renderPass = offscreenRenderpass.GetRenderPass();
+                renderPassBeginInfo.framebuffer = offscreenFramebuffers[imageIndex];
+                renderPassBeginInfo.renderArea.extent.width = depthImageShadowMap.GetShadowMapDimensions();
+                renderPassBeginInfo.renderArea.extent.height = depthImageShadowMap.GetShadowMapDimensions();
+                renderPassBeginInfo.clearValueCount = 1;
+                renderPassBeginInfo.pClearValues = values;
+
+                vkCmdBeginRenderPass(drawCommandBuffer[currentFrame].Get(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+                
+                VkViewport viewport{};
+                viewport.height = (float)depthImageShadowMap.GetShadowMapDimensions();
+                viewport.width = (float)depthImageShadowMap.GetShadowMapDimensions();
+                viewport.minDepth = 0;
+                viewport.maxDepth = 1;
+                vkCmdSetViewport(drawCommandBuffer[currentFrame].Get(), 0, 1, &viewport);
+
+
+                VkRect2D rect{};
+                rect.extent.height = depthImageShadowMap.GetShadowMapDimensions();
+                rect.extent.width = depthImageShadowMap.GetShadowMapDimensions();
+                rect.offset.x = 0;
+                rect.offset.y = 0;
+
+                vkCmdSetScissor(drawCommandBuffer[currentFrame].Get(), 0, 1, &rect);
+
+                vkCmdSetDepthBias(
+                    drawCommandBuffer[currentFrame].Get(),
+                    5.05f,
+                    0.0f,
+                    1.75f);
+
+                if (Globals::gDrawShadows)
+                {
+                    for (size_t j = 0, i = 0; i < scene->pGetVectorOfEntities()->size(); i++) {
+
+
+                        if (scene->pGetVectorOfEntities()->at(i)->GetEntityType() == ENTITY_TYPE_GAME_OBJECT)
+                        {
+                            if (((GameObject*)scene->pGetVectorOfEntities()->at(i))->pGetComponent<Mesh*>() != nullptr)
+                            {
+                                std::vector<VkDescriptorSet> descriptorSets = depthImageShadowMap.GetDescriptorSetsByIndex((int)j);
+                                ((GameObject*)scene->pGetVectorOfEntities()->at(i))->DrawShadowMaps(
+                                    drawCommandBuffer[currentFrame].Get(),
+                                    imageIndex,
+                                    descriptorSets
+                                );
+                                j++;
+                            }
+                        }
+                    }
+                }
+
+
+                vkCmdEndRenderPass(drawCommandBuffer[currentFrame].Get());
+                checkBuild[currentFrame] = true;
+                //-----------------------------------------------------------------------------------
+            }
+
+            renderPassBeginInfo = {};
+            renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+            renderPassBeginInfo.renderPass = renderPass.GetRenderPass();
+            renderPassBeginInfo.renderArea.extent = swapchain.GetInfo().imageExtent;
+            renderPassBeginInfo.renderArea.offset = { 0,0 };
+            renderPassBeginInfo.framebuffer = swapchain.GetSwapchainFramebuffers()[imageIndex];
+
+            VkClearValue clearColor = { 0.0f,0.0f,0.0f,1.0f };
+            VkClearValue depthClearColor = { 1.0,0.0f };
+            VkClearValue resolveColor = { 0.0f,0.0f,0.0f,1.0f };
+            VkClearValue clearColors[] = {
+                clearColor, depthClearColor, resolveColor
+            };
+
+            renderPassBeginInfo.pClearValues = clearColors;
+            renderPassBeginInfo.clearValueCount = 3;
+            vkCmdBeginRenderPass(drawCommandBuffer[currentFrame].Get(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+            if (ENABLE_DYNAMIC_VIEWPORT) {
+                vkCmdSetViewport(drawCommandBuffer[currentFrame].Get(), 0, 1, &renderer.rendererViewport);
+                vkCmdSetScissor(drawCommandBuffer[currentFrame].Get(), 0, 1, &renderer.rendererScissors);
+            }
+
+
+            for (size_t i = 0; i < scene->pGetVectorOfEntities()->size(); i++) {
+                scene->pGetVectorOfEntities()->at(i)->Draw(
+                    drawCommandBuffer[currentFrame].Get(),
+                    imageIndex
+                );
+            }
+
+            //ImGui_ImplVulkan_RenderDrawData(drawData, drawCommandBuffer[currentFrame].Get());
+
+            vkCmdEndRenderPass(drawCommandBuffer[currentFrame].Get());
+
+            drawCommandBuffer[currentFrame].EndCommandBuffer();
+        }
+        
+          
+    }
+
     void Renderer::FlushDrawingBuffer()
     {
         imageIndex = 0;
@@ -486,7 +593,10 @@ namespace Engine {
     {   
         for (size_t i = 0; i < drawCommandBuffer.size(); i++)
         {
-            drawCommandBuffer[i].FreeCommandBuffer(device.Get(), commandPool.Get());
+            
+            drawCommandBuffer[i].FreeCommandBuffer(device.Get(), drawCommandPool[i].Get());
+            drawCommandBufferForImgui[i].FreeCommandBuffer(device.Get(), drawCommandPool[i].Get());
+            
         }
         
         
@@ -513,6 +623,14 @@ namespace Engine {
         graphicsPipelineForCubemapObjects.DestroyPipelineObjects(device.Get());
         graphicsPipelineForRigidBodyMesh.DestroyPipelineObjects(device.Get());
         graphicsPipelineForShadowMap.DestroyPipelineObjects(device.Get());
+
+
+        for (size_t i = 0; i < drawCommandBuffer.size(); i++)
+        {
+            drawCommandPool[i].Destroy(device.Get());
+        }
+       
+
         commandPool.Destroy(device.Get());
         swapchain.DestroySwapchainObjects(device.Get());
         surface.Destroy(instance.get());

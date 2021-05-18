@@ -65,9 +65,9 @@ namespace Engine{
 		int GetID();
 	};
 
-    class Camera {
+    class Camera : public Entity{
     protected:
-        glm::vec3 CameraPos;
+		glm::vec3 CameraPos;
         glm::vec3 CameraUp;
         glm::vec3 CameraFront;
         glm::mat4 ProjectionMatrix;
@@ -76,8 +76,15 @@ namespace Engine{
             Pitch,
             CursorLastX,
             CursorLastY;
+		bool Active = false;
     public:
         bool	  CursorFirstMouse;
+
+		void SetActive();
+
+		void SetPassive();
+
+		bool IsActive();
 
         Camera();
 

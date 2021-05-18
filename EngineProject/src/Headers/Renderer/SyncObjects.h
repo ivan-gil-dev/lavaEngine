@@ -11,7 +11,7 @@ namespace Engine{
 		std::vector<VkSemaphore> ImageAvailableSemaphores;
 		std::vector<VkFence> Fences;
 	public:
-		void CreateSyncObjects(VkDevice device);
+		void CreateSyncObjects(VkDevice device, int frameCount);
 
 		std::vector<VkSemaphore> GetImageRenderedSemaphores();
 

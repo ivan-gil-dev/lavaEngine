@@ -816,11 +816,7 @@ void Engine::DepthImageShadowMap::Destroy(VkDevice device,VkDescriptorPool pool)
 	
 	for (size_t i = 0; i < b0_MVP.size(); i++){
 		for (size_t j = 0; j < b0_MVP[i].size(); j++){
-
-
 			b0_MVP[i][j].Destroy(device);
-
-
 		}		
 	}
     vkDestroySampler(device, DepthSampler, nullptr);

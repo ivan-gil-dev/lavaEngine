@@ -138,7 +138,7 @@ void Engine::Scene::Load(std::string path)
             attrib->lightColor.b = entityJson["Color"]["B"];
 
             attrib->ambient = entityJson.value("Ambient", 1);
-            attrib->diffuse = entityJson.value("Diffuse", 1);
+            attrib->diffuse = entityJson.value("Diffuse", 0.5);
             attrib->specular = entityJson.value("Specular", 1);
 
             directionalLightAttributes.push_back(attrib);
@@ -375,10 +375,13 @@ std::vector<Engine::DataTypes::PointLightAttributes_t*>* Engine::Scene::pGetVect
     return &pointLightAttributes;
 }
 
+std::vector<Engine::Camera*>* Engine::Scene::pGetVectorOfCameras() {
+    return &cameras;
+}
+
 void Engine::Scene::CleanScene()
 {
     //Save();
-
 
     for (size_t i = 0; i < entities.size(); i++) {
         delete entities[i];

@@ -32,7 +32,6 @@ namespace Engine{
 			features.samplerAnisotropy = VK_TRUE;
 			features.imageCubeArray = VK_TRUE;
 			features.fillModeNonSolid = VK_TRUE;
-			
 
 			CreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
 			CreateInfo.pEnabledFeatures = &features;
