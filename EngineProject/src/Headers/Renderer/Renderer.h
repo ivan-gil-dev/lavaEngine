@@ -47,7 +47,7 @@ namespace Engine {
             VkRect2D   rendererScissors;
             VkViewport rendererViewport;
             int entityCount;
-            bool drawShadows;
+            Globals::States_t oldStates;
         }old;
 
         //  Настройка и создание фреймбуферов
@@ -56,6 +56,8 @@ namespace Engine {
 
         std::vector<VkFramebuffer> createOffscreenFramebuffers(VkDevice device, VkRenderPass renderPass, int swapchainImageViewCount,
             VkImageView depthImageView, int ShadowMapDimensions);
+
+        void BuildCommandBuffers(ImDrawData* drawData, Scene* scene);
 
     public:
         Instance instance;
@@ -113,10 +115,9 @@ namespace Engine {
 
         void DrawScene(ImDrawData* drawData, Scene* scene, Camera camera);
 
-        void BuildCommandBuffers(ImDrawData* drawData, Scene* scene);
+        void RebuildBuffers();
 
-      
-        void FlushDrawingBuffer();
+        void WaitForDrawFences();
 
         void clear();
 

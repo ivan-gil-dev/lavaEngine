@@ -21,7 +21,7 @@ namespace Engine{
 		glm::vec3 StartScale;
 		
 	public:
-		void Translate(glm::vec3 translation) {
+		virtual void Translate(glm::vec3 translation) {
 			Position = translation;
 			TranslationMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(translation.x, translation.y, translation.z));
 
@@ -30,7 +30,7 @@ namespace Engine{
 			}
 		}
 
-		void Rotate(glm::vec3 Rotation) {
+		virtual void Rotate(glm::vec3 Rotation) {
 			
 			Quaternion = glm::quat(
 				glm::vec3(

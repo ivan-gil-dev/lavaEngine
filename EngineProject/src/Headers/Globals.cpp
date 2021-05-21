@@ -14,18 +14,27 @@
 namespace Engine {
 	namespace Globals {
 
-		KeyPressedEventHandler keyPressedEventHandler;
-		CursorPosition cursorPosition;
-		ShowCursorEventHandler showCursorEventHandler;
-		bool  gDrawShadows = true;
-		bool  gToggleFullscreen = false;
-		bool  gShowMeshes = true;
-		bool  gShowRigidbodyMeshes = true;
-		bool  gShowSkybox = true;
-		int   gHeight = 1366,
-			  gWidth = 768;
+		EngineAPI_GlobalVar KeyPressedEventHandler keyPressedEventHandler;
+		EngineAPI_GlobalVar CursorPosition cursorPosition;
+		EngineAPI_GlobalVar ShowCursorEventHandler showCursorEventHandler;
 
+		EngineAPI_GlobalVar int   gHeight = 1366,
+		                    	  gWidth = 768;
+
+       
+
+
+		EngineAPI_GlobalVar States_t states{
+			false,//ToggleFullscreen
+			true, //ShowMeshes
+			true, //ShowRigidbodyMeshes
+			true, //UseSceneCamera
+			true, //ShowSkybox
+			true  //DrawShadows
+		};
 		
+
+
 
 		std::shared_ptr<spdlog::logger> gLogger = spdlog::basic_logger_mt("file", "logs/log.txt",true);
 
@@ -35,7 +44,7 @@ namespace Engine {
 
 		const int gmax_frames = 2;
 
-		VkSampleCountFlagBits gMSAAsamples = VK_SAMPLE_COUNT_2_BIT;
+		EngineAPI_GlobalVar VkSampleCountFlagBits gMSAAsamples = VK_SAMPLE_COUNT_2_BIT;
 
 		Application App;
 

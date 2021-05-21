@@ -70,13 +70,50 @@
     "G": 1.0,
     "B": 1.0
    },
-   "Ambient": 1.0,
-   "Diffuse": 0.10000000149011612,
-   "Specular": 1.0,
+   "Ambient": 14.0,
+   "Diffuse": 1.0,
+   "Specular": 58.0,
    "Transform": {
     "Position": {
      "X": 0.0,
      "Y": 0.0,
+     "Z": 0.0
+    },
+    "Scale": {
+     "X": 1.0,
+     "Y": 1.0,
+     "Z": 1.0
+    },
+    "Rotation": {
+     "X": 0.0,
+     "Y": 0.0,
+     "Z": 0.0
+    }
+   }
+  },
+  {
+   "Name": "PointLight",
+   "Type": "PointLight",
+   "LightPosition": {
+    "X": 248.0,
+    "Y": 769.0,
+    "Z": 0.0
+   },
+   "LightColor": {
+    "R": 1.0,
+    "G": 1.0,
+    "B": 1.0
+   },
+   "Constant": 1.0,
+   "Linear": 0.09000000357627869,
+   "Quadrantic": 0.03200000151991844,
+   "Ambient": 1.0,
+   "Diffuse": 1.0,
+   "Specular": 1.0,
+   "Transform": {
+    "Position": {
+     "X": 248.0,
+     "Y": 769.0,
      "Z": 0.0
     },
     "Scale": {

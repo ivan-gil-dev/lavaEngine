@@ -12,6 +12,14 @@ void Engine::Scene::Load(std::string path)
         delete entities[i];
     }
 
+    for (size_t i = 0; i < cameras.size(); i++)
+    {
+        delete cameras[i];
+    }
+    cameras.clear();
+
+    activeCamera = nullptr;
+
     entities.clear();
 
     pointLightAttributes.clear();
@@ -192,6 +200,15 @@ void Engine::Scene::Load(std::string path)
 
 void Engine::Scene::New()
 {
+
+    for (size_t i = 0; i < cameras.size(); i++)
+    {
+        delete cameras[i];
+    }
+    cameras.clear();
+    activeCamera = nullptr;
+
+
     for (size_t i = 0; i < entities.size(); i++) {
         delete entities[i];
     }
@@ -375,13 +392,42 @@ std::vector<Engine::DataTypes::PointLightAttributes_t*>* Engine::Scene::pGetVect
     return &pointLightAttributes;
 }
 
-std::vector<Engine::Camera*>* Engine::Scene::pGetVectorOfCameras() {
+std::vector<Engine::Camera*>* Engine::Scene::pGetVectorOfCameras()
+{
     return &cameras;
+}
+
+void Engine::Scene::SetActiveCameraFromIndex(int id)
+{
+    if (id<cameras.size())
+    {
+        activeCamera = cameras[id];
+    }
+}
+
+Engine::Camera* Engine::Scene::pGetActiveCamera()
+{
+    return activeCamera;
+}
+
+Engine::Camera Engine::Scene::GetActiveCamera()
+{
+    return *activeCamera;
+}
+
+void Engine::Scene::UpdateActiveCamera()
+{
+    activeCamera->Update();
 }
 
 void Engine::Scene::CleanScene()
 {
     //Save();
+
+    for (size_t i = 0; i < cameras.size(); i++)
+    {
+        delete cameras[i];
+    }
 
     for (size_t i = 0; i < entities.size(); i++) {
         delete entities[i];

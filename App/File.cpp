@@ -3,14 +3,152 @@
 
 extern Application app;
 
+
+class PlayerCamera : public Engine::Camera {
+    glm::vec3 direction;
+    int counter = 0;
+public:
+    PlayerCamera() {
+        direction = glm::vec3(1, -1, 1);
+    }
+    void MouseUpdate()
+    {
+        using namespace Engine;
+        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_ALT)) {
+            Globals::showCursorEventHandler.HideCursor();
+
+           
+
+            
+
+
+            double xpos = Globals::cursorPosition.GetCursorPos().x,
+                   ypos = Globals::cursorPosition.GetCursorPos().y;
+
+
+          
+
+             
+            
+
+
+            if (CursorFirstMouse) {
+                CursorLastX = xpos;
+                CursorLastY = ypos;
+                CursorFirstMouse = false;
+            }
+
+            double xoffset = xpos - CursorLastX;
+            double yoffset = CursorLastY - ypos;
+
+            CursorLastX = xpos;
+            CursorLastY = ypos;
+
+            float sensitivity = 0.1f;
+            xoffset *= sensitivity;
+            yoffset *= sensitivity;
+
+           
+            
+           
+      
+          
+
+
+
+            Yaw = std::fmod((Yaw + xoffset), (GLfloat)360.0f);
+            Pitch += yoffset;
+
+            if (Pitch > 89.0f)
+                Pitch = 89.0f;
+            if (Pitch < -89.0f)
+                Pitch = -89.0f;
+
+            {
+                
+                direction.z = glm::sin(glm::radians((float)Yaw)) * glm::cos(glm::radians((float)Pitch));
+                direction.y = glm::sin(glm::radians((float)Pitch));
+                direction.x = glm::cos(glm::radians((float)Yaw)) * glm::cos(glm::radians((float)Pitch));
+     
+                //CameraFront = glm::normalize(direction);
+            }
+            
+
+            
+        }
+        else {
+            ClipCursor(NULL);
+            Globals::showCursorEventHandler.ShowCursor();
+            CursorFirstMouse = true;
+        }
+    }
+
+    void   Update() override {
+        MouseUpdate();
+        glm::vec3 playerPos = ref->Transform.GetPosition() ;
+        CameraPos = playerPos + glm::vec3(20.0f, 20.0f, 20.f)*(-direction);
+        CameraFront = glm::normalize(playerPos - CameraPos);
+
+
+    }
+};
+
+
+class Player : public Engine::GameObject {
+    float Speed = 10.1f;
+public:
+    void Update() override{
+        using namespace Engine;
+        glm::vec3 CameraFront = ((Camera*)ref)->GetCameraFront();
+        btVector3 dir = btVector3(CameraFront.x, 0, CameraFront.z);
+
+        if (Globals::keyPressedEventHandler.IsKeyPressed(Engine::KEY_W))
+        {
+            dir = btVector3(CameraFront.x * Speed * Globals::DeltaTime, 0, CameraFront.z * Speed * Globals::DeltaTime);
+            pRigidBody->GetBulletRigidBody()->applyCentralImpulse(dir);
+        }
+        if (Globals::keyPressedEventHandler.IsKeyPressed(Engine::KEY_S))
+        {
+            dir = btVector3(CameraFront.x * Speed * Globals::DeltaTime, 0, CameraFront.z * Speed * Globals::DeltaTime);
+            pRigidBody->GetBulletRigidBody()->applyCentralImpulse(-dir);
+        }
+        if (Globals::keyPressedEventHandler.IsKeyPressed(Engine::KEY_A))
+        {
+            glm::vec3 cross = glm::cross(CameraFront, glm::vec3(0, 1, 0));
+            dir = btVector3(cross.x * Speed * Globals::DeltaTime, 0, cross.z * Speed * Globals::DeltaTime);
+            pRigidBody->GetBulletRigidBody()->applyCentralImpulse(-dir);
+        }
+        if (Globals::keyPressedEventHandler.IsKeyPressed(Engine::KEY_D))
+        {
+            glm::vec3 cross = glm::cross(CameraFront, glm::vec3(0, 1, 0));
+            dir = btVector3(cross.x * Speed * Globals::DeltaTime, 0, cross.z * Speed * Globals::DeltaTime);
+            pRigidBody->GetBulletRigidBody()->applyCentralImpulse(dir);
+        }
+    }
+};
+
+
+
 extern "C" {
-    __declspec(dllexport) void DemoExe(std::vector<Engine::Entity*>* entities,
-        std::vector<Engine::DataTypes::DirectionalLightAttributes_t*>* directionalLightAttributes,
-        std::vector<Engine::DataTypes::PointLightAttributes_t*>* pointLightAttributes,
+    __declspec(dllexport) void DemoExe(
+        Engine::Scene *scene,
         btDynamicsWorld *dynamicsWorld
     )
     {
         using namespace Engine;
+
+
+        std::vector<Entity*> *entities = scene->pGetVectorOfEntities();
+        std::vector<DataTypes::DirectionalLightAttributes_t*>* directionalLightAttributes = scene->pGetVectorOfDirectionalLightAttributes();
+        std::vector<DataTypes::PointLightAttributes_t*>* pointLightAttributes = scene->pGetVectorOfSpotlightAttributes();
+        std::vector<Engine::Camera*>* cameras = scene->pGetVectorOfCameras();
+
+        Camera* cam = new PlayerCamera;
+        cam->SetCameraFront(glm::vec3(0.f, -1.f, -1.f));
+        cam->SetCameraPos(glm::vec3(5.0f, 50.0f, 50.f));
+        cameras->push_back(cam);
+        scene->SetActiveCameraFromIndex(0);
+
 
         Mesh* mesh;
         RigidBody* rigidBody;
@@ -31,34 +169,38 @@ extern "C" {
         for (size_t i = 1; i < 40; i++) {
             if (i == 1)
             {
-                GameObject* box = new GameObject;
-                box->AddComponent<Mesh>();
-                box->AddComponent<RigidBody>();
+                GameObject* Sphere = new Player;
+                Sphere->AddComponent<Mesh>();
+                Sphere->AddComponent<RigidBody>();
 
-                mesh = box->pGetComponent<Mesh*>();
-                rigidBody = box->pGetComponent<RigidBody*>();
+                mesh = Sphere->pGetComponent<Mesh*>();
+                rigidBody = Sphere->pGetComponent<RigidBody*>();
 
-                mesh->CreateMesh("CoreAssets/sphere.obj");
+                mesh->CreateMesh("CoreAssets/sphere2.obj");
 
                 rigidBody->CreateRigidBody(
                     RIGIDBODY_SHAPE_TYPE_SPHERE,
                     dynamicsWorld,
-                    reinterpret_cast<int>(box)
+                    reinterpret_cast<int>(Sphere)
                 );
 
                 rigidBody->SetRestitution(2.0f);
-                rigidBody->SetRigidbodyScale(glm::vec3(1.5f, 1.5f, 1.5f));
+                rigidBody->SetRigidbodyScale(glm::vec3(3.f, 3.f, 3.f));
 
-                box->Transform.Translate(glm::vec3(i * 3, i * 3, i * 3));
-                box->Transform.Rotate(glm::vec3(0.1f, 90.1f, 15.1f));
+                Sphere->Transform.Translate(glm::vec3(i * 3, i * 3, i * 3));
+                Sphere->Transform.Rotate(glm::vec3(0.1f, 90.1f, 15.1f));
 
-                box->SetID((int)box);
-                box->SetName("box1");
+                Sphere->SetID((int)Sphere);
+                Sphere->SetName("box1");
 
-                box->Transform.Scale(glm::vec3(1.5f, 1.5f, 1.5f));
+                Sphere->Transform.Scale(glm::vec3(1.5f, 1.5f, 1.5f));
 
-                box->ApplyEntityTransformToRigidbody();
-                entities->push_back(box);
+                Sphere->ApplyEntityTransformToRigidbody();
+                entities->push_back(Sphere);
+
+                cam->SetRef(Sphere);
+                Sphere->SetRef(cam);
+
             }
             else {
                 GameObject* box = new GameObject;
@@ -93,7 +235,7 @@ extern "C" {
 
         }
 
-        GameObject* gameObject2 = new Floor;
+        GameObject* gameObject2 = new GameObject;
         gameObject2->AddComponent<Mesh>();
         gameObject2->AddComponent<RigidBody>();
 
@@ -149,23 +291,23 @@ extern "C" {
 
         PointLightObject* pointLight2 = new PointLightObject;
         pointLight2->Transform.Translate(glm::vec3(25.0f, 3.0f, 13.0f));
+        pointLight2->pGetPointLightUniformData()->diffuse = 100;
         pointLight2->SetID(reinterpret_cast<int>(pointLight2));
         entities->push_back(pointLight2);
 
-        /*PointLightObject* pointLight3 = new PointLightObject;
-        pointLight3->Transform.Translate(glm::vec3(50.0f, 3.0f, 13.0f));
+
+        PointLightObject* pointLight3 = new PointLightObject;
+        pointLight3->Transform.Translate(glm::vec3(80.0f, 3.0f, 13.0f));
+        pointLight3->pGetPointLightUniformData()->diffuse = 100;
         pointLight3->SetID(reinterpret_cast<int>(pointLight3));
         entities->push_back(pointLight3);
 
-        PointLightObject* pointLight4 = new PointLightObject;
-        pointLight4->Transform.Translate(glm::vec3(70.0f, 3.0f, 13.0f));
-        pointLight4->SetID(reinterpret_cast<int>(pointLight4));
-        entities->push_back(pointLight4);*/
+       
 
         pointLightAttributes->push_back(pointLight->pGetPointLightUniformData());
         pointLightAttributes->push_back(pointLight2->pGetPointLightUniformData());
-    /*    pointLightAttributes->push_back(pointLight3->pGetPointLightUniformData());
-        pointLightAttributes->push_back(pointLight4->pGetPointLightUniformData());*/
+        pointLightAttributes->push_back(pointLight3->pGetPointLightUniformData());
+       
     }
 
 }

@@ -2,21 +2,17 @@
 #include "Events.h"
 #include "Renderer/Renderer.h"
 
+//void Engine::Camera::SetPosition(glm::vec3 Pos)
+//{
+//    //CameraPos = glm::vec3(0);
+//   
+//    CameraPos += Pos.x / CameraFront;
+//    CameraPos += Pos.y / CameraUp;
+//    CameraPos += Pos.z / glm::normalize(glm::cross(CameraFront, CameraUp));
+//    
+//    std::cout << CameraPos.x << " " << CameraPos.y << " " << CameraPos.z << " " << std::endl;
+//}
 
-void Engine::Camera::SetActive()
-{
-    Active = true;
-}
-
-void Engine::Camera::SetPassive()
-{
-    Active = false;
-}
-
-bool Engine::Camera::IsActive()
-{
-    return Active;
-}
 
 Engine::Camera::Camera()
 {
@@ -42,6 +38,16 @@ Engine::Camera::Camera()
     CameraFront = glm::normalize(direction);
 
     ProjectionMatrix = glm::perspective(glm::radians(FOV), ((float)Engine::Globals::gWidth / Engine::Globals::gHeight), 0.1f, 1000.0f);
+}
+
+void Engine::Camera::SetCameraPos(glm::vec3 pos)
+{
+    CameraPos = pos;
+}
+
+void Engine::Camera::SetCameraFront(glm::vec3 front)
+{
+    CameraFront = front;
 }
 
 Engine::DataTypes::ViewProjection_t Engine::Camera::GetViewProjectionForEntity() {
@@ -79,6 +85,11 @@ glm::vec3 Engine::Camera::GetPosition()
     return CameraPos;
 }
 
+glm::vec3 Engine::Camera::GetCameraFront()
+{
+    return CameraFront;
+}
+
 void Engine::Camera::Update()
 {
 
@@ -90,7 +101,7 @@ void Engine::EditorCamera::MouseUpdate()
         Globals::showCursorEventHandler.HideCursor();
 
         double xpos = Globals::cursorPosition.GetCursorPos().x,
-            ypos = Globals::cursorPosition.GetCursorPos().y;
+               ypos = Globals::cursorPosition.GetCursorPos().y;
 
 
         if (CursorFirstMouse) {
@@ -109,7 +120,7 @@ void Engine::EditorCamera::MouseUpdate()
         xoffset *= sensitivity;
         yoffset *= sensitivity;
 
-        Yaw += xoffset;
+        Yaw = std::fmod((Yaw + xoffset), (GLfloat)360.0f);
         Pitch += yoffset;
 
         if (Pitch > 89.0f)
@@ -171,7 +182,7 @@ void Engine::EditorCamera::Reset()
 void Engine::EditorCamera::Update()
 {
     MouseUpdate();
-
+    float step = 1.0f;
     //Перемещение камеры
     if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_ALT))
     {
@@ -199,8 +210,11 @@ void Engine::EditorCamera::Update()
         if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_S) && Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
             CameraPos -= moveSpeed * CameraFront * (float)Engine::Globals::DeltaTime * sprintSpeed;
         }
-    }
-    
+
+        if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_O) && !Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
+            CameraPos += CameraUp * moveSpeed * (float)Engine::Globals::DeltaTime;
+        }
+    }   
 }
 
 Engine::PointLightObject::PointLightObject() {
@@ -252,6 +266,11 @@ void Engine::Entity::Update() {
 
 }
 
+void Engine::Entity::SetRef(Entity* reference)
+{
+    ref = reference;
+}
+
 void Engine::Entity::SetName(std::string name) {
 	Name = name;
 }
@@ -279,7 +298,8 @@ Engine::GameObject::GameObject() {
 }
 
 void Engine::GameObject::UpdateUniforms(uint32_t imageIndex, VkDevice device, Camera camera, std::vector<DataTypes::PointLightAttributes_t*> spotlightAttributes, std::vector<DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes) {
-	if (pRigidBody != nullptr) {
+	
+    if (pRigidBody != nullptr) {
 		pRigidBody->pGetDebugMesh()->UpdateUniforms(imageIndex, device, camera.GetViewProjectionForEntity());
 	}
 	if (pMesh != nullptr) {
@@ -288,17 +308,17 @@ void Engine::GameObject::UpdateUniforms(uint32_t imageIndex, VkDevice device, Ca
 }
 
 void Engine::GameObject::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
-	if (ENABLE_RIGIDBODY_MESH && Globals::gShowRigidbodyMeshes && pRigidBody != nullptr) {
+	if (ENABLE_RIGIDBODY_MESH && Globals::states.showRigidbodyMeshes && pRigidBody != nullptr) {
 		pRigidBody->pGetDebugMesh()->Draw(commandBuffer, imageIndex,renderer.graphicsPipelineForRigidBodyMesh.Get());
 	}
-	if (Globals::gShowMeshes && pMesh != nullptr) {
+	if (Globals::states.showMeshes && pMesh != nullptr) {
 		pMesh->Draw(commandBuffer, imageIndex,renderer.graphicsPipelineForMesh.Get());
 	}
 }
 
 void Engine::GameObject::DrawShadowMaps(VkCommandBuffer commandBuffer, int imageIndex, std::vector<VkDescriptorSet>& pDescriptorSets)
 {
-    if (Globals::gShowMeshes && pMesh != nullptr) {
+    if (Globals::states.showMeshes && pMesh != nullptr) {
         pMesh->DrawShadowMaps(commandBuffer, imageIndex,pDescriptorSets);
     }
 }
@@ -367,7 +387,7 @@ Engine::CubemapObject::CubemapObject(std::vector<std::string> paths) {
 }
 
 void Engine::CubemapObject::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
-	if (Globals::gShowSkybox && pMesh != nullptr) {
+	if (Globals::states.showSkybox && pMesh != nullptr) {
 		pMesh->Draw(commandBuffer, imageIndex, renderer.graphicsPipelineForCubemapObjects.Get());
 	}
 }

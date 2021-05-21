@@ -110,9 +110,9 @@ namespace Engine{
 
 
 	namespace Globals{
-		extern KeyPressedEventHandler keyPressedEventHandler;
-		extern CursorPosition  cursorPosition;
-		extern ShowCursorEventHandler showCursorEventHandler;
+		EngineAPI_GlobalVar extern KeyPressedEventHandler keyPressedEventHandler;
+		EngineAPI_GlobalVar extern CursorPosition  cursorPosition;
+		EngineAPI_GlobalVar extern ShowCursorEventHandler showCursorEventHandler;
 	}
 	
 }

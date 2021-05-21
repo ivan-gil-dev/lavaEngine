@@ -40,6 +40,7 @@ namespace Engine{
 			EntityType Type;
 			int ID;
 			std::string Name;
+			Entity* ref;
 		public :
 		Entity();
 		virtual ~Entity();
@@ -54,6 +55,8 @@ namespace Engine{
 		
 		virtual void Update();
 
+		void SetRef(Entity* reference);
+
 		void SetName(std::string name);
 
 		void SetID(int Id);
@@ -65,7 +68,8 @@ namespace Engine{
 		int GetID();
 	};
 
-    class Camera : public Entity{
+    class EngineAPI_Export Camera : public Entity{
+		
     protected:
 		glm::vec3 CameraPos;
         glm::vec3 CameraUp;
@@ -80,25 +84,25 @@ namespace Engine{
     public:
         bool	  CursorFirstMouse;
 
-		void SetActive();
-
-		void SetPassive();
-
-		bool IsActive();
-
         Camera();
 
-		DataTypes::ViewProjection_t GetViewProjectionForEntity();
+		void SetCameraPos(glm::vec3 pos);
+
+		void SetCameraFront(glm::vec3 front);
+
+		virtual DataTypes::ViewProjection_t GetViewProjectionForEntity();
 		
-		DataTypes::ViewProjection_t GetViewProjectionForCubemap();
+		virtual DataTypes::ViewProjection_t GetViewProjectionForCubemap();
 
         glm::vec3 GetPosition();
 
-        virtual void Update();
+		glm::vec3 GetCameraFront();
+
+		virtual void Update();
 
     };
 
-    class EditorCamera : public Camera {
+    class EngineAPI_Export EditorCamera : public Camera {
 
         const float moveSpeed = 5.25f;
 
@@ -142,7 +146,7 @@ namespace Engine{
 	};
 
 	class EngineAPI_Export GameObject : public Entity{
-
+		protected:
         RigidBody* pRigidBody;
         Mesh* pMesh;
 		

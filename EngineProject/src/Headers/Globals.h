@@ -66,16 +66,38 @@ namespace Engine{
 		#define MAX_DLIGHTS 20
 	
 
-		extern bool  gToggleFullscreen;
-		extern bool  gShowMeshes;
-		extern bool  gShowRigidbodyMeshes;
-		extern bool  gShowSkybox;
-        extern bool  gDrawShadows;
-		extern int   gHeight,
-					 gWidth;
+        struct States_t {
+            bool  toggleFullscreen;
+            bool  showMeshes;
+            bool  showRigidbodyMeshes;
+            bool  useSceneCamera;
+            bool  showSkybox;
+            bool  drawShadows;
+            bool operator==(States_t states) {
+                if (
+                    toggleFullscreen == states.toggleFullscreen &&
+                    showMeshes == states.showMeshes &&
+                    showRigidbodyMeshes == states.showRigidbodyMeshes &&
+                    useSceneCamera == states.useSceneCamera &&
+                    showSkybox == states.showSkybox &&
+                    drawShadows == states.drawShadows
+                    )
+                {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        };
+
+        EngineAPI_GlobalVar extern States_t states;
+
+        EngineAPI_GlobalVar extern int gHeight,gWidth;
+        
 		
-		extern const int gmax_frames;
-		extern VkSampleCountFlagBits gMSAAsamples;
+        extern const int gmax_frames;
+        EngineAPI_GlobalVar extern VkSampleCountFlagBits gMSAAsamples;
 
 		extern std::shared_ptr<spdlog::logger> gLogger;
 
@@ -83,6 +105,7 @@ namespace Engine{
         EngineAPI_GlobalVar extern BulletPhysicsGlobalObjects bulletPhysicsGlobalObjects;
         EngineAPI_GlobalVar extern bool  gIsScenePlaying;
         EngineAPI_GlobalVar extern double DeltaTime;
+
 	}
 }
 

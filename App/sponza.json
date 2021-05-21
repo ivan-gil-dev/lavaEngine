@@ -70,9 +70,9 @@
     "G": 1.0,
     "B": 1.0
    },
-   "Ambient": 1.0,
-   "Diffuse": 0.10000000149011612,
-   "Specular": 1.0,
+   "Ambient": 14.0,
+   "Diffuse": 1.0,
+   "Specular": 58.0,
    "Transform": {
     "Position": {
      "X": 0.0,

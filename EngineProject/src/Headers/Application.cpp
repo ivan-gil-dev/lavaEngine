@@ -6,9 +6,7 @@
 
 
 typedef void (*DemoFunc)(
-	std::vector<Engine::Entity*>*,
-	std::vector<Engine::DataTypes::DirectionalLightAttributes_t*>*,
-	std::vector<Engine::DataTypes::PointLightAttributes_t*>*,
+	Engine::Scene*,
 	btDynamicsWorld* 
     );
 DemoFunc demo;
@@ -330,9 +328,10 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 				if (ImGui::MenuItem("New"))
 				{
 					SelectedItem_ID = -1;
-					Engine::renderer.FlushDrawingBuffer();
+					Engine::renderer.WaitForDrawFences();
 					Engine::Globals::gScene->New();
 					editorCamera.Reset();
+					Engine::renderer.RebuildBuffers();
 				}
 
 
@@ -344,12 +343,13 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                     {
                         spdlog::info("Loading...");
                         std::cout << path << std::endl;
-						Engine::renderer.FlushDrawingBuffer();			
+						Engine::renderer.WaitForDrawFences();
                         Engine::Globals::gScene->Load(path);
+					
 						editorCamera.Reset();
                         spdlog::info("Done!");
                     }
-					
+					Engine::renderer.RebuildBuffers();
                     
 					OpenFileDialog = false;
 				}
@@ -435,10 +435,11 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 			if (ImGui::BeginMenu(u8"View")) { //Меню: "Вид"
 				ImGui::MenuItem(u8"Hierarchy Panel", "", &ShowHierarchyPanel);
 				ImGui::MenuItem(u8"Properties Panel", "", &ShowPropertiesPanel);
-				ImGui::MenuItem(u8"Skybox", "", &Engine::Globals::gShowSkybox);
-				ImGui::MenuItem(u8"Mesh", "", &Engine::Globals::gShowMeshes);
-				ImGui::MenuItem(u8"Rigidbody Mesh", "", &Engine::Globals::gShowRigidbodyMeshes);
-				ImGui::MenuItem(u8"Draw Shadows", "", &Engine::Globals::gDrawShadows);
+				ImGui::MenuItem(u8"Skybox", "", &Engine::Globals::states.showSkybox);
+				ImGui::MenuItem(u8"Mesh", "", &Engine::Globals::states.showMeshes);
+				ImGui::MenuItem(u8"Rigidbody Mesh", "", &Engine::Globals::states.showRigidbodyMeshes);
+				ImGui::MenuItem(u8"Draw Shadows", "", &Engine::Globals::states.drawShadows);
+				ImGui::MenuItem(u8"Use Scene Camera", "", &Engine::Globals::states.useSceneCamera);
 				ImGui::EndMenu(); //Конец меню
 			}
 		ImGui::EndMainMenuBar(); //Конец менюбара
@@ -693,6 +694,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 
                                    ((Engine::GameObject*)Entities.at(SelectedItem_ID))->AddComponent<Engine::Mesh>();
                                    ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>()->CreateMesh(path);
+								     Engine::renderer.RebuildBuffers();
                                }
                            }
 
@@ -731,6 +733,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                             {
                                 ((Engine::GameObject*)Entities.at(SelectedItem_ID))->AddComponent<Engine::Mesh>();
                                 ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>()->CreateMesh("");
+								Engine::renderer.RebuildBuffers();
 
                             }
 						}
@@ -773,7 +776,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                                         SelectedItem_ID
                                     );
                                 }
-
+								Engine::renderer.RebuildBuffers();
                                 ImGui::EndPopup();
                             }
 						}
@@ -878,8 +881,6 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 }
 
 
-
-
 //Первоначальная настройка приложения
 void Application::Init() {
 	WindowWidth = 1366;
@@ -906,7 +907,7 @@ void Application::Init() {
 	::RegisterClassEx(&wc);
 
 	//Полный экран
-	if (Engine::Globals::gToggleFullscreen) {
+	if (Engine::Globals::states.toggleFullscreen) {
 		hwnd = CreateWindowEx(
 			0,
 			wc.lpszClassName,
@@ -956,9 +957,7 @@ void Application::Init() {
 	demo = (DemoFunc)GetProcAddress(GetModuleHandle(NULL), "DemoExe");
 
 	demo(
-		Engine::Globals::gScene->pGetVectorOfEntities(),
-		Engine::Globals::gScene->pGetVectorOfDirectionalLightAttributes(),
-		Engine::Globals::gScene->pGetVectorOfSpotlightAttributes(),
+		Engine::Globals::gScene,
 		Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld
 	);
 
@@ -1015,7 +1014,7 @@ void Application::Execute() {
 		
 
 		if (ENABLE_IMGUI) {
-			{//Формирование данных ImGUI для передачи в GPU
+			{//Формирование данных ImGUI для отрисовки кадра
 				ImGui_ImplVulkan_NewFrame();
 				ImGui_ImplWin32_NewFrame();
 				ImGui::NewFrame();
@@ -1029,17 +1028,53 @@ void Application::Execute() {
 
 		}
 
-		//Вывод сцены и редактора (Или вывод без редактора)
-		//if (!Engine::Globals::gIsScenePlaying){
-            sceneEditor.editorCamera.Update();
 
-
+		if (!Engine::Globals::gIsScenePlaying)
+		{
+            //Отрисовка сцены c камерой редактора
             Engine::renderer.DrawScene(
                 ImguiDrawData,
                 Engine::Globals::gScene,
                 sceneEditor.editorCamera
             );
-		//}
+
+			sceneEditor.editorCamera.Update();
+		}
+		else {
+			if (Engine::Globals::states.useSceneCamera)
+			{
+
+				if (Engine::Globals::gScene->pGetActiveCamera()!=nullptr)
+				{
+                    Engine::renderer.DrawScene(
+                        ImguiDrawData,
+                        Engine::Globals::gScene,
+                        *Engine::Globals::gScene->pGetActiveCamera()
+                    );
+
+                    Engine::Globals::gScene->UpdateActiveCamera();
+
+                }
+                else {
+                    Engine::renderer.DrawScene(
+                        ImguiDrawData,
+                        Engine::Globals::gScene,
+                        sceneEditor.editorCamera
+                    );
+
+                    sceneEditor.editorCamera.Update();
+                }
+			}
+            else {
+                Engine::renderer.DrawScene(
+                    ImguiDrawData,
+                    Engine::Globals::gScene,
+                    sceneEditor.editorCamera
+                );
+
+                sceneEditor.editorCamera.Update();
+            }
+		}
 		
 	}
 }

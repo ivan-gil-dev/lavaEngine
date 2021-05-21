@@ -231,7 +231,7 @@ namespace Engine {
         old.rendererScissors = rendererScissors;
         old.rendererViewport = rendererViewport;
         old.entityCount = 0;
-        old.drawShadows = Globals::gDrawShadows;
+        old.oldStates = Globals::states;
 
     }
 
@@ -247,6 +247,9 @@ namespace Engine {
             device.Get(),
             surface.Get(),
             physicalDevice.GetQueueIndices());
+
+        Globals::gHeight = swapchain.GetInfo().imageExtent.height;
+        Globals::gWidth = swapchain.GetInfo().imageExtent.width;
 
         swapchain.CreateImageViews(device.Get());
 
@@ -281,11 +284,8 @@ namespace Engine {
         {
             if (old.entityCount != (int)scene->pGetVectorOfEntities()->size())
             {
-                std::cout << "Rebuild1" << std::endl;
-                for (size_t i = 0; i < checkBuild.size(); i++)
-                {
-                    checkBuild[i] = false;
-                }
+                //std::cout << "Rebuild1" << std::endl;
+                RebuildBuffers();
             }
             else
             if (old.rendererScissors.extent.height != rendererScissors.extent.height ||
@@ -295,11 +295,8 @@ namespace Engine {
                 )
             {
                 old.rendererScissors = rendererScissors;
-                std::cout << "Rebuild2" << std::endl;
-                for (size_t i = 0; i < checkBuild.size(); i++)
-                {
-                    checkBuild[i] = false;
-                }
+                //std::cout << "Rebuild2" << std::endl;
+                RebuildBuffers();
             }
 
             else
@@ -309,21 +306,14 @@ namespace Engine {
                 old.rendererViewport.y != rendererViewport.y
                 )
             {
-                std::cout << "Rebuild3" << std::endl;
+                //std::cout << "Rebuild3" << std::endl;
                 old.rendererViewport = rendererViewport;
-                for (size_t i = 0; i < checkBuild.size(); i++)
-                {
-                    checkBuild[i] = false;
-                }
+                RebuildBuffers();
             }
             else
-                if (old.drawShadows != Globals::gDrawShadows) {
-                    std::cout << "Rebuild4" << std::endl;
-                    old.drawShadows = Globals::gDrawShadows;
-                    for (size_t i = 0; i < checkBuild.size(); i++)
-                    {
-                        checkBuild[i] = false;
-                    }
+            if (!(old.oldStates == Globals::states)) {
+                old.oldStates = Globals::states;
+                RebuildBuffers();
 
             }
 
@@ -461,6 +451,19 @@ namespace Engine {
         currentFrame = (currentFrame + 1) % MAX_FRAMES;
     }
 
+    void Renderer::RebuildBuffers()
+    {
+        for (size_t i = 0; i < checkBuild.size(); i++)
+        {
+            checkBuild[i] = false;
+        }
+    }
+
+    void Renderer::WaitForDrawFences()
+    {
+        vkWaitForFences(device.Get(), syncObjects.GetFences().size(), syncObjects.GetFences().data(), VK_TRUE, UINT64_MAX);
+    }
+
     void Renderer::BuildCommandBuffers(ImDrawData* drawData, Scene* scene)
     {
 
@@ -508,7 +511,7 @@ namespace Engine {
                     0.0f,
                     1.75f);
 
-                if (Globals::gDrawShadows)
+                if (Globals::states.drawShadows)
                 {
                     for (size_t j = 0, i = 0; i < scene->pGetVectorOfEntities()->size(); i++) {
 
@@ -566,27 +569,11 @@ namespace Engine {
                 );
             }
 
-            //ImGui_ImplVulkan_RenderDrawData(drawData, drawCommandBuffer[currentFrame].Get());
 
             vkCmdEndRenderPass(drawCommandBuffer[currentFrame].Get());
 
             drawCommandBuffer[currentFrame].EndCommandBuffer();
         }
-        
-          
-    }
-
-    void Renderer::FlushDrawingBuffer()
-    {
-        imageIndex = 0;
-        currentFrame = 0;
-
-        vkWaitForFences(device.Get(), (uint32_t)syncObjects.GetFences().size(), syncObjects.GetFences().data(), VK_TRUE, UINT64_MAX);
-        //drawCommandBuffer.FreeCommandBuffer(device.Get(), commandPool.Get());
-
-       
- 
-        
     }
 
     void Renderer::clear()
