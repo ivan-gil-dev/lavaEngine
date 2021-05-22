@@ -88,8 +88,6 @@ public:
         glm::vec3 playerPos = ref->Transform.GetPosition() ;
         CameraPos = playerPos + glm::vec3(20.0f, 20.0f, 20.f)*(-direction);
         CameraFront = glm::normalize(playerPos - CameraPos);
-
-
     }
 };
 

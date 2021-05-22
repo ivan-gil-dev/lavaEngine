@@ -1046,33 +1046,32 @@ void Application::Execute() {
 
 				if (Engine::Globals::gScene->pGetActiveCamera()!=nullptr)
 				{
+					Engine::Globals::gScene->UpdateActiveCamera();
+
                     Engine::renderer.DrawScene(
                         ImguiDrawData,
                         Engine::Globals::gScene,
                         *Engine::Globals::gScene->pGetActiveCamera()
                     );
-
-                    Engine::Globals::gScene->UpdateActiveCamera();
-
                 }
                 else {
+					sceneEditor.editorCamera.Update();
+
                     Engine::renderer.DrawScene(
                         ImguiDrawData,
                         Engine::Globals::gScene,
                         sceneEditor.editorCamera
                     );
-
-                    sceneEditor.editorCamera.Update();
                 }
 			}
             else {
+				sceneEditor.editorCamera.Update();
+
                 Engine::renderer.DrawScene(
                     ImguiDrawData,
                     Engine::Globals::gScene,
                     sceneEditor.editorCamera
                 );
-
-                sceneEditor.editorCamera.Update();
             }
 		}
 		

@@ -1,31 +1,29 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\Microsoft.Common.CurrentVersion.targets(1947,5): warning : The referenced project '..\Engine\Lava.vcxproj' does not exist.
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(519,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (Lava.vcxproj).  Это может привести к ошибкам очистки и перестроения.
   File.cpp
-G:\dev\cpp\WinAPI Branch\App\File.cpp(184,49): warning C4311: reinterpret_cast: усечение указателя из "Engine::GameObject *" в "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(184,49): warning C4302: reinterpret_cast: усечение из "Engine::GameObject *" к "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(193,42): warning C4311: приведение типов: усечение указателя из "Engine::GameObject *" в "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(193,42): warning C4302: приведение типов: усечение из "Engine::GameObject *" к "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(219,17): warning C4311: приведение типов: усечение указателя из "Engine::GameObject *" в "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(219,17): warning C4302: приведение типов: усечение из "Engine::GameObject *" к "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(227,53): warning C4311: reinterpret_cast: усечение указателя из "Engine::GameObject *" в "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(227,53): warning C4302: reinterpret_cast: усечение из "Engine::GameObject *" к "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(248,46): warning C4311: reinterpret_cast: усечение указателя из "Engine::GameObject *" в "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(248,46): warning C4302: reinterpret_cast: усечение из "Engine::GameObject *" к "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(251,61): warning C4311: reinterpret_cast: усечение указателя из "Engine::GameObject *" в "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(251,61): warning C4302: reinterpret_cast: усечение из "Engine::GameObject *" к "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(264,45): warning C4311: reinterpret_cast: усечение указателя из "Engine::GameObject *" в "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(264,45): warning C4302: reinterpret_cast: усечение из "Engine::GameObject *" к "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(268,68): warning C4316: "Engine::DirectionalLightObject": объект, размещенный в куче, может не быть выровнен 32
-G:\dev\cpp\WinAPI Branch\App\File.cpp(272,51): warning C4311: reinterpret_cast: усечение указателя из "Engine::DirectionalLightObject *" в "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(272,51): warning C4302: reinterpret_cast: усечение из "Engine::DirectionalLightObject *" к "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(287,60): warning C4316: "Engine::PointLightObject": объект, размещенный в куче, может не быть выровнен 32
-G:\dev\cpp\WinAPI Branch\App\File.cpp(289,59): warning C4311: reinterpret_cast: усечение указателя из "Engine::PointLightObject *" в "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(289,59): warning C4302: reinterpret_cast: усечение из "Engine::PointLightObject *" к "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(292,61): warning C4316: "Engine::PointLightObject": объект, размещенный в куче, может не быть выровнен 32
-G:\dev\cpp\WinAPI Branch\App\File.cpp(295,61): warning C4311: reinterpret_cast: усечение указателя из "Engine::PointLightObject *" в "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(295,61): warning C4302: reinterpret_cast: усечение из "Engine::PointLightObject *" к "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(299,61): warning C4316: "Engine::PointLightObject": объект, размещенный в куче, может не быть выровнен 32
-G:\dev\cpp\WinAPI Branch\App\File.cpp(302,61): warning C4311: reinterpret_cast: усечение указателя из "Engine::PointLightObject *" в "int"
-G:\dev\cpp\WinAPI Branch\App\File.cpp(302,61): warning C4302: reinterpret_cast: усечение из "Engine::PointLightObject *" к "int"
-     Создается библиотека G:\dev\cpp\WinAPI Branch\x64\Debug\App.lib и объект G:\dev\cpp\WinAPI Branch\x64\Debug\App.exp
+G:\dev\cpp\WinAPI Branch\App\File.cpp(182,49): warning C4311: reinterpret_cast: усечение указателя из "Engine::GameObject *" в "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(182,49): warning C4302: reinterpret_cast: усечение из "Engine::GameObject *" к "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(191,42): warning C4311: приведение типов: усечение указателя из "Engine::GameObject *" в "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(191,42): warning C4302: приведение типов: усечение из "Engine::GameObject *" к "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(217,17): warning C4311: приведение типов: усечение указателя из "Engine::GameObject *" в "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(217,17): warning C4302: приведение типов: усечение из "Engine::GameObject *" к "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(225,53): warning C4311: reinterpret_cast: усечение указателя из "Engine::GameObject *" в "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(225,53): warning C4302: reinterpret_cast: усечение из "Engine::GameObject *" к "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(246,46): warning C4311: reinterpret_cast: усечение указателя из "Engine::GameObject *" в "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(246,46): warning C4302: reinterpret_cast: усечение из "Engine::GameObject *" к "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(249,61): warning C4311: reinterpret_cast: усечение указателя из "Engine::GameObject *" в "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(249,61): warning C4302: reinterpret_cast: усечение из "Engine::GameObject *" к "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(262,45): warning C4311: reinterpret_cast: усечение указателя из "Engine::GameObject *" в "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(262,45): warning C4302: reinterpret_cast: усечение из "Engine::GameObject *" к "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(266,68): warning C4316: "Engine::DirectionalLightObject": объект, размещенный в куче, может не быть выровнен 32
+G:\dev\cpp\WinAPI Branch\App\File.cpp(270,51): warning C4311: reinterpret_cast: усечение указателя из "Engine::DirectionalLightObject *" в "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(270,51): warning C4302: reinterpret_cast: усечение из "Engine::DirectionalLightObject *" к "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(285,60): warning C4316: "Engine::PointLightObject": объект, размещенный в куче, может не быть выровнен 32
+G:\dev\cpp\WinAPI Branch\App\File.cpp(287,59): warning C4311: reinterpret_cast: усечение указателя из "Engine::PointLightObject *" в "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(287,59): warning C4302: reinterpret_cast: усечение из "Engine::PointLightObject *" к "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(290,61): warning C4316: "Engine::PointLightObject": объект, размещенный в куче, может не быть выровнен 32
+G:\dev\cpp\WinAPI Branch\App\File.cpp(293,61): warning C4311: reinterpret_cast: усечение указателя из "Engine::PointLightObject *" в "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(293,61): warning C4302: reinterpret_cast: усечение из "Engine::PointLightObject *" к "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(297,61): warning C4316: "Engine::PointLightObject": объект, размещенный в куче, может не быть выровнен 32
+G:\dev\cpp\WinAPI Branch\App\File.cpp(300,61): warning C4311: reinterpret_cast: усечение указателя из "Engine::PointLightObject *" в "int"
+G:\dev\cpp\WinAPI Branch\App\File.cpp(300,61): warning C4302: reinterpret_cast: усечение из "Engine::PointLightObject *" к "int"
   App.vcxproj -> G:\dev\cpp\WinAPI Branch\x64\Debug\App.exe
