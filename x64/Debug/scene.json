@@ -77,7 +77,7 @@
     "Z": 1.0
    },
    "Color": {
-    "R": 1.0,
+    "R": 0.5,
     "G": 1.0,
     "B": 1.0
    },
@@ -207,14 +207,14 @@
    }
   },
   {
-   "Name": "Game Object",
+   "Name": "obstacle",
    "Type": "GameObject",
    "Mesh": {
     "Path": "",
-    "Shininess": 32.0,
-    "Roughness": 1.0,
+    "Shininess": 9.399999618530273,
+    "Roughness": 0.30000001192092896,
     "Metallic": 1.0,
-    "Occlusion": 0.10000000149011612
+    "Occlusion": 0.0010000000474974513
    },
    "Rigidbody": {
     "Mass": 0.0,
@@ -285,7 +285,7 @@
    }
   },
   {
-   "Name": "Game Object",
+   "Name": "obstacle1",
    "Type": "GameObject",
    "Mesh": {
     "Path": "./CoreAssets/AtlasCube.obj",
@@ -308,7 +308,7 @@
    "Transform": {
     "Position": {
      "X": 4.0,
-     "Y": 3.0,
+     "Y": 2.0,
      "Z": -25.0
     },
     "Scale": {
@@ -324,7 +324,7 @@
    }
   },
   {
-   "Name": "Game Object",
+   "Name": "obstacle2",
    "Type": "GameObject",
    "Mesh": {
     "Path": "",
@@ -347,7 +347,7 @@
    "Transform": {
     "Position": {
      "X": -3.0,
-     "Y": -1.0,
+     "Y": 0.0,
      "Z": -6.0
     },
     "Scale": {
@@ -366,26 +366,26 @@
    "Name": "PointLight",
    "Type": "PointLight",
    "LightPosition": {
-    "X": 48.0,
-    "Y": 0.0,
-    "Z": 0.0
+    "X": -117.0,
+    "Y": 47.0,
+    "Z": 36.0
    },
    "LightColor": {
     "R": 1.0,
     "G": 1.0,
-    "B": 1.0
+    "B": 134.0
    },
    "Constant": 1.0,
    "Linear": 0.09000000357627869,
    "Quadrantic": 0.03200000151991844,
    "Ambient": 1.0,
-   "Diffuse": 1.0,
+   "Diffuse": 91.0,
    "Specular": 1.0,
    "Transform": {
     "Position": {
-     "X": 48.0,
-     "Y": 0.0,
-     "Z": 0.0
+     "X": -117.0,
+     "Y": 47.0,
+     "Z": 36.0
     },
     "Scale": {
      "X": 1.0,

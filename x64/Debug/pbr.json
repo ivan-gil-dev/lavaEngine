@@ -35,9 +35,9 @@
    "Mesh": {
     "Path": "CoreAssets/plane.obj",
     "Shininess": 32.0,
-    "Roughness": 1.0,
-    "Metallic": 1.0,
-    "Occlusion": 0.05000000074505806
+    "Roughness": 0.20000000298023224,
+    "Metallic": 1.399999976158142,
+    "Occlusion": 0.009999999776482582
    },
    "Transform": {
     "Position": {
@@ -71,7 +71,7 @@
     "B": 1.0
    },
    "Ambient": 1.0,
-   "Diffuse": 1.0,
+   "Diffuse": 66.0,
    "Specular": 1.0,
    "Transform": {
     "Position": {
@@ -96,10 +96,10 @@
    "Type": "GameObject",
    "Mesh": {
     "Path": "./CoreAssets/kettle/kettle.obj",
-    "Shininess": 13.600000381469727,
-    "Roughness": 0.8999999761581421,
-    "Metallic": 3.700000047683716,
-    "Occlusion": 0.009999999776482582
+    "Shininess": 8.399999618530273,
+    "Roughness": 0.5,
+    "Metallic": 1.0,
+    "Occlusion": 0.20999999344348907
    },
    "Transform": {
     "Position": {
@@ -129,7 +129,7 @@
    },
    "LightColor": {
     "R": 1.0,
-    "G": 1.0,
+    "G": 11.0,
     "B": 1.0
    },
    "Constant": 1.0,
@@ -165,8 +165,8 @@
     "Z": 35.0
    },
    "LightColor": {
-    "R": 1.0,
-    "G": 1.0,
+    "R": 127.0,
+    "G": 33.0,
     "B": 1.0
    },
    "Constant": 1.0,

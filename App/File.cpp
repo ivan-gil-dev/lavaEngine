@@ -197,7 +197,7 @@ extern "C" {
                     (int)box
                 );
 
-                rigidBody->SetRestitution(2.0f);
+                rigidBody->SetRestitution(0.5f);
                 rigidBody->SetRigidbodyScale(glm::vec3(1.5f, 1.5f, 1.5f));
 
                 box->Transform.Translate(glm::vec3(i * 3, i * 3, i * 3));
@@ -246,7 +246,7 @@ extern "C" {
 
         DirectionalLightObject* dlight = new DirectionalLightObject;
         dlight->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(1, -1, 1);
-        dlight->pGetDirectionalLightUniformData()->lightColor = glm::vec3(1, 1, 1);
+        dlight->pGetDirectionalLightUniformData()->lightColor = glm::vec3(0.5, 0.5, 0.7);
 
         dlight->SetID(reinterpret_cast<int>(dlight));
         entities->push_back(dlight);
