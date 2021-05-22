@@ -34,15 +34,15 @@ void Engine::Swapchain::CreateSwapchain(VkPhysicalDevice physicalDevice, VkDevic
 	}
 
 	for (size_t i = 0; i < presentModesCount; i++) {
-		if (presentModes[i] == VK_PRESENT_MODE_FIFO_KHR) {
+		if (presentModes[i] == VK_PRESENT_MODE_MAILBOX_KHR) {
 			CreateInfo.presentMode = presentModes[i];
 			break;
 		}
 	}
 
-	/*if (CreateInfo.presentMode != VK_PRESENT_MODE_MAILBOX_KHR) {
+	if (CreateInfo.presentMode != VK_PRESENT_MODE_MAILBOX_KHR) {
 		CreateInfo.presentMode = VK_PRESENT_MODE_FIFO_KHR;
-	}*/
+	}
 
 	CreateInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 	CreateInfo.minImageCount = surfaceCapabilities.minImageCount + 1;

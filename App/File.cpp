@@ -17,20 +17,8 @@ public:
         if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_ALT)) {
             Globals::showCursorEventHandler.HideCursor();
 
-           
-
-            
-
-
             double xpos = Globals::cursorPosition.GetCursorPos().x,
                    ypos = Globals::cursorPosition.GetCursorPos().y;
-
-
-          
-
-             
-            
-
 
             if (CursorFirstMouse) {
                 CursorLastX = xpos;
@@ -49,13 +37,6 @@ public:
             yoffset *= sensitivity;
 
            
-            
-           
-      
-          
-
-
-
             Yaw = std::fmod((Yaw + xoffset), (GLfloat)360.0f);
             Pitch += yoffset;
 
@@ -189,7 +170,7 @@ extern "C" {
                 Sphere->Transform.Rotate(glm::vec3(0.1f, 90.1f, 15.1f));
 
                 Sphere->SetID((int)Sphere);
-                Sphere->SetName("box1");
+                Sphere->SetName("Sphere");
 
                 Sphere->Transform.Scale(glm::vec3(1.5f, 1.5f, 1.5f));
 
@@ -223,7 +204,7 @@ extern "C" {
                 box->Transform.Rotate(glm::vec3(0.1f, 90.1f, 15.1f));
 
                 box->SetID(reinterpret_cast<int>(box));
-                box->SetName("box1");
+                box->SetName("box");
 
                 box->Transform.Scale(glm::vec3(1.5f, 1.5f, 1.5f));
 
@@ -247,7 +228,7 @@ extern "C" {
         );
 
         gameObject2->SetID(reinterpret_cast<int>(gameObject2));
-        gameObject2->SetName("Arena");
+        gameObject2->SetName("Plane");
 
         gameObject2->Transform.Scale(glm::vec3(228.0f, 25.0f, 329.0f));
 
