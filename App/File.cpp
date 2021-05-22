@@ -115,7 +115,8 @@ extern "C" {
     )
     {
         using namespace Engine;
-
+        Globals::states.drawShadows = false;
+        Globals::states.showRigidbodyMeshes = false;
 
         std::vector<Entity*> *entities = scene->pGetVectorOfEntities();
         std::vector<DataTypes::DirectionalLightAttributes_t*>* directionalLightAttributes = scene->pGetVectorOfDirectionalLightAttributes();
@@ -162,6 +163,11 @@ extern "C" {
                     dynamicsWorld,
                     reinterpret_cast<int>(Sphere)
                 );
+
+                mesh->pGetMaterial()->metallic = 10.0f;
+                mesh->pGetMaterial()->shininess = 32.0f;
+                mesh->pGetMaterial()->roughness = 1.4f;
+
 
                 rigidBody->SetRestitution(2.0f);
                 rigidBody->SetRigidbodyScale(glm::vec3(3.f, 3.f, 3.f));

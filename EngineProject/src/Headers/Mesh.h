@@ -89,6 +89,9 @@ namespace Engine{
 
 		DataTypes::Material_t GetMaterial();
 
+		DataTypes::Material_t *pGetMaterial();
+
+
 		void SetMaterial(DataTypes::Material_t mat);
 	
 		void Draw(VkCommandBuffer commandBuffer, int imageIndex, VkPipeline pipeline);

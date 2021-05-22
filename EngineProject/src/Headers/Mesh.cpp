@@ -451,6 +451,11 @@ Engine::DataTypes::Material_t Engine::Mesh::GetMaterial() {
 	return Material;
 }
 
+Engine::DataTypes::Material_t* Engine::Mesh::pGetMaterial()
+{
+	return &Material;
+}
+
 void Engine::Mesh::SetMaterial(DataTypes::Material_t mat) {
 	Material = mat;
 }
