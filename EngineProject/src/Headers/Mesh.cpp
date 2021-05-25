@@ -524,81 +524,91 @@ void Engine::Mesh::CreateMesh(std::string modelPath) {
 	{
 		std::mutex m;
 		m.lock();
-			Material = { 32.f, 1.0f,1.0f,0.05f };
+		Material = { 32.f, 1.0f,1.0f,0.05f };
 		
-			MeshPath = modelPath;
+		MeshPath = modelPath;
 
-			LoadModel(modelPath);
+		LoadModel(modelPath);
 
-			{//Создание буферов
+		{//Создание буферов
 
-				//<1x1 текстура (0,0,0,255)> 
+			//<1x1 текстура (0,0,0,255)> 
 
-				DiffuseTextures_b1.resize(MAX_MATERIALS);
-				SpecularTextures_b6.resize(MAX_MATERIALS);
-				RoughnessTextures_b9.resize(MAX_MATERIALS);
-				MetallicTextures_b10.resize(MAX_MATERIALS);
+			DiffuseTextures_b1.resize(MAX_MATERIALS);
+			SpecularTextures_b6.resize(MAX_MATERIALS);
+			RoughnessTextures_b9.resize(MAX_MATERIALS);
+			MetallicTextures_b10.resize(MAX_MATERIALS);
 
-				Blank.CreateTexture(
-					renderer.physicalDevice.Get(),
-					renderer.device.Get(),
-					renderer.device.GetGraphicsQueue(),
-					renderer.commandPool.Get(), "");
+			Blank.CreateTexture(
+				renderer.physicalDevice.Get(),
+				renderer.device.Get(),
+				renderer.device.GetGraphicsQueue(),
+				renderer.commandPool.Get(), "");
 
-				for (size_t i = 0; i < DiffuseTextures_b1.size(); i++)
-				{
-					if (i < Faces.size()) {
-						DiffuseTextures_b1[i].CreateTexture(renderer.physicalDevice.Get(),
-							renderer.device.Get(),
-							renderer.device.GetGraphicsQueue(),
-							renderer.commandPool.Get(), Faces[i].diffuseMapPath);
+			for (size_t i = 0; i < DiffuseTextures_b1.size(); i++)
+			{
+				if (i < Faces.size()) {
+					DiffuseTextures_b1[i].CreateTexture(renderer.physicalDevice.Get(),
+						renderer.device.Get(),
+						renderer.device.GetGraphicsQueue(),
+						renderer.commandPool.Get(), Faces[i].diffuseMapPath);
 
-						SpecularTextures_b6[i].CreateTexture(renderer.physicalDevice.Get(),
-							renderer.device.Get(),
-							renderer.device.GetGraphicsQueue(),
-							renderer.commandPool.Get(), Faces[i].specularMapPath);
+					SpecularTextures_b6[i].CreateTexture(renderer.physicalDevice.Get(),
+						renderer.device.Get(),
+						renderer.device.GetGraphicsQueue(),
+						renderer.commandPool.Get(), Faces[i].specularMapPath);
 
-						RoughnessTextures_b9[i].CreateTexture(renderer.physicalDevice.Get(),
-							renderer.device.Get(),
-							renderer.device.GetGraphicsQueue(),
-							renderer.commandPool.Get(), Faces[i].roughnessMapPath);
+					RoughnessTextures_b9[i].CreateTexture(renderer.physicalDevice.Get(),
+						renderer.device.Get(),
+						renderer.device.GetGraphicsQueue(),
+						renderer.commandPool.Get(), Faces[i].roughnessMapPath);
 
-						MetallicTextures_b10[i].CreateTexture(renderer.physicalDevice.Get(),
-							renderer.device.Get(),
-							renderer.device.GetGraphicsQueue(),
-							renderer.commandPool.Get(), Faces[i].metallicMapPath);
-					}
-				}
-
-				UniformBuffersMVP_b0.resize(renderer.swapchain.PGetImageViews()->size());
-				UniformBuffersLightSpace_b1.resize(renderer.swapchain.PGetImageViews()->size());
-				UniformBuffersSpotLightAttributes_b2.resize(renderer.swapchain.PGetImageViews()->size());
-				UniformBuffersDebugCameraPos_b3.resize(renderer.swapchain.PGetImageViews()->size());
-				UniformBuffersMaterial_b4.resize(renderer.swapchain.PGetImageViews()->size());
-				UniformBuffersDirectionalLightAttributes_b5.resize(renderer.swapchain.PGetImageViews()->size());
-
-				for (size_t i = 0; i < renderer.swapchain.PGetImageViews()->size(); i++) {
-					UniformBuffersMVP_b0[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::MVP_t));
-					UniformBuffersLightSpace_b1[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::LightSpace_t));
-
-					UniformBuffersDebugCameraPos_b3[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::CameraPos_t));
-					UniformBuffersMaterial_b4[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::Material_t));
-					UniformBuffersSpotLightAttributes_b2[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(),
-						sizeof(DataTypes::PointLightAttributes_t) * MAX_SPOTLIGHTS);
-					UniformBuffersDirectionalLightAttributes_b5[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(),
-						sizeof(DataTypes::DirectionalLightAttributes_t) * MAX_DLIGHTS);
-
+					MetallicTextures_b10[i].CreateTexture(renderer.physicalDevice.Get(),
+						renderer.device.Get(),
+						renderer.device.GetGraphicsQueue(),
+						renderer.commandPool.Get(), Faces[i].metallicMapPath);
 				}
 			}
 
-			CreateDescriptorSets(
-				renderer.device.Get(), renderer.setLayoutForMesh.Get(),
-				renderer.descriptorPoolForMesh.Get(), *renderer.swapchain.PGetImageViews()
-			);
-			IsCreated = true;
+			UniformBuffersMVP_b0.resize(renderer.swapchain.PGetImageViews()->size());
+			UniformBuffersLightSpace_b1.resize(renderer.swapchain.PGetImageViews()->size());
+			UniformBuffersSpotLightAttributes_b2.resize(renderer.swapchain.PGetImageViews()->size());
+			UniformBuffersDebugCameraPos_b3.resize(renderer.swapchain.PGetImageViews()->size());
+			UniformBuffersMaterial_b4.resize(renderer.swapchain.PGetImageViews()->size());
+			UniformBuffersDirectionalLightAttributes_b5.resize(renderer.swapchain.PGetImageViews()->size());
+
+			for (size_t i = 0; i < renderer.swapchain.PGetImageViews()->size(); i++) {
+				UniformBuffersMVP_b0[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::MVP_t));
+				UniformBuffersLightSpace_b1[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::LightSpace_t));
+
+				UniformBuffersDebugCameraPos_b3[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::CameraPos_t));
+				UniformBuffersMaterial_b4[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(), sizeof(DataTypes::Material_t));
+				UniformBuffersSpotLightAttributes_b2[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(),
+					sizeof(DataTypes::PointLightAttributes_t) * MAX_SPOTLIGHTS);
+				UniformBuffersDirectionalLightAttributes_b5[i].CreateUniformBuffer(renderer.physicalDevice.Get(), renderer.device.Get(),
+					sizeof(DataTypes::DirectionalLightAttributes_t) * MAX_DLIGHTS);
+
+			}
+		}
+
+		CreateDescriptorSets(
+			renderer.device.Get(), renderer.setLayoutForMesh.Get(),
+			renderer.descriptorPoolForMesh.Get(), *renderer.swapchain.PGetImageViews()
+		);
+		IsCreated = true;
 		m.unlock();
 	}
 }
+
+void Engine::Mesh::CreateMesh_FromThread(std::string modelPath, std::atomic<bool>&ready) {
+	std::mutex m;
+	m.lock();
+	ready = false;
+	CreateMesh(modelPath);
+	ready = true;
+	m.unlock();
+}
+
 
 void Engine::Mesh::UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec3 cameraPosition, 
 	DataTypes::ViewProjection_t viewProjection, glm::mat4 TransformMatrixProduct, std::vector<DataTypes::PointLightAttributes_t*> spotlightAttributes, 

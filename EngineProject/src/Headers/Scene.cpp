@@ -367,7 +367,7 @@ void Engine::Scene::SaveAs(std::string path)
     outputJson.close();
 }
 
-void Engine::Scene::New_FromThread(bool& ready)
+void Engine::Scene::New_FromThread(std::atomic<bool>& ready)
 {
     std::mutex m;
     m.lock();
@@ -377,7 +377,7 @@ void Engine::Scene::New_FromThread(bool& ready)
     m.unlock();
 }
 
-void Engine::Scene::Save_FromThread(bool& ready)
+void Engine::Scene::Save_FromThread(std::atomic<bool>& ready)
 {
     std::mutex m;
     m.lock();
@@ -387,7 +387,7 @@ void Engine::Scene::Save_FromThread(bool& ready)
     m.unlock();
 }
 
-void Engine::Scene::SaveAs_FromThread(std::string path, bool& ready)
+void Engine::Scene::SaveAs_FromThread(std::string path, std::atomic<bool>& ready)
 {
     std::mutex m;
     m.lock();
@@ -397,10 +397,11 @@ void Engine::Scene::SaveAs_FromThread(std::string path, bool& ready)
     m.unlock();
 }
 
-void Engine::Scene::Load_FromThread(std::string path, bool& ready)
+void Engine::Scene::Load_FromThread(std::string path, std::atomic<bool>& ready)
 {
     std::mutex m;
     m.lock();
+
     ready = false;
     Load(path);
     ready = true;

@@ -61,7 +61,7 @@ namespace Engine{
 		void CreateRigidBody(RigidBodyShapeType shapeType, btDynamicsWorld* dynamicsWorld, int id);
 		
 		void Destroy(btDynamicsWorld *dynamicsWorld);
-		
+
 		RigidBodyShapeType GetShapeType();
 
 		float GetMass() const;

@@ -147,61 +147,33 @@ namespace Engine{
 
 	class EngineAPI_Export GameObject : public Entity{
 		protected:
-        RigidBody* pRigidBody;
-        Mesh* pMesh;
-		
+        RigidBody *pRigidBody;
+		Mesh *pMesh;
+		bool IsMeshCreated = false;
+		bool IsRigidbodyCreated = false;
+
 		public:
 	
 		GameObject();
 		~GameObject();
 
-        template <typename T> void AddComponent() {
+		template <typename T> void AddComponent();
 
-        }
+		template <> void AddComponent<RigidBody>();
 
-		template <> void AddComponent<RigidBody>() {
-            if (pRigidBody == nullptr) pRigidBody = new RigidBody;
-            else {
-                delete pRigidBody;
-                pRigidBody = new RigidBody;
-            }
-		}
+		template <> void AddComponent<Mesh>();
 
-        template <> void AddComponent<Mesh>() {
-            if (pMesh == nullptr) pMesh = new Mesh;
-            else {
-                delete pMesh;
-                pMesh = new Mesh;
-            }
-        }
+		template <typename T> T pGetComponent();
 
-        template <typename T> T pGetComponent() {
+		template <> RigidBody* pGetComponent<RigidBody*>();
 
-        }
+		template <> Mesh* pGetComponent<Mesh*>();
 
-        template <> RigidBody* pGetComponent<RigidBody*>() {
-			return pRigidBody;
-        }
+		template <typename T> void DeleteComponent();
 
-        template <> Mesh* pGetComponent<Mesh*>() {
-            return pMesh;
-        }
+		template <> void DeleteComponent<RigidBody>();
 
-        template <typename T> void DeleteComponent() {
-
-        }
-
-        template <> void DeleteComponent<RigidBody>() {
-			pRigidBody->Destroy(Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld);
-			delete pRigidBody;
-			pRigidBody = nullptr;
-        }
-
-        template <> void DeleteComponent<Mesh>() {
-			pMesh->Destroy();
-			delete pMesh;
-			pMesh = nullptr;
-        }
+		template <> void DeleteComponent<Mesh>();
 
 
 

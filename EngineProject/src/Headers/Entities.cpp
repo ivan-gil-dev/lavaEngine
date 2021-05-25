@@ -291,6 +291,62 @@ int Engine::Entity::GetID() {
 	return ID;
 }
 
+
+
+template <typename T> void AddComponent() {
+
+}
+
+template <> void Engine::GameObject::AddComponent<Engine::RigidBody>() {
+    if (!IsRigidbodyCreated) pRigidBody = new RigidBody;
+    else {
+        delete pRigidBody;
+        pRigidBody = new RigidBody;
+        IsRigidbodyCreated = true;
+    }
+}
+
+template <> void Engine::GameObject::AddComponent<Engine::Mesh>() {
+
+    if (!IsMeshCreated) pMesh = new Mesh;
+    else {
+        delete pMesh;
+        pMesh = new Mesh;
+        IsMeshCreated = true;
+    }
+
+
+}
+
+template <typename T> T Engine::GameObject::pGetComponent() {
+
+}
+
+template <> Engine::RigidBody* Engine::GameObject::pGetComponent<Engine::RigidBody*>() {
+    return pRigidBody;
+}
+
+template <> Engine::Mesh* Engine::GameObject::pGetComponent<Engine::Mesh*>() {
+    return pMesh;
+}
+
+template <typename T> void Engine::GameObject::DeleteComponent() {
+
+}
+
+template <> void Engine::GameObject::DeleteComponent<Engine::RigidBody>() {
+    pRigidBody->Destroy(Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld);
+    delete pRigidBody;
+    IsRigidbodyCreated = false;
+   
+}
+
+template <> void Engine::GameObject::DeleteComponent<Engine::Mesh>() {
+    pMesh->Destroy();
+    delete pMesh;
+    IsMeshCreated = false;
+}
+
 Engine::GameObject::GameObject() {
 	Type = ENTITY_TYPE_GAME_OBJECT;
 	Name = "Game Object";

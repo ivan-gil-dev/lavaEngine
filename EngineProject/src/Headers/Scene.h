@@ -47,13 +47,13 @@ namespace Engine{
 
         void SaveAs(std::string path);
 
-        void Load_FromThread(std::string path, bool &ready);
+        void Load_FromThread(std::string path, std::atomic<bool> &ready);
 
-        void New_FromThread(bool& ready);
+        void New_FromThread(std::atomic<bool>& ready);
 
-        void Save_FromThread(bool& ready);
+        void Save_FromThread(std::atomic<bool>& ready);
 
-        void SaveAs_FromThread(std::string path, bool& ready);
+        void SaveAs_FromThread(std::string path, std::atomic<bool>& ready);
 
 		std::vector<Entity*>* pGetVectorOfEntities();
 

@@ -18,7 +18,7 @@ public:
 		 ResetPhysics        = true,  //Сбросить физические параметры (Если симуляция не начата)
 		 CloseWindow         = false, //Закрыть окно
 		 OpenFileDialog		 = false;
-	bool LoadingIsEnded = true;
+	std::atomic<bool> LoadingIsEnded = true;
 public:
 	bool enableEditor = true;
 	Engine::EditorCamera editorCamera{};

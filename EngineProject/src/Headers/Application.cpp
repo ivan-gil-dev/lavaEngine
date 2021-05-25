@@ -345,7 +345,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                     thr.join();
 
 					editorCamera.Reset();
-					Engine::renderer.RebuildBuffers();
+					Engine::renderer.SetRebuildTrigger();
 				}
 
 
@@ -363,18 +363,34 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 
 						std::thread thr(
 							&Engine::Scene::Load_FromThread,
-							Engine::Globals::gScene, 
+							Engine::Globals::gScene,
 							path, 
 							std::ref(LoadingIsEnded)
 						);
 
-						thr.join();
+						LoadingIsEnded = false;
+
+						thr.detach();
+
+						MSG msg = { };
+						while (!LoadingIsEnded)
+						{
+                            if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE)) {
+                                TranslateMessage(&msg);
+                                DispatchMessage(&msg);
+                            }
+						}
+
                         
 						editorCamera.Reset();
                         spdlog::info("Done!");
                     }
-					Engine::renderer.RebuildBuffers();
-                    
+
+					
+
+					Engine::renderer.recreateSwapchain();
+					Engine::renderer.SetRebuildTrigger();
+
 					OpenFileDialog = false;
 				}
 
@@ -536,6 +552,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 			
 			if (ImGui::BeginPopup("Popup")) {
 				if(ImGui::MenuItem("Delete")) {
+					Engine::renderer.WaitForDrawFences();
 					if (Entities[SelectedItem_ID]->GetEntityType() == Engine::ENTITY_TYPE_GAME_OBJECT)
 					{
                         delete Entities[SelectedItem_ID];
@@ -735,21 +752,40 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                                {
                                    std::cout << path << std::endl;
                                    std::replace(path.begin(), path.end(), '\\', '/');
+
+								   Engine::renderer.WaitForDrawFences();
+
+
                                    ((Engine::GameObject*)Entities.at(SelectedItem_ID))->DeleteComponent<Engine::Mesh>();
 
                                    ((Engine::GameObject*)Entities.at(SelectedItem_ID))->AddComponent<Engine::Mesh>();
 
-								   Engine::renderer.WaitForDrawFences();
+								  
 								   WaitMessage();
 
                                    std::thread thr(
-									   &Engine::Mesh::CreateMesh, 
+									   &Engine::Mesh::CreateMesh_FromThread, 
 									   ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>(),
-									   path);
-                                   thr.join();
+									   path,
+									   std::ref(LoadingIsEnded)
+									   );
+                               
+                                   LoadingIsEnded = false;
+
+                                   thr.detach();
+
+                                   MSG msg = { };
+                                   while (!LoadingIsEnded)
+                                   {
+                                       if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE)) {
+                                           TranslateMessage(&msg);
+                                           DispatchMessage(&msg);
+                                       }
+                                   }
 
                                      //((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>()->CreateMesh(path);
-								     Engine::renderer.RebuildBuffers();
+								   Engine::renderer.recreateSwapchain();
+								     Engine::renderer.SetRebuildTrigger();
                                }
                            }
 
@@ -789,6 +825,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                                 ((Engine::GameObject*)Entities.at(SelectedItem_ID))->AddComponent<Engine::Mesh>();
 
 								WaitMessage();
+								
 
                                 std::thread thr(
                                     &Engine::Mesh::CreateMesh,
@@ -797,7 +834,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 
                                 thr.join();
 
-								Engine::renderer.RebuildBuffers();
+								Engine::renderer.SetRebuildTrigger();
 
                             }
 						}
@@ -840,7 +877,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                                         SelectedItem_ID
                                     );
                                 }
-								Engine::renderer.RebuildBuffers();
+					
                                 ImGui::EndPopup();
                             }
 						}
@@ -1041,14 +1078,17 @@ void Application::Init() {
 //Главный цикл
 void Application::Execute() {
 	MSG msg = { };
+
+    
+
 	while (msg.message != WM_QUIT) {
 
-		//Обработка событий
-		if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE)) {
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
-			continue;
-		}
+        //Обработка сообщений
+        if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE)) {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+            continue;
+        }
 
 		//Расчет времени итерации цикла
 		{
@@ -1113,35 +1153,68 @@ void Application::Execute() {
                     {
                         Engine::Globals::gScene->UpdateActiveCamera();
 
-                        Engine::renderer.DrawScene(
+
+
+
+                        std::thread drawWithActiveCamera(
+                            &Engine::Renderer::DrawScene,
+                            &Engine::renderer,
                             ImguiDrawData,
                             Engine::Globals::gScene,
                             *Engine::Globals::gScene->pGetActiveCamera()
                         );
+
+						drawWithActiveCamera.join();
+
+                        /*Engine::renderer.DrawScene(
+                            ImguiDrawData,
+                            Engine::Globals::gScene,
+                            *Engine::Globals::gScene->pGetActiveCamera()
+                        );*/
                     }
                     else {
                         sceneEditor.editorCamera.Update();
 
-                        Engine::renderer.DrawScene(
+                        std::thread drawWithEditorCamera(
+                            &Engine::Renderer::DrawScene,
+                            &Engine::renderer,
                             ImguiDrawData,
                             Engine::Globals::gScene,
                             sceneEditor.editorCamera
                         );
+
+						drawWithEditorCamera.join();
+
+                        /*Engine::renderer.DrawScene(
+                            ImguiDrawData,
+                            Engine::Globals::gScene,
+                            sceneEditor.editorCamera
+                        );*/
                     }
                 }
                 else {
                     sceneEditor.editorCamera.Update();
 
-                    Engine::renderer.DrawScene(
+                    std::thread drawWithEditorCamera(
+                        &Engine::Renderer::DrawScene,
+                        &Engine::renderer,
                         ImguiDrawData,
                         Engine::Globals::gScene,
                         sceneEditor.editorCamera
                     );
+
+					drawWithEditorCamera.join();
+
+                 /*   Engine::renderer.DrawScene(
+                        ImguiDrawData,
+                        Engine::Globals::gScene,
+                        sceneEditor.editorCamera
+                    );*/
                 }
             }
 		}
 
-		
+        
 		
 	}
 }

@@ -100,10 +100,14 @@ namespace Engine{
 
 		void CreateMesh(std::string modelPath);
 
+		void CreateMesh_FromThread(std::string modelPath, std::atomic<bool>& ready);
+
 		void UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec3 cameraPosition, DataTypes::ViewProjection_t viewProjection, glm::mat4 TransformMatrixProduct,
 			std::vector<DataTypes::PointLightAttributes_t*> spotlightAttributes, std::vector <DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes);
 
 		void Destroy();
+
+		
 
 	};
 
@@ -143,6 +147,8 @@ namespace Engine{
 
 		void Destroy();
 
+		
+
 	};
 
 	class CubemapMesh{
@@ -173,6 +179,8 @@ namespace Engine{
 		void UpdateUniforms(uint32_t imageIndex, VkDevice device, DataTypes::ViewProjection_t viewProjection);
 
 		void Destroy();
+
+	
 
 	};
 }
