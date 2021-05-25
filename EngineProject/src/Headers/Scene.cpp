@@ -1,5 +1,7 @@
 #include "Scene.h"
 #include "Renderer/Renderer.h"
+#include <mutex>
+#include <chrono>
 std::string Engine::Scene::GetScenePath()
 {
     return scenePath;
@@ -363,6 +365,46 @@ void Engine::Scene::SaveAs(std::string path)
     //std::cout << sceneJson.dump(1) << std::endl;
     outputJson << sceneJson.dump(1);
     outputJson.close();
+}
+
+void Engine::Scene::New_FromThread(bool& ready)
+{
+    std::mutex m;
+    m.lock();
+    ready = false;
+    New();
+    ready = true;
+    m.unlock();
+}
+
+void Engine::Scene::Save_FromThread(bool& ready)
+{
+    std::mutex m;
+    m.lock();
+    ready = false;
+    Save();
+    ready = true;
+    m.unlock();
+}
+
+void Engine::Scene::SaveAs_FromThread(std::string path, bool& ready)
+{
+    std::mutex m;
+    m.lock();
+    ready = false;
+    SaveAs(path);
+    ready = true;
+    m.unlock();
+}
+
+void Engine::Scene::Load_FromThread(std::string path, bool& ready)
+{
+    std::mutex m;
+    m.lock();
+    ready = false;
+    Load(path);
+    ready = true;
+    m.unlock();
 }
 
 std::vector<Engine::Entity*>* Engine::Scene::pGetVectorOfEntities()

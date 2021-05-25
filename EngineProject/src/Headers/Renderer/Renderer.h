@@ -103,6 +103,8 @@ namespace Engine {
         std::vector<CommandPool> drawCommandPool;
         std::vector<bool> checkBuild;
 
+        bool BlockBuilding = false;
+
         uint32_t imageIndex;
         uint32_t currentFrame = 0;
         int MAX_FRAMES;

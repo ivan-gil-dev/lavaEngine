@@ -28,11 +28,12 @@ layout(binding = 2) uniform Light{Spotlight_t spotlight[MAX_SPOTLIGHTS];}light;
 
 layout(binding = 3) uniform CameraPos{vec3 cameraPos;}Camera;
 
+//Материал объекта
 struct Material_t{
-    float shininess;
-    float metallic;
-    float roughness;
-    float ao;
+    float shininess; // величина сияния объекта  
+    float metallic;  // металличность
+    float roughness; // грубость объекта
+    float ao;        // ambient occlusion
 };
 
 layout(binding = 4) uniform Material{
@@ -100,7 +101,7 @@ vec3 CalculateSpotlight(Spotlight_t spotlight_p, vec3 normals_p, vec3 viewDir_p)
             discard;
         }
 
-
+        
         vec3 albedo = pow(texture(diffuseColorMaps[PushConstants.MaterialID],frag_UVmap).rgb,vec3(2.2));
         float metallic = texture(metallicColorMaps[PushConstants.MaterialID],frag_UVmap).r * material.material.metallic;
         float roughness = texture(roughnessColorMaps[PushConstants.MaterialID],frag_UVmap).r * material.material.roughness;
@@ -161,7 +162,7 @@ vec3 CalculateDirectionalLight(DirectionalLight_t directionalLight_p, vec3 norma
         F0 = mix(F0, albedo, metallic);
         vec3 L0 = vec3(0.0);
 
-        //Radiance
+        //Расчет яркости в точке
         vec3 L = normalize(-directionalLight_p.Direction);
         vec3 H = normalize(viewDir_p + L);
         float distance = length(directionalLight_p.Direction);

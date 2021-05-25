@@ -466,114 +466,117 @@ namespace Engine {
 
     void Renderer::BuildCommandBuffers(ImDrawData* drawData, Scene* scene)
     {
-
-        if (!checkBuild[currentFrame])
+        if (!BlockBuilding)
         {
-            //std::cout << "CheckBuild" << std::endl;
-            drawCommandBuffer[currentFrame].BeginCommandBuffer();
-            VkRenderPassBeginInfo renderPassBeginInfo = { VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO };
-            //--------shadowmapping---------
+            if (!checkBuild[currentFrame])
             {
-
-                VkClearValue clVal = { 1.f,0 };
-                VkClearValue values[] = { clVal };
-
-
-                renderPassBeginInfo.renderPass = offscreenRenderpass.GetRenderPass();
-                renderPassBeginInfo.framebuffer = offscreenFramebuffers[imageIndex];
-                renderPassBeginInfo.renderArea.extent.width = depthImageShadowMap.GetShadowMapDimensions();
-                renderPassBeginInfo.renderArea.extent.height = depthImageShadowMap.GetShadowMapDimensions();
-                renderPassBeginInfo.clearValueCount = 1;
-                renderPassBeginInfo.pClearValues = values;
-
-                vkCmdBeginRenderPass(drawCommandBuffer[currentFrame].Get(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-                
-                VkViewport viewport{};
-                viewport.height = (float)depthImageShadowMap.GetShadowMapDimensions();
-                viewport.width = (float)depthImageShadowMap.GetShadowMapDimensions();
-                viewport.minDepth = 0;
-                viewport.maxDepth = 1;
-                vkCmdSetViewport(drawCommandBuffer[currentFrame].Get(), 0, 1, &viewport);
-
-
-                VkRect2D rect{};
-                rect.extent.height = depthImageShadowMap.GetShadowMapDimensions();
-                rect.extent.width = depthImageShadowMap.GetShadowMapDimensions();
-                rect.offset.x = 0;
-                rect.offset.y = 0;
-
-                vkCmdSetScissor(drawCommandBuffer[currentFrame].Get(), 0, 1, &rect);
-
-                vkCmdSetDepthBias(
-                    drawCommandBuffer[currentFrame].Get(),
-                    5.05f,
-                    0.0f,
-                    1.75f);
-
-                if (Globals::states.drawShadows)
+                //std::cout << "CheckBuild" << std::endl;
+                drawCommandBuffer[currentFrame].BeginCommandBuffer();
+                VkRenderPassBeginInfo renderPassBeginInfo = { VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO };
+                //--------shadowmapping---------
                 {
-                    for (size_t j = 0, i = 0; i < scene->pGetVectorOfEntities()->size(); i++) {
+
+                    VkClearValue clVal = { 1.f,0 };
+                    VkClearValue values[] = { clVal };
 
 
-                        if (scene->pGetVectorOfEntities()->at(i)->GetEntityType() == ENTITY_TYPE_GAME_OBJECT)
-                        {
-                            if (((GameObject*)scene->pGetVectorOfEntities()->at(i))->pGetComponent<Mesh*>() != nullptr)
+                    renderPassBeginInfo.renderPass = offscreenRenderpass.GetRenderPass();
+                    renderPassBeginInfo.framebuffer = offscreenFramebuffers[imageIndex];
+                    renderPassBeginInfo.renderArea.extent.width = depthImageShadowMap.GetShadowMapDimensions();
+                    renderPassBeginInfo.renderArea.extent.height = depthImageShadowMap.GetShadowMapDimensions();
+                    renderPassBeginInfo.clearValueCount = 1;
+                    renderPassBeginInfo.pClearValues = values;
+
+                    vkCmdBeginRenderPass(drawCommandBuffer[currentFrame].Get(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+
+                    VkViewport viewport{};
+                    viewport.height = (float)depthImageShadowMap.GetShadowMapDimensions();
+                    viewport.width = (float)depthImageShadowMap.GetShadowMapDimensions();
+                    viewport.minDepth = 0;
+                    viewport.maxDepth = 1;
+                    vkCmdSetViewport(drawCommandBuffer[currentFrame].Get(), 0, 1, &viewport);
+
+
+                    VkRect2D rect{};
+                    rect.extent.height = depthImageShadowMap.GetShadowMapDimensions();
+                    rect.extent.width = depthImageShadowMap.GetShadowMapDimensions();
+                    rect.offset.x = 0;
+                    rect.offset.y = 0;
+
+                    vkCmdSetScissor(drawCommandBuffer[currentFrame].Get(), 0, 1, &rect);
+
+                    vkCmdSetDepthBias(
+                        drawCommandBuffer[currentFrame].Get(),
+                        5.05f,
+                        0.0f,
+                        1.75f);
+
+                    if (Globals::states.drawShadows)
+                    {
+                        for (size_t j = 0, i = 0; i < scene->pGetVectorOfEntities()->size(); i++) {
+
+
+                            if (scene->pGetVectorOfEntities()->at(i)->GetEntityType() == ENTITY_TYPE_GAME_OBJECT)
                             {
-                                std::vector<VkDescriptorSet> descriptorSets = depthImageShadowMap.GetDescriptorSetsByIndex((int)j);
-                                ((GameObject*)scene->pGetVectorOfEntities()->at(i))->DrawShadowMaps(
-                                    drawCommandBuffer[currentFrame].Get(),
-                                    imageIndex,
-                                    descriptorSets
-                                );
-                                j++;
+                                if (((GameObject*)scene->pGetVectorOfEntities()->at(i))->pGetComponent<Mesh*>() != nullptr)
+                                {
+                                    std::vector<VkDescriptorSet> descriptorSets = depthImageShadowMap.GetDescriptorSetsByIndex((int)j);
+                                    ((GameObject*)scene->pGetVectorOfEntities()->at(i))->DrawShadowMaps(
+                                        drawCommandBuffer[currentFrame].Get(),
+                                        imageIndex,
+                                        descriptorSets
+                                    );
+                                    j++;
+                                }
                             }
                         }
                     }
+
+
+                    vkCmdEndRenderPass(drawCommandBuffer[currentFrame].Get());
+                    checkBuild[currentFrame] = true;
+                    //-----------------------------------------------------------------------------------
+                }
+
+                renderPassBeginInfo = {};
+                renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+                renderPassBeginInfo.renderPass = renderPass.GetRenderPass();
+                renderPassBeginInfo.renderArea.extent = swapchain.GetInfo().imageExtent;
+                renderPassBeginInfo.renderArea.offset = { 0,0 };
+                renderPassBeginInfo.framebuffer = swapchain.GetSwapchainFramebuffers()[imageIndex];
+
+                VkClearValue clearColor = { 0.0f,0.0f,0.0f,1.0f };
+                VkClearValue depthClearColor = { 1.0,0.0f };
+                VkClearValue resolveColor = { 0.0f,0.0f,0.0f,1.0f };
+                VkClearValue clearColors[] = {
+                    clearColor, depthClearColor, resolveColor
+                };
+
+                renderPassBeginInfo.pClearValues = clearColors;
+                renderPassBeginInfo.clearValueCount = 3;
+                vkCmdBeginRenderPass(drawCommandBuffer[currentFrame].Get(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+                if (ENABLE_DYNAMIC_VIEWPORT) {
+                    vkCmdSetViewport(drawCommandBuffer[currentFrame].Get(), 0, 1, &renderer.rendererViewport);
+                    vkCmdSetScissor(drawCommandBuffer[currentFrame].Get(), 0, 1, &renderer.rendererScissors);
+                }
+
+
+                for (size_t i = 0; i < scene->pGetVectorOfEntities()->size(); i++) {
+                    scene->pGetVectorOfEntities()->at(i)->Draw(
+                        drawCommandBuffer[currentFrame].Get(),
+                        imageIndex
+                    );
                 }
 
 
                 vkCmdEndRenderPass(drawCommandBuffer[currentFrame].Get());
-                checkBuild[currentFrame] = true;
-                //-----------------------------------------------------------------------------------
+
+                drawCommandBuffer[currentFrame].EndCommandBuffer();
             }
-
-            renderPassBeginInfo = {};
-            renderPassBeginInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
-            renderPassBeginInfo.renderPass = renderPass.GetRenderPass();
-            renderPassBeginInfo.renderArea.extent = swapchain.GetInfo().imageExtent;
-            renderPassBeginInfo.renderArea.offset = { 0,0 };
-            renderPassBeginInfo.framebuffer = swapchain.GetSwapchainFramebuffers()[imageIndex];
-
-            VkClearValue clearColor = { 0.0f,0.0f,0.0f,1.0f };
-            VkClearValue depthClearColor = { 1.0,0.0f };
-            VkClearValue resolveColor = { 0.0f,0.0f,0.0f,1.0f };
-            VkClearValue clearColors[] = {
-                clearColor, depthClearColor, resolveColor
-            };
-
-            renderPassBeginInfo.pClearValues = clearColors;
-            renderPassBeginInfo.clearValueCount = 3;
-            vkCmdBeginRenderPass(drawCommandBuffer[currentFrame].Get(), &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-
-            if (ENABLE_DYNAMIC_VIEWPORT) {
-                vkCmdSetViewport(drawCommandBuffer[currentFrame].Get(), 0, 1, &renderer.rendererViewport);
-                vkCmdSetScissor(drawCommandBuffer[currentFrame].Get(), 0, 1, &renderer.rendererScissors);
-            }
-
-
-            for (size_t i = 0; i < scene->pGetVectorOfEntities()->size(); i++) {
-                scene->pGetVectorOfEntities()->at(i)->Draw(
-                    drawCommandBuffer[currentFrame].Get(),
-                    imageIndex
-                );
-            }
-
-
-            vkCmdEndRenderPass(drawCommandBuffer[currentFrame].Get());
-
-            drawCommandBuffer[currentFrame].EndCommandBuffer();
         }
+       
     }
 
     void Renderer::clear()

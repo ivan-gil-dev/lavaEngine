@@ -1,5 +1,4 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\Microsoft.Common.CurrentVersion.targets(1947,5): warning : The referenced project '..\Engine\Lava.vcxproj' does not exist.
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(519,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (Lava.vcxproj).  Это может привести к ошибкам очистки и перестроения.
   File.cpp
 G:\dev\cpp\WinAPI Branch\App\File.cpp(164,49): warning C4311: reinterpret_cast: усечение указателя из "Engine::GameObject *" в "int"
 G:\dev\cpp\WinAPI Branch\App\File.cpp(164,49): warning C4302: reinterpret_cast: усечение из "Engine::GameObject *" к "int"
@@ -27,5 +26,4 @@ G:\dev\cpp\WinAPI Branch\App\File.cpp(280,61): warning C4302: reinterpret_cast: 
 G:\dev\cpp\WinAPI Branch\App\File.cpp(284,61): warning C4316: "Engine::PointLightObject": объект, размещенный в куче, может не быть выровнен 32
 G:\dev\cpp\WinAPI Branch\App\File.cpp(287,61): warning C4311: reinterpret_cast: усечение указателя из "Engine::PointLightObject *" в "int"
 G:\dev\cpp\WinAPI Branch\App\File.cpp(287,61): warning C4302: reinterpret_cast: усечение из "Engine::PointLightObject *" к "int"
-     Создается библиотека G:\dev\cpp\WinAPI Branch\x64\Debug\App.lib и объект G:\dev\cpp\WinAPI Branch\x64\Debug\App.exp
   App.vcxproj -> G:\dev\cpp\WinAPI Branch\x64\Debug\App.exe
