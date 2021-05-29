@@ -349,49 +349,49 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
 				}
 
 
-				ImGui::MenuItem(u8"Open", "", &OpenFileDialog);
-				if (OpenFileDialog){
-					SelectedItem_ID = -1;
-					std::string path = WinApiOpenDialog();
-                    if (path!="")
+                ImGui::MenuItem(u8"Open", "", &OpenFileDialog);
+                if (OpenFileDialog) {
+                    SelectedItem_ID = -1;
+                    std::string path = WinApiOpenDialog();
+                    if (path != "")
                     {
                         spdlog::info("Loading...");
                         std::cout << path << std::endl;
-						Engine::renderer.WaitForDrawFences();
+                        Engine::renderer.WaitForDrawFences();
 
-						WaitMessage();
+                        WaitMessage();
 
-						std::thread thr(
-							&Engine::Scene::Load_FromThread,
-							Engine::Globals::gScene,
-							path, 
-							std::ref(LoadingIsEnded)
-						);
+                        std::thread thr(
+                            &Engine::Scene::Load_FromThread,
+                            Engine::Globals::gScene,
+                            path,
+                            std::ref(LoadingIsEnded)
+                        );
 
-						LoadingIsEnded = false;
+                        LoadingIsEnded = false;
 
-						thr.detach();
+                        thr.detach();
 
-						MSG msg = { };
-						while (!LoadingIsEnded)
-						{
+                        MSG msg = { };
+                        while (!LoadingIsEnded)
+                        {
                             if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE)) {
                                 TranslateMessage(&msg);
                                 DispatchMessage(&msg);
                             }
-						}
+                        }
 
-                        
-						editorCamera.Reset();
+
+                        editorCamera.Reset();
                         spdlog::info("Done!");
                     }
 
-					
 
-					Engine::renderer.recreateSwapchain();
-					Engine::renderer.SetRebuildTrigger();
 
-					OpenFileDialog = false;
+                    Engine::renderer.recreateSwapchain();
+                    Engine::renderer.SetRebuildTrigger();
+
+                    OpenFileDialog = false;
 				}
 
 				bool Save = false;
@@ -877,6 +877,15 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                                         SelectedItem_ID
                                     );
                                 }
+                                if (ImGui::MenuItem("Mesh"))
+                                {
+                                    ((Engine::GameObject*)Entities.at(SelectedItem_ID))->AddComponent<Engine::RigidBody>();
+                                    ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->CreateRigidBody(
+                                        ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>(),
+                                        Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
+                                        SelectedItem_ID
+                                    );
+                                }
 					
                                 ImGui::EndPopup();
                             }
@@ -1078,9 +1087,6 @@ void Application::Init() {
 //Главный цикл
 void Application::Execute() {
 	MSG msg = { };
-
-    
-
 	while (msg.message != WM_QUIT) {
 
         //Обработка сообщений
@@ -1096,11 +1102,8 @@ void Application::Execute() {
 			Engine::Globals::DeltaTime = Time - LastFrameTime;
 			Engine::Globals::DeltaTime /= 100;
 			LastFrameTime = Time;
+            FpsCapTimer += Engine::Globals::DeltaTime;
 		}
-
-		//std::cout << Engine::Globals::DeltaTime << std::endl;
-		
-		
 
 		if (Engine::Globals::gIsScenePlaying) {
 			for (size_t i = 0; i < Engine::Globals::gScene->pGetVectorOfEntities()->size(); i++) {
@@ -1116,9 +1119,9 @@ void Application::Execute() {
 		}
 
 		
-
 		if (ENABLE_IMGUI) {
-			{//Формирование данных ImGUI для отрисовки кадра
+			{
+				//Формирование данных ImGUI для отрисовки кадра
 				ImGui_ImplVulkan_NewFrame();
 				ImGui_ImplWin32_NewFrame();
 				ImGui::NewFrame();
@@ -1132,8 +1135,10 @@ void Application::Execute() {
 
 		}
 
-		if (sceneEditor.LoadingIsEnded)
+		if (sceneEditor.LoadingIsEnded && FpsCapTimer > 0.13)
 		{
+            //Лимит FPS
+            FpsCapTimer = 0;
             if (!Engine::Globals::gIsScenePlaying)
             {
                 //Отрисовка сцены c камерой редактора
@@ -1148,13 +1153,11 @@ void Application::Execute() {
             else {
                 if (Engine::Globals::states.useSceneCamera)
                 {
-
+                    
+                    //Отрисовка сцены c активной камерой
                     if (Engine::Globals::gScene->pGetActiveCamera() != nullptr)
                     {
                         Engine::Globals::gScene->UpdateActiveCamera();
-
-
-
 
                         std::thread drawWithActiveCamera(
                             &Engine::Renderer::DrawScene,
@@ -1163,14 +1166,8 @@ void Application::Execute() {
                             Engine::Globals::gScene,
                             *Engine::Globals::gScene->pGetActiveCamera()
                         );
-
+                        
 						drawWithActiveCamera.join();
-
-                        /*Engine::renderer.DrawScene(
-                            ImguiDrawData,
-                            Engine::Globals::gScene,
-                            *Engine::Globals::gScene->pGetActiveCamera()
-                        );*/
                     }
                     else {
                         sceneEditor.editorCamera.Update();
@@ -1185,11 +1182,6 @@ void Application::Execute() {
 
 						drawWithEditorCamera.join();
 
-                        /*Engine::renderer.DrawScene(
-                            ImguiDrawData,
-                            Engine::Globals::gScene,
-                            sceneEditor.editorCamera
-                        );*/
                     }
                 }
                 else {
@@ -1205,11 +1197,6 @@ void Application::Execute() {
 
 					drawWithEditorCamera.join();
 
-                 /*   Engine::renderer.DrawScene(
-                        ImguiDrawData,
-                        Engine::Globals::gScene,
-                        sceneEditor.editorCamera
-                    );*/
                 }
             }
 		}

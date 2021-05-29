@@ -9,7 +9,7 @@
 
 //Редактор сцены
 class SceneEditor{
-public:
+private:
 	
 	bool DemoWindowActive    = true,  //Демо ImGui (для отладки)
 		 ShowHierarchyPanel  = true,  //Показать панель иерархии
@@ -17,16 +17,17 @@ public:
 		 StartButtonActive,			  //Обработка нажатия кнопки старт
 		 ResetPhysics        = true,  //Сбросить физические параметры (Если симуляция не начата)
 		 CloseWindow         = false, //Закрыть окно
-		 OpenFileDialog		 = false;
-	std::atomic<bool> LoadingIsEnded = true;
+		 OpenFileDialog		 = false; //Вывод диалогового окна для открытия файла
+	
 public:
+	std::atomic<bool> LoadingIsEnded = true;//Ожидание завершения потока загрузки
 	bool enableEditor = true;
-	Engine::EditorCamera editorCamera{};
+	Engine::EditorCamera editorCamera{};//Камера редактора сцен
 	int   SelectedItem_ID  = -1;  //Текущий выбранный элемент
 	float MenubarHeight = 0;    //Высота менюбара (для вычисления отступов)
 public:
 
-	//Первоначальная настройка ImGui
+	//настройка ImGui
 	void InitEditor(HWND hwnd);
 
 	//Обработка интерфейса в главном цикле
@@ -55,6 +56,8 @@ public:
 
     double		Time,  
 				LastFrameTime;
+private:
+	float		FpsCapTimer = 0;
 	
 	//json		settingsJson;
 public:

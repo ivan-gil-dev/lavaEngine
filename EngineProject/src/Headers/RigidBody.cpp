@@ -157,15 +157,22 @@ void Engine::RigidBody::CreateShape(Mesh* mesh) {
 		DebugMesh.CreateMesh(mesh->pGetMeshPath(), glm::vec3(0.0f, 1.0f, 0.0f));
 	}
 
+	std::vector<DataTypes::MeshVertex_t>* Vertices = mesh->GetVertices();
+
+
 	pShape = new btConvexHullShape;
 	for (size_t i = 0; i < mesh->GetVertices()->size(); i++) {
 		((btConvexHullShape*)pShape)->addPoint(btVector3(
-			mesh->GetVertices()->at(i).pos.x,
-			mesh->GetVertices()->at(i).pos.y,
-			mesh->GetVertices()->at(i).pos.z),
+			btScalar(Vertices->at(i).pos.x),
+			-btScalar(Vertices->at(i).pos.y),
+			btScalar(Vertices->at(i).pos.z)
+		)
+			,
 			true);
 	}
-	((btConvexHullShape*)pShape)->optimizeConvexHull();
+
+
+	//((btConvexHullShape*)pShape)->optimizeConvexHull();
 	((btConvexHullShape*)pShape)->initializePolyhedralFeatures();
 	((btConvexHullShape*)pShape)->recalcLocalAabb();
 }
@@ -176,7 +183,7 @@ void Engine::RigidBody::CreateBodyWithMass(btDynamicsWorld* dynamicsWorld, int u
 	transform.setOrigin(btVector3(0, 0, 0));
 
 	btVector3 bodyInertia;
-	btScalar bodyMass = GetMass();
+	btScalar bodyMass = mass;
 
 	if (bodyMass == 0) pMotionState = 0;
 	else {
@@ -234,11 +241,15 @@ void Engine::RigidBody::SetRigidBodyTransform(Transform& transform) {
 
 void Engine::RigidBody::SetRigidbodyScale(glm::vec3 scaleVal) {
 	rigidbodyScale = scaleVal;
-	pShape->setLocalScaling(btVector3(
-		scaleVal.x,
-		scaleVal.y,
-		scaleVal.z
-	));
+	
+
+        pShape->setLocalScaling(btVector3(
+            scaleVal.x,
+            scaleVal.y,
+            scaleVal.z
+        ));
+	
+	
 	
 	DebugMesh.Transform.Scale(scaleVal);
 	

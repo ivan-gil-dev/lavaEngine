@@ -241,14 +241,21 @@ extern "C" {
         rigidBody->SetMass(0.0f);
         rigidBody->SetRigidbodyScale(gameObject2->Transform.GetScaleValue());
 
-
         gameObject2->ApplyEntityTransformToRigidbody();
         entities->push_back(gameObject2);
 
-        GameObject* obj = new GameObject;
+       /* GameObject* obj = new GameObject;
         obj->SetID(reinterpret_cast<int>(obj));
         obj->SetName("Test");
-        entities->push_back(obj);
+        obj->AddComponent <RigidBody>();
+        obj->AddComponent <Mesh>();
+        mesh = obj->pGetComponent<Mesh*>();
+        rigidBody = obj->pGetComponent<RigidBody*>();
+        mesh->CreateMesh("CoreAssets/kettle/kettle.obj");
+        rigidBody->CreateRigidBody(mesh,dynamicsWorld,obj->GetID());
+        entities->push_back(obj);*/
+
+
 
         DirectionalLightObject* dlight = new DirectionalLightObject;
         dlight->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(1, -1, 1);

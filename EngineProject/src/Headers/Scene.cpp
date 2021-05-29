@@ -7,7 +7,7 @@ std::string Engine::Scene::GetScenePath()
     return scenePath;
 }
 
-void Engine::Scene::Load(std::string path)
+void Engine::Scene::Load(const std::string& path)
 {
 
     for (size_t i = 0; i < entities.size(); i++) {
@@ -264,7 +264,7 @@ void Engine::Scene::Save()
     SaveAs(scenePath);
 }
 
-void Engine::Scene::SaveAs(std::string path)
+void Engine::Scene::SaveAs(const std::string& path)
 {
     scenePath = path;
     std::ofstream outputJson(path);

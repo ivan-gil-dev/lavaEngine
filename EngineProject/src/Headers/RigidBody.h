@@ -16,61 +16,61 @@ namespace Engine{
 		RIGIDBODY_SHAPE_TYPE_SPHERE
 	};
 
-	class EngineAPI_Export RigidBody	{
-		RigidBodyShapeType    ShapeType;
-		btConvexShape *       pShape;
-		btRigidBody *		  pRigidBody;
+class EngineAPI_Export RigidBody	{
+	RigidBodyShapeType    ShapeType;
+	btConvexShape *       pShape;
+	btRigidBody *		  pRigidBody;
 		
-		btDefaultMotionState* pMotionState;
-		WireframeMesh		  DebugMesh;
+	btDefaultMotionState* pMotionState;
+	WireframeMesh		  DebugMesh;
 
-		float				  mass,
-							  restitution,
-							  friction;
+	float				  mass,
+							restitution,
+							friction;
 		
-        glm::vec3			  rigidbodyOffset;
-        glm::vec3			  rigidbodyRotation;
-		glm::vec3			  rigidbodyScale;
-		private:
-		std::vector<glm::vec3> *LoadVertices(std::string modelPath);
+    glm::vec3			  rigidbodyOffset;
+    glm::vec3			  rigidbodyRotation;
+	glm::vec3			  rigidbodyScale;
+	private:
+	std::vector<glm::vec3> *LoadVertices(std::string modelPath);
 
-		void CreateShape(Mesh *mesh);
+	void CreateShape(Mesh *mesh);
 
-		void CreateShape(RigidBodyShapeType shapeType);
+	void CreateShape(RigidBodyShapeType shapeType);
 
-		//Создание твердого тела
-		void CreateBodyWithMass(btDynamicsWorld* dynamicsWorld, int userIndex);
+	//Создание твердого тела
+	void CreateBodyWithMass(btDynamicsWorld* dynamicsWorld, int userIndex);
 
-		public:
-			RigidBody();
+	public:
+		RigidBody();
 
-		void SetRigidBodyTransform(Transform &transform);
+	void SetRigidBodyTransform(Transform &transform);
 		
-		void SetRigidbodyScale(glm::vec3 scaleVal);
+	void SetRigidbodyScale(glm::vec3 scaleVal);
 
-		glm::vec3 GetRigidbodyScale();
+	glm::vec3 GetRigidbodyScale();
 
-		WireframeMesh* pGetDebugMesh();
+	WireframeMesh* pGetDebugMesh();
 
-		btRigidBody* GetBulletRigidBody();
+	btRigidBody* GetBulletRigidBody();
 
-		btCollisionShape* GetBulletShape();
+	btCollisionShape* GetBulletShape();
 
-		void CreateRigidBody(Mesh *mesh, btDynamicsWorld* dynamicsWorld, int id);
+	void CreateRigidBody(Mesh *mesh, btDynamicsWorld* dynamicsWorld, int id);
 
-		void CreateRigidBody(RigidBodyShapeType shapeType, btDynamicsWorld* dynamicsWorld, int id);
+	void CreateRigidBody(RigidBodyShapeType shapeType, btDynamicsWorld* dynamicsWorld, int id);
 		
-		void Destroy(btDynamicsWorld *dynamicsWorld);
+	void Destroy(btDynamicsWorld *dynamicsWorld);
 
-		RigidBodyShapeType GetShapeType();
+	RigidBodyShapeType GetShapeType();
 
-		float GetMass() const;
-		void SetMass(float val);
-        float GetRestitution() const;
-        void SetRestitution(float val);
-        float GetFriction() const;
-        void SetFriction(float val);
-	};
+	float GetMass() const;
+	void SetMass(float val);
+    float GetRestitution() const;
+    void SetRestitution(float val);
+    float GetFriction() const;
+    void SetFriction(float val);
+};
 }
 
 #endif

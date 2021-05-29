@@ -32,20 +32,17 @@ namespace Engine{
 
 		Camera* activeCamera;
 
-        
-
-
 	public:
 
 		std::string GetScenePath();
 
-        void Load(std::string path);
+        void Load(const std::string &path);
 
         void New();
 
         void Save();
 
-        void SaveAs(std::string path);
+        void SaveAs(const std::string& path);
 
         void Load_FromThread(std::string path, std::atomic<bool> &ready);
 
