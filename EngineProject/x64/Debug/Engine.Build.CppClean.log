@@ -1,9 +1,5 @@
 g:\dev\cpp\winapi branch\engineproject\x64\debug\vc142.pdb
 g:\dev\cpp\winapi branch\engineproject\x64\debug\vc142.idb
-g:\dev\cpp\winapi branch\engineproject\x64\debug\globals.obj
-g:\dev\cpp\winapi branch\engineproject\x64\debug\entities.obj
-g:\dev\cpp\winapi branch\engineproject\x64\debug\application.obj
-g:\dev\cpp\winapi branch\engineproject\x64\debug\entrypoint.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\imgui_widgets.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\imgui_impl_win32.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\imgui_impl_vulkan.obj
@@ -17,7 +13,11 @@ g:\dev\cpp\winapi branch\engineproject\x64\debug\rigidbody.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\syncobjects.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\mesh.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\images.obj
+g:\dev\cpp\winapi branch\engineproject\x64\debug\globals.obj
+g:\dev\cpp\winapi branch\engineproject\x64\debug\entities.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\buffers.obj
+g:\dev\cpp\winapi branch\engineproject\x64\debug\application.obj
+g:\dev\cpp\winapi branch\engineproject\x64\debug\entrypoint.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\renderer.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\pipelines.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\volk.obj

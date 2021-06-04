@@ -5,27 +5,26 @@
 #include "DataTypes.h"
 #include <vector>
 
-namespace Engine{
-	class SyncObjects {
-		std::vector<VkSemaphore> ImageRenderedSemaphores;
-		std::vector<VkSemaphore> ImageAvailableSemaphores;
-		std::vector<VkFence> Fences;
-	public:
-		void CreateSyncObjects(VkDevice device, int frameCount);
+namespace Engine {
+    class SyncObjects {
+        std::vector<VkSemaphore> ImageRenderedSemaphores;
+        std::vector<VkSemaphore> ImageAvailableSemaphores;
+        std::vector<VkFence> Fences;
+    public:
+        void CreateSyncObjects(VkDevice device, int frameCount);
 
-		std::vector<VkSemaphore> GetImageRenderedSemaphores();
+        std::vector<VkSemaphore> GetImageRenderedSemaphores();
 
-		std::vector<VkSemaphore> GetImageAvailableSemaphores();
+        std::vector<VkSemaphore> GetImageAvailableSemaphores();
 
-		std::vector<VkFence> GetFences();
+        std::vector<VkFence> GetFences();
 
-		void DestroySyncObjects(VkDevice device);
+        void DestroySyncObjects(VkDevice device);
+    };
 
-	};
-
-	//namespace Globals{
-	//	extern SyncObjects gSyncObjects;
-	//}
+    //namespace Globals{
+    //	extern SyncObjects gSyncObjects;
+    //}
 }
 
 #endif

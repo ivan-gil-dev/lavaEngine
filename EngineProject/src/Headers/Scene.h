@@ -3,8 +3,6 @@
 #ifndef scene_h
 #define scene_h
 
-
-
 #include "Globals.h"
 #include "Renderer/DataTypes.h"
 #include <vector>
@@ -12,31 +10,27 @@
 #include <string>
 #include <fstream>
 #include "Entities.h"
-namespace Engine{
+namespace Engine {
+    class EngineAPI_Export Scene {
+        std::vector<DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes;//Свойства направленных источников света
 
-	
+        std::vector<DataTypes::PointLightAttributes_t*> pointLightAttributes;//Свойства точечных источников света
 
-	class EngineAPI_Export Scene {
+        std::vector<Entity*> entities;//Объекты в сцене
 
-		std::vector<DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes;//Свойства направленных источников света
+        nlohmann::ordered_json sceneJson;//JSON парсер
 
-		std::vector<DataTypes::PointLightAttributes_t*> pointLightAttributes;//Свойства точечных источников света
+        std::string scenePath;//Путь к сцене
 
-		std::vector<Entity*> entities;//Объекты в сцене
+        std::vector<Camera*> cameras;
 
-		nlohmann::ordered_json sceneJson;//JSON парсер
+        Camera* activeCamera;
 
-		std::string scenePath;//Путь к сцене
+    public:
 
-		std::vector<Camera*> cameras;
+        std::string GetScenePath();
 
-		Camera* activeCamera;
-
-	public:
-
-		std::string GetScenePath();
-
-        void Load(const std::string &path);
+        void Load(const std::string& path);
 
         void New();
 
@@ -44,7 +38,7 @@ namespace Engine{
 
         void SaveAs(const std::string& path);
 
-        void Load_FromThread(std::string path, std::atomic<bool> &ready);
+        void Load_FromThread(std::string path, std::atomic<bool>& ready);
 
         void New_FromThread(std::atomic<bool>& ready);
 
@@ -52,30 +46,30 @@ namespace Engine{
 
         void SaveAs_FromThread(std::string path, std::atomic<bool>& ready);
 
-		std::vector<Entity*>* pGetVectorOfEntities();
+        std::vector<Entity*>* pGetVectorOfEntities();
 
-		Scene();
+        Scene();
 
-		std::vector<DataTypes::DirectionalLightAttributes_t*>* pGetVectorOfDirectionalLightAttributes();
+        std::vector<DataTypes::DirectionalLightAttributes_t*>* pGetVectorOfDirectionalLightAttributes();
 
-		std::vector<DataTypes::PointLightAttributes_t*>* pGetVectorOfSpotlightAttributes();
+        std::vector<DataTypes::PointLightAttributes_t*>* pGetVectorOfSpotlightAttributes();
 
-		std::vector<Camera*>* pGetVectorOfCameras();
+        std::vector<Camera*>* pGetVectorOfCameras();
 
-		void SetActiveCameraFromIndex(int id);
+        void SetActiveCameraFromIndex(int id);
 
-		Camera* pGetActiveCamera();
+        Camera* pGetActiveCamera();
 
-		Camera GetActiveCamera();
+        Camera GetActiveCamera();
 
-		void UpdateActiveCamera();
+        void UpdateActiveCamera();
 
-		void CleanScene();
-	};
+        void CleanScene();
+    };
 
-	namespace Globals{
-		extern Scene* gScene;
-	}
+    namespace Globals {
+        extern Scene* gScene;
+    }
 }
 
 #endif

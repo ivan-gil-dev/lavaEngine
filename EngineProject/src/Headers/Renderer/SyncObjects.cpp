@@ -12,7 +12,6 @@ void Engine::SyncObjects::CreateSyncObjects(VkDevice device, int frameCount)
     fenceCreateInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
     for (size_t i = 0; i < ImageRenderedSemaphores.size(); i++) {
-
         if (vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &ImageRenderedSemaphores[i]) != VK_SUCCESS ||
             vkCreateSemaphore(device, &semaphoreCreateInfo, nullptr, &ImageAvailableSemaphores[i]) != VK_SUCCESS ||
             vkCreateFence(device, &fenceCreateInfo, nullptr, &Fences[i]) != VK_SUCCESS) {
@@ -47,4 +46,3 @@ void Engine::SyncObjects::DestroySyncObjects(VkDevice device)
     ImageAvailableSemaphores.clear();
     Fences.clear();
 }
-

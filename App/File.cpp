@@ -3,7 +3,6 @@
 
 extern Application app;
 
-
 class PlayerCamera : public Engine::Camera {
     glm::vec3 direction;
     int counter = 0;
@@ -18,7 +17,7 @@ public:
             Globals::showCursorEventHandler.HideCursor();
 
             double xpos = Globals::cursorPosition.GetCursorPos().x,
-                   ypos = Globals::cursorPosition.GetCursorPos().y;
+                ypos = Globals::cursorPosition.GetCursorPos().y;
 
             if (CursorFirstMouse) {
                 CursorLastX = xpos;
@@ -36,7 +35,6 @@ public:
             xoffset *= sensitivity;
             yoffset *= sensitivity;
 
-           
             Yaw = std::fmod((Yaw + xoffset), (GLfloat)360.0f);
             Pitch += yoffset;
 
@@ -46,16 +44,10 @@ public:
                 Pitch = -89.0f;
 
             {
-                
                 direction.z = glm::sin(glm::radians((float)Yaw)) * glm::cos(glm::radians((float)Pitch));
                 direction.y = glm::sin(glm::radians((float)Pitch));
                 direction.x = glm::cos(glm::radians((float)Yaw)) * glm::cos(glm::radians((float)Pitch));
-     
-                //CameraFront = glm::normalize(direction);
             }
-            
-
-            
         }
         else {
             ClipCursor(NULL);
@@ -66,17 +58,16 @@ public:
 
     void   Update() override {
         MouseUpdate();
-        glm::vec3 playerPos = ref->Transform.GetPosition() ;
-        CameraPos = playerPos + glm::vec3(20.0f, 20.0f, 20.f)*(-direction);
+        glm::vec3 playerPos = ref->Transform.GetPosition();
+        CameraPos = playerPos + glm::vec3(20.0f, 20.0f, 20.f) * (-direction);
         CameraFront = glm::normalize(playerPos - CameraPos);
     }
 };
 
-
 class Player : public Engine::GameObject {
-    float Speed = 10.1f;
+    float Speed = 10.0f;
 public:
-    void Update() override{
+    void Update() override {
         using namespace Engine;
         glm::vec3 CameraFront = ((Camera*)ref)->GetCameraFront();
         btVector3 dir = btVector3(CameraFront.x, 0, CameraFront.z);
@@ -106,19 +97,17 @@ public:
     }
 };
 
-
-
 extern "C" {
     __declspec(dllexport) void DemoExe(
-        Engine::Scene *scene,
-        btDynamicsWorld *dynamicsWorld
+        Engine::Scene* scene,
+        btDynamicsWorld* dynamicsWorld
     )
     {
         using namespace Engine;
         Globals::states.drawShadows = false;
         Globals::states.showRigidbodyMeshes = false;
 
-        std::vector<Entity*> *entities = scene->pGetVectorOfEntities();
+        std::vector<Entity*>* entities = scene->pGetVectorOfEntities();
         std::vector<DataTypes::DirectionalLightAttributes_t*>* directionalLightAttributes = scene->pGetVectorOfDirectionalLightAttributes();
         std::vector<DataTypes::PointLightAttributes_t*>* pointLightAttributes = scene->pGetVectorOfSpotlightAttributes();
         std::vector<Engine::Camera*>* cameras = scene->pGetVectorOfCameras();
@@ -128,7 +117,6 @@ extern "C" {
         cam->SetCameraPos(glm::vec3(5.0f, 50.0f, 50.f));
         cameras->push_back(cam);
         scene->SetActiveCameraFromIndex(0);
-
 
         Mesh* mesh;
         RigidBody* rigidBody;
@@ -168,7 +156,6 @@ extern "C" {
                 mesh->pGetMaterial()->shininess = 32.0f;
                 mesh->pGetMaterial()->roughness = 1.4f;
 
-
                 rigidBody->SetRestitution(2.0f);
                 rigidBody->SetRigidbodyScale(glm::vec3(3.f, 3.f, 3.f));
 
@@ -185,7 +172,6 @@ extern "C" {
 
                 cam->SetRef(Sphere);
                 Sphere->SetRef(cam);
-
             }
             else {
                 GameObject* box = new GameObject;
@@ -217,7 +203,6 @@ extern "C" {
                 box->ApplyEntityTransformToRigidbody();
                 entities->push_back(box);
             }
-
         }
 
         GameObject* gameObject2 = new GameObject;
@@ -244,7 +229,7 @@ extern "C" {
         gameObject2->ApplyEntityTransformToRigidbody();
         entities->push_back(gameObject2);
 
-       /* GameObject* obj = new GameObject;
+        GameObject* obj = new GameObject;
         obj->SetID(reinterpret_cast<int>(obj));
         obj->SetName("Test");
         obj->AddComponent <RigidBody>();
@@ -252,10 +237,8 @@ extern "C" {
         mesh = obj->pGetComponent<Mesh*>();
         rigidBody = obj->pGetComponent<RigidBody*>();
         mesh->CreateMesh("CoreAssets/kettle/kettle.obj");
-        rigidBody->CreateRigidBody(mesh,dynamicsWorld,obj->GetID());
-        entities->push_back(obj);*/
-
-
+        rigidBody->CreateRigidBody(mesh, dynamicsWorld, obj->GetID());
+        entities->push_back(obj);
 
         DirectionalLightObject* dlight = new DirectionalLightObject;
         dlight->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(1, -1, 1);
@@ -265,14 +248,12 @@ extern "C" {
         entities->push_back(dlight);
         directionalLightAttributes->push_back(dlight->pGetDirectionalLightUniformData());
 
-
         /*DirectionalLightObject* dlight2 = new DirectionalLightObject;
         dlight2->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(0.25, -1, 0.25);
         dlight2->pGetDirectionalLightUniformData()->lightColor = glm::vec3(0.2, 0.2, 0.2);
 
         dlight2->SetID(reinterpret_cast<int>(dlight2));
         entities->push_back(dlight2);
-
 
         directionalLightAttributes->push_back(dlight2->pGetDirectionalLightUniformData());*/
 
@@ -287,19 +268,14 @@ extern "C" {
         pointLight2->SetID(reinterpret_cast<int>(pointLight2));
         entities->push_back(pointLight2);
 
-
         PointLightObject* pointLight3 = new PointLightObject;
         pointLight3->Transform.Translate(glm::vec3(80.0f, 3.0f, 13.0f));
         pointLight3->pGetPointLightUniformData()->diffuse = 100;
         pointLight3->SetID(reinterpret_cast<int>(pointLight3));
         entities->push_back(pointLight3);
 
-       
-
         pointLightAttributes->push_back(pointLight->pGetPointLightUniformData());
         pointLightAttributes->push_back(pointLight2->pGetPointLightUniformData());
         pointLightAttributes->push_back(pointLight3->pGetPointLightUniformData());
-       
     }
-
 }

@@ -9,7 +9,6 @@ std::string Engine::Scene::GetScenePath()
 
 void Engine::Scene::Load(const std::string& path)
 {
-
     for (size_t i = 0; i < entities.size(); i++) {
         delete entities[i];
     }
@@ -26,7 +25,7 @@ void Engine::Scene::Load(const std::string& path)
 
     pointLightAttributes.clear();
     directionalLightAttributes.clear();
-    
+
     sceneJson.clear();
 
     std::ifstream inputJson(path);
@@ -45,14 +44,12 @@ void Engine::Scene::Load(const std::string& path)
     //std::cout << sceneJson.dump() << std::endl;
 
     for (auto entityJson : sceneJson["Entities"]) {
-
         Entity* entity;
-       
 
-        if (entityJson["Type"] == "GameObject") {      
+        if (entityJson["Type"] == "GameObject") {
             entity = new GameObject;
 
-            if (entityJson.count("Mesh") !=0 ){
+            if (entityJson.count("Mesh") != 0) {
                 ((GameObject*)entity)->AddComponent<Mesh>();
                 Mesh* mesh = ((GameObject*)entity)->pGetComponent<Mesh*>();
                 mesh->CreateMesh(entityJson["Mesh"]["Path"]);
@@ -70,7 +67,7 @@ void Engine::Scene::Load(const std::string& path)
 
                 std::string shapeType = entityJson["Rigidbody"]["ShapeType"];
 
-                if (shapeType == "Plane"){
+                if (shapeType == "Plane") {
                     rigidbody->CreateRigidBody(
                         RIGIDBODY_SHAPE_TYPE_PLANE,
                         Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
@@ -83,7 +80,7 @@ void Engine::Scene::Load(const std::string& path)
                         Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
                         int(entity));
                 }
-                
+
                 if (shapeType == "Sphere") {
                     rigidbody->CreateRigidBody(
                         RIGIDBODY_SHAPE_TYPE_SPHERE,
@@ -91,22 +88,20 @@ void Engine::Scene::Load(const std::string& path)
                         int(entity));
                 }
 
-
                 rigidbody->SetMass(entityJson["Rigidbody"]["Mass"]);
                 rigidbody->SetFriction(entityJson["Rigidbody"]["Friction"]);
                 rigidbody->SetRestitution(entityJson["Rigidbody"]["Restitution"]);
-                 
+
                 rigidbody->SetRigidbodyScale(glm::vec3(
                     entityJson["Rigidbody"]["Scale"]["X"],
                     entityJson["Rigidbody"]["Scale"]["Y"],
                     entityJson["Rigidbody"]["Scale"]["Z"]
                 ));
             }
-
         }
 
         else if (entityJson["Type"] == "PointLight") {
-           // std::cout << entityJson["Type"] << std::endl;
+            // std::cout << entityJson["Type"] << std::endl;
             entity = new PointLightObject;
             DataTypes::PointLightAttributes_t* attrib = ((PointLightObject*)entity)->pGetPointLightUniformData();
 
@@ -117,25 +112,24 @@ void Engine::Scene::Load(const std::string& path)
             attrib->lightPosition = glm::vec3(
                 entityJson.at("LightPosition").at("X"),
                 entityJson["LightPosition"]["Y"],
-                entityJson["LightPosition"]["Z"] 
+                entityJson["LightPosition"]["Z"]
             );
-                
+
             attrib->lightColor = glm::vec3(
                 entityJson["LightColor"]["R"],
                 entityJson["LightColor"]["G"],
                 entityJson["LightColor"]["B"]
             );
 
-           
-            attrib->ambient = entityJson.value("Ambient",1); 
-            attrib->diffuse = entityJson.value("Diffuse",1);
-            attrib->specular = entityJson.value("Specular",1);
-            
+            attrib->ambient = entityJson.value("Ambient", 1);
+            attrib->diffuse = entityJson.value("Diffuse", 1);
+            attrib->specular = entityJson.value("Specular", 1);
+
             pointLightAttributes.push_back(attrib);
         }
 
         else if (entityJson["Type"] == "DirectionalLight") {
-           // std::cout << entityJson["Type"] << std::endl;
+            // std::cout << entityJson["Type"] << std::endl;
             entity = new DirectionalLightObject;
             DataTypes::DirectionalLightAttributes_t* attrib = ((DirectionalLightObject*)entity)->pGetDirectionalLightUniformData();
 
@@ -155,10 +149,10 @@ void Engine::Scene::Load(const std::string& path)
         }
 
         else if (entityJson["Type"] == "Cubemap") {
-           // std::cout << entityJson["Type"] << std::endl;
+            // std::cout << entityJson["Type"] << std::endl;
             std::vector<std::string> cubemapPaths;
 
-            for (auto cubemapPath : entityJson["CubemapPaths"]){
+            for (auto cubemapPath : entityJson["CubemapPaths"]) {
                 cubemapPaths.push_back(cubemapPath);
             }
 
@@ -197,19 +191,16 @@ void Engine::Scene::Load(const std::string& path)
 
         entities.push_back(entity);
     }
-
 }
 
 void Engine::Scene::New()
 {
-
     for (size_t i = 0; i < cameras.size(); i++)
     {
         delete cameras[i];
     }
     cameras.clear();
     activeCamera = nullptr;
-
 
     for (size_t i = 0; i < entities.size(); i++) {
         delete entities[i];
@@ -235,19 +226,17 @@ void Engine::Scene::New()
 
     GameObject* gameObject2 = new GameObject;
     gameObject2->AddComponent<Mesh>();
-   
+
     Mesh* mesh;
     mesh = gameObject2->pGetComponent<Mesh*>();
 
     mesh->CreateMesh("CoreAssets/plane.obj");
-   
 
     gameObject2->SetID((int)gameObject2);
     gameObject2->SetName("Plane");
 
     gameObject2->Transform.Scale(glm::vec3(70.0f, 70.0f, 70.0f));
     entities.push_back(gameObject2);
-
 
     DirectionalLightObject* dlight = new DirectionalLightObject;
     dlight->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(1, -1, 1);
@@ -256,7 +245,6 @@ void Engine::Scene::New()
     dlight->SetID((int)dlight);
     entities.push_back(dlight);
     directionalLightAttributes.push_back(dlight->pGetDirectionalLightUniformData());
-
 }
 
 void Engine::Scene::Save()
@@ -281,7 +269,7 @@ void Engine::Scene::SaveAs(const std::string& path)
                 DataTypes::Material_t mat = mesh->GetMaterial();
                 sceneJson["Entities"][i]["Mesh"]["Shininess"] = mat.shininess;
                 sceneJson["Entities"][i]["Mesh"]["Roughness"] = mat.roughness;
-                sceneJson["Entities"][i]["Mesh"]["Metallic"]  = mat.metallic;
+                sceneJson["Entities"][i]["Mesh"]["Metallic"] = mat.metallic;
                 sceneJson["Entities"][i]["Mesh"]["Occlusion"] = mat.ao;
             }
             RigidBody* rigidBody = ((GameObject*)entities[i])->pGetComponent<RigidBody*>();
@@ -322,7 +310,6 @@ void Engine::Scene::SaveAs(const std::string& path)
             sceneJson["Entities"][i]["Linear"] = attributes.linear;
             sceneJson["Entities"][i]["Quadrantic"] = attributes.quadrantic;
 
-
             sceneJson["Entities"][i]["Ambient"] = attributes.ambient;
             sceneJson["Entities"][i]["Diffuse"] = attributes.diffuse;
             sceneJson["Entities"][i]["Specular"] = attributes.specular;
@@ -338,11 +325,10 @@ void Engine::Scene::SaveAs(const std::string& path)
             sceneJson["Entities"][i]["Color"]["R"] = attributes.lightColor.r;
             sceneJson["Entities"][i]["Color"]["G"] = attributes.lightColor.g;
             sceneJson["Entities"][i]["Color"]["B"] = attributes.lightColor.b;
-           
+
             sceneJson["Entities"][i]["Ambient"] = attributes.ambient;
             sceneJson["Entities"][i]["Diffuse"] = attributes.diffuse;
             sceneJson["Entities"][i]["Specular"] = attributes.specular;
-
         }
         if (entityType == ENTITY_TYPE_CUBEMAP_OBJECT) {
             sceneJson["Entities"][i]["Type"] = "Cubemap";
@@ -417,9 +403,9 @@ Engine::Scene::Scene()
 {
     Engine::Globals::bulletPhysicsGlobalObjects.InitBullet();
     scenePath = "";
-    #ifdef DemoFromFile
-        Load("demo.json");
-    #endif
+#ifdef DemoFromFile
+    Load("demo.json");
+#endif
     entities.resize(0);
     directionalLightAttributes.resize(0);
     pointLightAttributes.resize(0);
@@ -442,7 +428,7 @@ std::vector<Engine::Camera*>* Engine::Scene::pGetVectorOfCameras()
 
 void Engine::Scene::SetActiveCameraFromIndex(int id)
 {
-    if (id<cameras.size())
+    if (id < cameras.size())
     {
         activeCamera = cameras[id];
     }

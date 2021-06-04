@@ -14,95 +14,117 @@ static bool enableValidationLayer = true;
 static bool enableValidationLayer = false;
 #endif
 
-namespace Engine{
+namespace Engine {
+    //Слой валидации (проверка объектов при создании или удалении в соответствии со спецификацией KHRONOS)//
+    static std::vector<const char*> layers = { "VK_LAYER_KHRONOS_validation" };
 
-	static std::vector<const char*> layers = { "VK_LAYER_KHRONOS_validation" };
+    //Функция определяющая как выводить и тип выводимых отладочных сообщений//
+    static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType,
+        const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
+        if (messageType == VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT) {
+            //spdlog::info(pCallbackData->pMessage);
+            //Globals::gLogger->info(pCallbackData->pMessage);
+        }
+        else {
+            spdlog::warn(pCallbackData->pMessage);
+            Globals::gLogger->warn(pCallbackData->pMessage);
+        }
 
-	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType,
-			const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
-		if (messageType == VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT){
-			//spdlog::info(pCallbackData->pMessage);
-			//Globals::gLogger->info(pCallbackData->pMessage);
-		}
-		else {
-			spdlog::warn(pCallbackData->pMessage);
-			Globals::gLogger->warn(pCallbackData->pMessage);
-		}
-		
-		return VK_FALSE;
-	}
+        return VK_FALSE;
+    }
 
-	class Instance {
-		VkInstance instance;
-		VkApplicationInfo appInfo{};
-		VkInstanceCreateInfo createInfo{};
-		VkDebugUtilsMessengerEXT debugMessenger;
-		VkDebugUtilsMessengerCreateInfoEXT messengerInfo = {};
-		public:
-		void createInstance() {
+    //Сеанс Vulkan "Instance"//
+    class Instance {
+        VkInstance instance;
+        //Информация о сеансе//
+        VkApplicationInfo appInfo{};
+        //Информация о создании сеанса//
+        VkInstanceCreateInfo createInfo{};
+        //Обработчик отладочных сообщений//
+        VkDebugUtilsMessengerEXT debugMessenger; \
+            //Информация о создании обработчика отладочных сообщений//
+            VkDebugUtilsMessengerCreateInfoEXT messengerInfo = {};
+    public:
+        //Создать сеанс//
+        void createInstance() {
+            //Инициализация библиотеки для загрузки процедур из vulkan-1.dll//
+            if (volkInitialize() != VK_SUCCESS) {
+                throw std::runtime_error("Failed to init volk");
+            }
 
-			if (volkInitialize() != VK_SUCCESS) {
-				throw std::runtime_error("Failed to init volk");
-			}
+            //Информация о приложении//
+            appInfo.apiVersion = VK_MAKE_VERSION(1, 2, 0);
+            appInfo.applicationVersion = VK_MAKE_VERSION(0, 0, 1);
+            appInfo.engineVersion = VK_MAKE_VERSION(0, 0, 1);
+            appInfo.pApplicationName = "Engine";
+            appInfo.pEngineName = "Lava";
+            appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
 
-			appInfo.apiVersion = VK_MAKE_VERSION(1, 2, 0);
-			appInfo.applicationVersion = VK_MAKE_VERSION(0, 0, 1);
-			appInfo.engineVersion = VK_MAKE_VERSION(0, 0, 1);
-			appInfo.pApplicationName = "Lava Engine";
-			appInfo.pEngineName = "Lava";
-			appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+            std::vector<const char*> extensions;
 
-			std::vector<const char*> extensions;
-			
-			extensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-			extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
-			extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-			createInfo.enabledExtensionCount = uint32_t(extensions.size());
-			createInfo.ppEnabledExtensionNames = extensions.data();
+            //Расширение для использования окна Win32//
+            //в качестве  поверхности для вывода//
+            extensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
 
-			if (enableValidationLayer) {
-				createInfo.enabledLayerCount = (uint32_t)layers.size();
-				createInfo.ppEnabledLayerNames = layers.data();
-			}
+            //Расширение для использования поверхностей вывода//
+            extensions.push_back(VK_KHR_SURFACE_EXTENSION_NAME);
 
-			messengerInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-			messengerInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
-				VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-			messengerInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
-				| VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-				VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-			messengerInfo.pfnUserCallback = debugCallback;
-			messengerInfo.pUserData = nullptr;
-			messengerInfo.flags = 0;
+            //Расширение для использования утилит отладки//
+            extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 
-			createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&messengerInfo;
-			createInfo.pApplicationInfo = &appInfo;
-			createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+            createInfo.enabledExtensionCount = uint32_t(extensions.size());
+            createInfo.ppEnabledExtensionNames = extensions.data();
 
-			if (vkCreateInstance(&createInfo, nullptr, &instance) != VK_SUCCESS) {
-				throw std::runtime_error("Failed to create instance");
-			}
-			volkLoadInstance(instance);
+            if (enableValidationLayer) {
+                createInfo.enabledLayerCount = (uint32_t)layers.size();
+                createInfo.ppEnabledLayerNames = layers.data();
+            }
 
-			if (vkCreateDebugUtilsMessengerEXT(instance, &messengerInfo, nullptr, &debugMessenger) != VK_SUCCESS) {
-				throw std::runtime_error("Failed to create debug messenger");
-			}
-		}
+            //Заполнение структуры для создания обработчика отладочных сообщений//
+            messengerInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+            messengerInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
+                VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+            messengerInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
+                | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
+                VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+            messengerInfo.pfnUserCallback = debugCallback;
+            messengerInfo.pUserData = nullptr;
+            messengerInfo.flags = 0;
 
-		VkInstance get() {
-			return instance;
-		}
+            //Привязка структуры messengerInfo к структуре createInfo//
+            createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&messengerInfo;
+            createInfo.pApplicationInfo = &appInfo;
+            createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
 
-		void destroy() {
-			vkDestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
-			vkDestroyInstance(instance, nullptr);
-		};
-	};
+            //Создание сеанса//
+            EngineExec(
+                vkCreateInstance(&createInfo, nullptr, &instance),
+                "Instance"
+            );
 
-	//namespace Globals{
-	//	extern Instance gInstance;
-	//}
-	
+            //Загрузка сеанса в библиотеку volk//
+            volkLoadInstance(instance);
+
+            //Создание обработчика отладочных сообщений//
+            EngineExec(
+                vkCreateDebugUtilsMessengerEXT(instance, &messengerInfo, nullptr, &debugMessenger),
+                "Debug Utils"
+            );
+        }
+
+        VkInstance get() {
+            return instance;
+        }
+
+        void destroy() {
+            vkDestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+            vkDestroyInstance(instance, nullptr);
+        };
+    };
+
+    //namespace Globals{
+    //	extern Instance gInstance;
+    //}
 }
 
 #endif

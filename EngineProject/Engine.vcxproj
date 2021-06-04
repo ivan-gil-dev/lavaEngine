@@ -75,7 +75,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)/glfw/include;$(SolutionDir)/Lava/vendor;$(VULKAN_SDK)\Include;$(SolutionDir)/spdlog/;$(SolutionDir)/bullet3/src;$(UniversalCRT_IncludePath);$(SolutionDir)/include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)/glfw/include;$(SolutionDir)/Lava/vendor;$(VULKAN_SDK)\Include;$(SolutionDir)/spdlog/;$(SolutionDir)/bullet3/src;$(UniversalCRT_IncludePath);$(SolutionDir)/include;$(SolutionDir)/lua;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)\bullet3\lib\debug;$(SolutionDir)\glfw\lib-vc2019;$(LibraryPath)</LibraryPath>
     <TargetName>Engine</TargetName>
   </PropertyGroup>
@@ -108,7 +108,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;LinearMath_Debug.lib;BulletDynamics_Debug.lib;BulletCollision_Debug.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;LinearMath_Debug.lib;BulletDynamics_Debug.lib;BulletCollision_Debug.lib;shlwapi.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalOptions>/FORCE:MULTIPLE %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Lib>
@@ -148,6 +148,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Headers\Script.cpp" />
     <ClCompile Include="src\Headers\Renderer\Pipelines.cpp" />
     <ClCompile Include="src\Headers\Renderer\Renderer.cpp" />
     <ClCompile Include="src\EntryPoint.cpp" />
@@ -171,6 +172,7 @@
     <ClCompile Include="vendor\volk.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Headers\Script.h" />
     <ClInclude Include="src\Headers\Renderer\Renderer.h" />
     <ClInclude Include="src\Headers\Renderer\Buffers.h" />
     <ClInclude Include="src\Headers\Renderer\CommandBuffer.h" />
@@ -206,6 +208,9 @@
     <ClInclude Include="vendor\imstb_truetype.h" />
     <ClInclude Include="vendor\tiny_obj_loader.h" />
     <ClInclude Include="vendor\volk.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="scripts\test.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

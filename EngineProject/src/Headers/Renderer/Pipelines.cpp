@@ -62,7 +62,6 @@ void Engine::RenderPass::CreateRenderPass(VkDevice device, VkSwapchainCreateInfo
         colorAttachmentReference.attachment = (uint32_t)2;
     }
 
-
     VkSubpassDescription subpassDescription{};
     subpassDescription.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
     subpassDescription.colorAttachmentCount = (uint32_t)1;
@@ -205,9 +204,9 @@ std::vector<char> Engine::GraphicsPipeline::ReadShader(std::string path)
 
 void Engine::GraphicsPipelineForMesh::CreateGraphicsPipeline(VkDevice device, VkSwapchainCreateInfoKHR swapchainCreateInfo, VkDescriptorSetLayout setLayout, VkRenderPass renderPass)
 {
-
     std::vector<char> vertexShader = this->ReadShader("src/SPIRV/gameObjectVertex.spv");
     std::vector<char> fragmentShader;
+
     if (PBR)
     {
         fragmentShader = this->ReadShader("src/SPIRV/gameObjectFragmentPBR.spv");
@@ -216,15 +215,17 @@ void Engine::GraphicsPipelineForMesh::CreateGraphicsPipeline(VkDevice device, Vk
         fragmentShader = this->ReadShader("src/SPIRV/gameObjectFragmentPhong.spv");
     }
 
-
     std::vector<VkVertexInputAttributeDescription> attributeDescriptions;
 
     VkVertexInputBindingDescription bindingDescription;
     bindingDescription = {};
+    //Номер привязки в вершинном шейдере//
     bindingDescription.binding = 0;
+    //Шаг считывания данных//
     bindingDescription.stride = sizeof(DataTypes::MeshVertex_t);
     bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
+    //Настройки Z-буфера//
     VkPipelineDepthStencilStateCreateInfo depthState{};
     depthState.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
     depthState.depthTestEnable = VK_TRUE;
@@ -232,32 +233,35 @@ void Engine::GraphicsPipelineForMesh::CreateGraphicsPipeline(VkDevice device, Vk
     depthState.depthCompareOp = VK_COMPARE_OP_LESS;
     depthState.depthBoundsTestEnable = VK_FALSE;
 
+    //Описание каждого поля структуры данных, хранящей параметры вершины//
+    {
+        VkVertexInputAttributeDescription attribDescription{};
+        attribDescription.binding = 0;
+        attribDescription.location = 0;
+        attribDescription.format = VK_FORMAT_R32G32B32_SFLOAT;
+        attribDescription.offset = offsetof(DataTypes::MeshVertex_t, pos);
+        attributeDescriptions.push_back(attribDescription);
 
-    VkVertexInputAttributeDescription attribDescription{};
-    attribDescription.binding = 0;
-    attribDescription.location = 0;
-    attribDescription.format = VK_FORMAT_R32G32B32_SFLOAT;
-    attribDescription.offset = offsetof(DataTypes::MeshVertex_t, pos);
-    attributeDescriptions.push_back(attribDescription);
+        attribDescription.binding = 0;
+        attribDescription.location = 1;
+        attribDescription.format = VK_FORMAT_R32G32B32_SFLOAT;
+        attribDescription.offset = offsetof(DataTypes::MeshVertex_t, color);
+        attributeDescriptions.push_back(attribDescription);
 
-    attribDescription.binding = 0;
-    attribDescription.location = 1;
-    attribDescription.format = VK_FORMAT_R32G32B32_SFLOAT;
-    attribDescription.offset = offsetof(DataTypes::MeshVertex_t, color);
-    attributeDescriptions.push_back(attribDescription);
+        attribDescription.binding = 0;
+        attribDescription.location = 2;
+        attribDescription.format = VK_FORMAT_R32G32_SFLOAT;
+        attribDescription.offset = offsetof(DataTypes::MeshVertex_t, UVmap);
+        attributeDescriptions.push_back(attribDescription);
 
-    attribDescription.binding = 0;
-    attribDescription.location = 2;
-    attribDescription.format = VK_FORMAT_R32G32_SFLOAT;
-    attribDescription.offset = offsetof(DataTypes::MeshVertex_t, UVmap);
-    attributeDescriptions.push_back(attribDescription);
+        attribDescription.binding = 0;
+        attribDescription.location = 3;
+        attribDescription.format = VK_FORMAT_R32G32B32_SFLOAT;
+        attribDescription.offset = offsetof(DataTypes::MeshVertex_t, normals);
+        attributeDescriptions.push_back(attribDescription);
+    }
 
-    attribDescription.binding = 0;
-    attribDescription.location = 3;
-    attribDescription.format = VK_FORMAT_R32G32B32_SFLOAT;
-    attribDescription.offset = offsetof(DataTypes::MeshVertex_t, normals);
-    attributeDescriptions.push_back(attribDescription);
-
+    //Структура, объединяющая описание атрибутов//
     VkPipelineVertexInputStateCreateInfo vertexInputInfo = {};
     vertexInputInfo.sType = { VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO };
     vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
@@ -265,28 +269,32 @@ void Engine::GraphicsPipelineForMesh::CreateGraphicsPipeline(VkDevice device, Vk
     vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
     vertexInputInfo.vertexBindingDescriptionCount = (uint32_t)1;
 
+    //Топология отрисовки примитивов//
     VkPipelineInputAssemblyStateCreateInfo assemblyInfo = {};
-    assemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+    assemblyInfo.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;//Отрисовка примитивов треугольниками//
     assemblyInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     assemblyInfo.primitiveRestartEnable = VK_FALSE;
 
+    //Загрузка шейдеров//
     VkShaderModule vertexModule = CreateShaderModule(device, vertexShader);
     VkShaderModule fragmentModule = CreateShaderModule(device, fragmentShader);
 
+    //Передача шейдеров в конвейер//
     VkPipelineShaderStageCreateInfo vertexStage = {};
     vertexStage.module = vertexModule;
     vertexStage.sType = { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO };
-    vertexStage.pName = "main";
-    vertexStage.stage = VK_SHADER_STAGE_VERTEX_BIT;
+    vertexStage.pName = "main";                    //Точка входа//
+    vertexStage.stage = VK_SHADER_STAGE_VERTEX_BIT;//Тип шейдера//
 
     VkPipelineShaderStageCreateInfo fragmentStage = {};
     fragmentStage.module = fragmentModule;
     fragmentStage.sType = { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO };
-    fragmentStage.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-    fragmentStage.pName = "main";
+    fragmentStage.stage = VK_SHADER_STAGE_FRAGMENT_BIT;//Тип шейдера//
+    fragmentStage.pName = "main";                      //Точка входа//
 
     VkPipelineShaderStageCreateInfo stages[] = { vertexStage,fragmentStage };
 
+    //исходные параметры вьюпорта//
     VkViewport viewport = {};
     viewport.x = 0;
     viewport.y = 0;
@@ -309,17 +317,17 @@ void Engine::GraphicsPipelineForMesh::CreateGraphicsPipeline(VkDevice device, Vk
     rasterizationInfo.sType = { VK_STRUCTURE_TYPE_PIPELINE_RASTERIZATION_STATE_CREATE_INFO };
     rasterizationInfo.rasterizerDiscardEnable = VK_FALSE;
     rasterizationInfo.depthBiasEnable = VK_FALSE;
-    rasterizationInfo.cullMode = VK_CULL_MODE_BACK_BIT;
-    rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;
+    rasterizationInfo.cullMode = VK_CULL_MODE_BACK_BIT;//Не отрисовывать полигоны на заднем плане//
+    rasterizationInfo.polygonMode = VK_POLYGON_MODE_FILL;//Заполнение цветом треугольников//
     rasterizationInfo.lineWidth = 1.0f;
     rasterizationInfo.depthClampEnable = VK_FALSE;
-    rasterizationInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+    rasterizationInfo.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;//Соединение вершин против часовой стрелки//
 
     VkPipelineMultisampleStateCreateInfo multisampleInfo = { VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO };
     multisampleInfo.rasterizationSamples = Globals::gMSAAsamples;
-    multisampleInfo.minSampleShading = 1.0f;
+    multisampleInfo.minSampleShading = 0.2f;
     multisampleInfo.pSampleMask = nullptr;
-    multisampleInfo.sampleShadingEnable = VK_FALSE;
+    multisampleInfo.sampleShadingEnable = VK_TRUE;
     multisampleInfo.alphaToCoverageEnable = VK_FALSE;
     multisampleInfo.alphaToOneEnable = VK_FALSE;
 
@@ -332,12 +340,14 @@ void Engine::GraphicsPipelineForMesh::CreateGraphicsPipeline(VkDevice device, Vk
     colorBlendInfo.attachmentCount = 1;
 
     PipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    //схема передачи наборов дескрипторов (локации юниформ)//
     PipelineLayoutInfo.pSetLayouts = &setLayout;
     PipelineLayoutInfo.setLayoutCount = 1;
 
     VkPushConstantRange pushConstantRange{};
+    //свойства констант, которые можно передать без буферов//
     pushConstantRange.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
-    pushConstantRange.size = sizeof(DataTypes::PushConstants);
+    pushConstantRange.size = sizeof(DataTypes::PushConstants);//Размер структуры с константами//
     pushConstantRange.offset = 0;
 
     PipelineLayoutInfo.pPushConstantRanges = &pushConstantRange;
@@ -435,17 +445,11 @@ void Engine::GraphicsPipelineForCubemapObjects::CreateGraphicsPipeline(VkDevice 
     vertexStage.pName = "main";
     vertexStage.stage = VK_SHADER_STAGE_VERTEX_BIT;
 
-
-
-
-
     VkPipelineShaderStageCreateInfo fragmentStage = {};
     fragmentStage.module = fragmentModule;
     fragmentStage.sType = { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO };
     fragmentStage.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
     fragmentStage.pName = "main";
-
-
 
     VkPipelineShaderStageCreateInfo stages[] = { vertexStage,fragmentStage };
 
@@ -811,7 +815,6 @@ VK_DYNAMIC_STATE_DEPTH_BIAS
         dynamicStateInfo.pDynamicStates = dynamicStates;
 
         CreateInfo.pDynamicState = &dynamicStateInfo;
-
     }
 
     CreateInfo.pViewportState = &viewportStateCreateInfo;

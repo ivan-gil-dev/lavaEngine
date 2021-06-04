@@ -12,6 +12,13 @@
 #include <iostream>
 #include <windows.h>
 
+extern "C" {
+#include <lua54/lua.h>
+#include <lua54/lauxlib.h>
+#include <lua54/lualib.h>
+}
+
+#pragma comment(lib,"lua54/liblua54.a")
 
 #define EngineAPI_Export __declspec(dllexport)
 
@@ -31,10 +38,24 @@ static bool ENABLE_IMGUI = false;
 static bool ENABLE_RIGIDBODY_MESH = false;
 #endif
 
-namespace Engine{
-	namespace Globals{
-		struct __declspec(dllexport) BulletPhysicsGlobalObjects
-		{
+namespace Engine {
+    namespace Lua {
+        EngineAPI_GlobalVar extern lua_State* gLuaState;
+    }
+
+    inline void EngineExec(VkResult r, std::string PartOfExecution) {
+        if (r != VK_SUCCESS)
+        {
+            std::cout << "Vulkan Error Occured! Result code: " << r << std::endl;
+            std::cout << "Section: " << PartOfExecution << std::endl;
+
+            throw std::runtime_error("Exiting program...");
+        }
+    }
+
+    namespace Globals {
+        struct __declspec(dllexport) BulletPhysicsGlobalObjects
+        {
             btBroadphaseInterface* broadphase;
             btDefaultCollisionConfiguration* collisionConfiguration;
             btCollisionDispatcher* dispatcher;
@@ -48,7 +69,7 @@ namespace Engine{
                 solver = new btSequentialImpulseConstraintSolver;
                 dynamicsWorld = new btDiscreteDynamicsWorld(
                     dispatcher, broadphase,
-                    solver,collisionConfiguration
+                    solver, collisionConfiguration
                 );
                 dynamicsWorld->setGravity(btVector3(0, -9.8, 0));
             }
@@ -60,11 +81,10 @@ namespace Engine{
                 delete broadphase;
                 delete dynamicsWorld;
             }
-		};
+        };
 
-		#define MAX_SPOTLIGHTS 100
-		#define MAX_DLIGHTS 20
-	
+#define MAX_SPOTLIGHTS 100
+#define MAX_DLIGHTS 20
 
         struct States_t {
             bool  toggleFullscreen;
@@ -93,20 +113,17 @@ namespace Engine{
 
         EngineAPI_GlobalVar extern States_t states;
 
-        EngineAPI_GlobalVar extern int gHeight,gWidth;
-        
-		
+        EngineAPI_GlobalVar extern int gHeight, gWidth;
+
         extern const int gmax_frames;
         EngineAPI_GlobalVar extern VkSampleCountFlagBits gMSAAsamples;
 
-		extern std::shared_ptr<spdlog::logger> gLogger;
+        extern std::shared_ptr<spdlog::logger> gLogger;
 
-		
         EngineAPI_GlobalVar extern BulletPhysicsGlobalObjects bulletPhysicsGlobalObjects;
         EngineAPI_GlobalVar extern bool  gIsScenePlaying;
         EngineAPI_GlobalVar extern double DeltaTime;
-
-	}
+    }
 }
 
 #endif

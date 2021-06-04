@@ -69,7 +69,7 @@ struct ImGui_ImplVulkanH_WindowRenderBuffers
 {
     uint32_t            Index;
     uint32_t            Count;
-    ImGui_ImplVulkanH_FrameRenderBuffers*   FrameRenderBuffers;
+    ImGui_ImplVulkanH_FrameRenderBuffers* FrameRenderBuffers;
 };
 
 // Vulkan data
@@ -442,8 +442,8 @@ bool ImGui_ImplVulkan_CreateFontsTexture(VkCommandBuffer command_buffer)
 
     unsigned char* pixels;
     int width, height;
-    io.Fonts->AddFontFromFileTTF("fonts/Roboto-Regular.ttf",16.0f,NULL,io.Fonts->GetGlyphRangesCyrillic());
-    
+    io.Fonts->AddFontFromFileTTF("fonts/Roboto-Regular.ttf", 16.0f, NULL, io.Fonts->GetGlyphRangesCyrillic());
+
     io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
     size_t upload_size = width * height * 4 * sizeof(char);
 
@@ -631,7 +631,7 @@ bool ImGui_ImplVulkan_CreateDeviceObjects()
 
     if (!gDescriptorSetLayout)
     {
-        VkSampler sampler[1] = {gFontSampler};
+        VkSampler sampler[1] = { gFontSampler };
         VkDescriptorSetLayoutBinding binding[1] = {};
         binding[0].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
         binding[0].descriptorCount = 1;
@@ -724,11 +724,9 @@ bool ImGui_ImplVulkan_CreateDeviceObjects()
     raster_info.cullMode = VK_CULL_MODE_NONE;
     raster_info.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
     raster_info.lineWidth = 1.0f;
-    
 
     VkPipelineMultisampleStateCreateInfo ms_info = {};
     ms_info.sType = VK_STRUCTURE_TYPE_PIPELINE_MULTISAMPLE_STATE_CREATE_INFO;
-
 
     ms_info.rasterizationSamples = Engine::Globals::gMSAAsamples;
     VkPipelineColorBlendAttachmentState color_attachment[1] = {};
@@ -800,13 +798,13 @@ void    ImGui_ImplVulkan_DestroyDeviceObjects()
     ImGui_ImplVulkanH_DestroyWindowRenderBuffers(v->Device, &gMainWindowRenderBuffers, v->Allocator);
     ImGui_ImplVulkan_DestroyFontUploadObjects();
 
-    if (gFontView)             { vkDestroyImageView(v->Device, gFontView, v->Allocator); gFontView = VK_NULL_HANDLE; }
-    if (gFontImage)            { vkDestroyImage(v->Device, gFontImage, v->Allocator); gFontImage = VK_NULL_HANDLE; }
-    if (gFontMemory)           { vkFreeMemory(v->Device, gFontMemory, v->Allocator); gFontMemory = VK_NULL_HANDLE; }
-    if (gFontSampler)          { vkDestroySampler(v->Device, gFontSampler, v->Allocator); gFontSampler = VK_NULL_HANDLE; }
-    if (gDescriptorSetLayout)  { vkDestroyDescriptorSetLayout(v->Device, gDescriptorSetLayout, v->Allocator); gDescriptorSetLayout = VK_NULL_HANDLE; }
-    if (gPipelineLayout)       { vkDestroyPipelineLayout(v->Device, gPipelineLayout, v->Allocator); gPipelineLayout = VK_NULL_HANDLE; }
-    if (gPipeline)             { vkDestroyPipeline(v->Device, gPipeline, v->Allocator); gPipeline = VK_NULL_HANDLE; }
+    if (gFontView) { vkDestroyImageView(v->Device, gFontView, v->Allocator); gFontView = VK_NULL_HANDLE; }
+    if (gFontImage) { vkDestroyImage(v->Device, gFontImage, v->Allocator); gFontImage = VK_NULL_HANDLE; }
+    if (gFontMemory) { vkFreeMemory(v->Device, gFontMemory, v->Allocator); gFontMemory = VK_NULL_HANDLE; }
+    if (gFontSampler) { vkDestroySampler(v->Device, gFontSampler, v->Allocator); gFontSampler = VK_NULL_HANDLE; }
+    if (gDescriptorSetLayout) { vkDestroyDescriptorSetLayout(v->Device, gDescriptorSetLayout, v->Allocator); gDescriptorSetLayout = VK_NULL_HANDLE; }
+    if (gPipelineLayout) { vkDestroyPipelineLayout(v->Device, gPipelineLayout, v->Allocator); gPipelineLayout = VK_NULL_HANDLE; }
+    if (gPipeline) { vkDestroyPipeline(v->Device, gPipeline, v->Allocator); gPipeline = VK_NULL_HANDLE; }
 }
 
 bool    ImGui_ImplVulkan_Init(ImGui_ImplVulkan_InitInfo* info, VkRenderPass render_pass)
@@ -853,7 +851,6 @@ void ImGui_ImplVulkan_SetMinImageCount(uint32_t min_image_count)
     ImGui_ImplVulkanH_DestroyWindowRenderBuffers(v->Device, &gMainWindowRenderBuffers, v->Allocator);
     gVulkanInitInfo.MinImageCount = min_image_count;
 }
-
 
 //-------------------------------------------------------------------------
 // Internal / Miscellaneous Vulkan Helpers

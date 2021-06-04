@@ -1,14 +1,30 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(519,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (Lava.vcxproj).  Это может привести к ошибкам очистки и перестроения.
+  Script.cpp
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Script.h(28,24): warning C4244: return: преобразование "lua_Integer" в "int", возможна потеря данных
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Script.h(33,24): warning C4244: return: преобразование "lua_Number" в "float", возможна потеря данных
+  Pipelines.cpp
+  Renderer.cpp
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Renderer\Renderer.cpp(309,135): warning C4267: аргумент: преобразование из "size_t" в "uint32_t"; возможна потеря данных
+  EntryPoint.cpp
   Application.cpp
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(623,40): warning C4311: приведение типов: усечение указателя из "Engine::GameObject *" в "int"
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(623,40): warning C4302: приведение типов: усечение из "Engine::GameObject *" к "int"
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(628,81): warning C4316: "Engine::PointLightObject": объект, размещенный в куче, может не быть выровнен 32
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(630,40): warning C4311: приведение типов: усечение указателя из "Engine::PointLightObject *" в "int"
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(630,40): warning C4302: приведение типов: усечение из "Engine::PointLightObject *" к "int"
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(637,93): warning C4316: "Engine::DirectionalLightObject": объект, размещенный в куче, может не быть выровнен 32
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(642,40): warning C4311: приведение типов: усечение указателя из "Engine::DirectionalLightObject *" в "int"
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(642,40): warning C4302: приведение типов: усечение из "Engine::DirectionalLightObject *" к "int"
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(1105,54): warning C4244: +=: преобразование "double" в "float", возможна потеря данных
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Script.h(28,24): warning C4244: return: преобразование "lua_Integer" в "int", возможна потеря данных
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Script.h(33,24): warning C4244: return: преобразование "lua_Number" в "float", возможна потеря данных
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(612,43): warning C4311: <function-style-cast>: усечение указателя из "Engine::GameObject *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(612,43): warning C4302: <function-style-cast>: усечение из "Engine::GameObject *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(736,40): warning C4311: приведение типов: усечение указателя из "Engine::GameObject *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(736,40): warning C4302: приведение типов: усечение из "Engine::GameObject *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(743,81): warning C4316: "Engine::PointLightObject": объект, размещенный в куче, может не быть выровнен 32
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(745,40): warning C4311: приведение типов: усечение указателя из "Engine::PointLightObject *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(745,40): warning C4302: приведение типов: усечение из "Engine::PointLightObject *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(753,93): warning C4316: "Engine::DirectionalLightObject": объект, размещенный в куче, может не быть выровнен 32
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(758,40): warning C4311: приведение типов: усечение указателя из "Engine::DirectionalLightObject *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(758,40): warning C4302: приведение типов: усечение из "Engine::DirectionalLightObject *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(1231,100): warning C4244: =: преобразование "_Rep" в "double", возможна потеря данных
+          with
+          [
+              _Rep=__int64
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(1240,24): warning C4244: инициализация: преобразование "double" в "float", возможна потеря данных
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.28.29910\include\xstring(2468,23): warning C4244: аргумент: преобразование "wchar_t" в "const _Elem", возможна потеря данных
           with
           [
@@ -48,6 +64,63 @@ G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Application.cpp(80): message 
               _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
               _Alloc=std::allocator<char>
           ]
+  Buffers.cpp
+  Entities.cpp
+  Globals.cpp
+  Images.cpp
+  Mesh.cpp
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Mesh.cpp(139,42): warning C4834: отмена возвращаемого значения функции с атрибутом "nodiscard"
+  SyncObjects.cpp
+  RigidBody.cpp
+  Swapchain.cpp
+  Scene.cpp
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(74,35): warning C4311: <function-style-cast>: усечение указателя из "Engine::Entity *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(74,35): warning C4302: <function-style-cast>: усечение из "Engine::Entity *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(81,35): warning C4311: <function-style-cast>: усечение указателя из "Engine::Entity *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(81,35): warning C4302: <function-style-cast>: усечение из "Engine::Entity *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(88,35): warning C4311: <function-style-cast>: усечение указателя из "Engine::Entity *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(88,35): warning C4302: <function-style-cast>: усечение из "Engine::Entity *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(105,42): warning C4316: "Engine::PointLightObject": объект, размещенный в куче, может не быть выровнен 32
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(124,47): warning C4244: =: преобразование "ValueType" в "float", возможна потеря данных
+          with
+          [
+              ValueType=int
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(125,47): warning C4244: =: преобразование "ValueType" в "float", возможна потеря данных
+          with
+          [
+              ValueType=int
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(126,48): warning C4244: =: преобразование "ValueType" в "float", возможна потеря данных
+          with
+          [
+              ValueType=int
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(133,48): warning C4316: "Engine::DirectionalLightObject": объект, размещенный в куче, может не быть выровнен 32
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(144,47): warning C4244: =: преобразование "ValueType" в "float", возможна потеря данных
+          with
+          [
+              ValueType=int
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(145,47): warning C4244: =: преобразование "ValueType" в "float", возможна потеря данных
+          with
+          [
+              ValueType=double
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(146,48): warning C4244: =: преобразование "ValueType" в "float", возможна потеря данных
+          with
+          [
+              ValueType=int
+          ]
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(166,34): warning C4311: приведение типов: усечение указателя из "Engine::Entity *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(166,34): warning C4302: приведение типов: усечение из "Engine::Entity *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(235,40): warning C4311: приведение типов: усечение указателя из "Engine::GameObject *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(235,40): warning C4302: приведение типов: усечение из "Engine::GameObject *" к "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(241,64): warning C4316: "Engine::DirectionalLightObject": объект, размещенный в куче, может не быть выровнен 32
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(245,30): warning C4311: приведение типов: усечение указателя из "Engine::DirectionalLightObject *" в "int"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Headers\Scene.cpp(245,30): warning C4302: приведение типов: усечение из "Engine::DirectionalLightObject *" к "int"
+  imgui_impl_vulkan.cpp
+  Создание кода...
 LINK : warning LNK4075: не учитывается "/INCREMENTAL" из-за спецификации "/FORCE"
      Создается библиотека G:\dev\cpp\WinAPI Branch\x64\Debug\Engine.lib и объект G:\dev\cpp\WinAPI Branch\x64\Debug\Engine.exp
 LINK : warning LNK4098: библиотека по умолчанию "MSVCRT" конфликтует с использованием других библиотек; используйте /NODEFAULTLIB:library
@@ -75,7 +148,7 @@ BulletCollision_Debug.lib(btCollisionObject.obj) : warning LNK4099: "BulletColli
 BulletCollision_Debug.lib(btCollisionWorld.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btCollisionWorld.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
 BulletCollision_Debug.lib(btCompoundCollisionAlgorithm.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btCompoundCollisionAlgorithm.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
 BulletCollision_Debug.lib(btCompoundCompoundCollisionAlgorithm.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btCompoundCompoundCollisionAlgorithm.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
-BulletCollision_Debug.lib(btConvexConcaveCollisionAlgorithm.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btConvexConcaveCollisionAlgorithm.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btConvexConcaveCollisionAlgorithm.obj) : warning LNK4099: "" PDB не найден с "BulletCollision_Debug.lib(btConvexConcaveCollisionAlgorithm.obj)" или на ""; компоновка объекта выполняется как при отсутствии отладочных данных
 BulletCollision_Debug.lib(btConvexConvexAlgorithm.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btConvexConvexAlgorithm.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
 BulletCollision_Debug.lib(btConvexPlaneCollisionAlgorithm.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btConvexPlaneCollisionAlgorithm.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
 BulletCollision_Debug.lib(btDefaultCollisionConfiguration.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btDefaultCollisionConfiguration.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
@@ -107,7 +180,7 @@ BulletCollision_Debug.lib(btConvexCast.obj) : warning LNK4099: "BulletCollision.
 BulletCollision_Debug.lib(btGjkConvexCast.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btGjkConvexCast.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
 BulletCollision_Debug.lib(btGjkEpa2.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btGjkEpa2.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
 BulletCollision_Debug.lib(btGjkEpaPenetrationDepthSolver.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btGjkEpaPenetrationDepthSolver.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
-BulletCollision_Debug.lib(btGjkPairDetector.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btGjkPairDetector.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
+BulletCollision_Debug.lib(btGjkPairDetector.obj) : warning LNK4099: "" PDB не найден с "BulletCollision_Debug.lib(btGjkPairDetector.obj)" или на ""; компоновка объекта выполняется как при отсутствии отладочных данных
 BulletCollision_Debug.lib(btMinkowskiPenetrationDepthSolver.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btMinkowskiPenetrationDepthSolver.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
 BulletCollision_Debug.lib(btPersistentManifold.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btPersistentManifold.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных
 BulletCollision_Debug.lib(btRaycastCallback.obj) : warning LNK4099: "BulletCollision.pdb" PDB не найден с "BulletCollision_Debug.lib(btRaycastCallback.obj)" или на "G:\dev\cpp\WinAPI Branch\x64\Debug\BulletCollision.pdb"; компоновка объекта выполняется как при отсутствии отладочных данных

@@ -8,90 +8,84 @@
 #include	<iostream>
 #include	<fstream>
 
-namespace Engine{
-	static bool PBR = true;
+namespace Engine {
+    static bool PBR = true;
 
-	class RenderPass{
-		VkRenderPass vRenderPass;
-		public:
-		VkRenderPass GetRenderPass();
+    class RenderPass {
+        VkRenderPass vRenderPass;
+    public:
+        VkRenderPass GetRenderPass();
 
-		void CreateRenderPass(VkDevice device, VkSwapchainCreateInfoKHR swapchainCreateInfo, VkFormat depthImageFormat);
+        void CreateRenderPass(VkDevice device, VkSwapchainCreateInfoKHR swapchainCreateInfo, VkFormat depthImageFormat);
 
-		void Destroy(VkDevice device);
-
-	};
+        void Destroy(VkDevice device);
+    };
 
     class ShadowMapOffscreenRenderPass {
         VkRenderPass vRenderPass;
     public:
         VkRenderPass GetRenderPass();
 
-		void CreateRenderPass(VkDevice device, VkSwapchainCreateInfoKHR swapchainCreateInfo, VkFormat depthImageFormat);
+        void CreateRenderPass(VkDevice device, VkSwapchainCreateInfoKHR swapchainCreateInfo, VkFormat depthImageFormat);
 
         void Destroy(VkDevice device);
-
     };
 
-	class GraphicsPipeline {
-		protected:
-		VkPipeline vGraphicsPipeline;
-		VkGraphicsPipelineCreateInfo CreateInfo{};
-		VkPipelineLayout PipelineLayout;
-		VkPipelineLayoutCreateInfo PipelineLayoutInfo{};
+    class GraphicsPipeline {
+    protected:
+        VkPipeline vGraphicsPipeline;
+        VkGraphicsPipelineCreateInfo CreateInfo{};
+        VkPipelineLayout PipelineLayout;
+        VkPipelineLayoutCreateInfo PipelineLayoutInfo{};
 
-		public:
-		VkPipeline* PGetGraphicsPipeline();
+    public:
+        VkPipeline* PGetGraphicsPipeline();
 
-		VkPipeline Get();
+        VkPipeline Get();
 
-		VkPipelineLayout GetPipelineLayout();
+        VkPipelineLayout GetPipelineLayout();
 
-		VkShaderModule CreateShaderModule(VkDevice device, std::vector<char>& code);
+        VkShaderModule CreateShaderModule(VkDevice device, std::vector<char>& code);
 
-		std::vector<char> ReadShader(std::string path);
-	
-		virtual void CreateGraphicsPipeline(VkDevice device, VkSwapchainCreateInfoKHR swapchainCreateInfo,
-			VkDescriptorSetLayout setLayout, VkRenderPass renderPass) = 0;
+        std::vector<char> ReadShader(std::string path);
 
-		virtual void DestroyPipelineObjects(VkDevice device) = 0;
-	};
+        virtual void CreateGraphicsPipeline(VkDevice device, VkSwapchainCreateInfoKHR swapchainCreateInfo,
+            VkDescriptorSetLayout setLayout, VkRenderPass renderPass) = 0;
 
-	class GraphicsPipelineForMesh : public GraphicsPipeline {	
-		public:
-		void CreateGraphicsPipeline(VkDevice device, VkSwapchainCreateInfoKHR swapchainCreateInfo,
-			VkDescriptorSetLayout setLayout, VkRenderPass renderPass);
+        virtual void DestroyPipelineObjects(VkDevice device) = 0;
+    };
 
-		void DestroyPipelineObjects(VkDevice device);
-
-	};
-
-	class GraphicsPipelineForCubemapObjects : public GraphicsPipeline {
-		public:
-		void CreateGraphicsPipeline(VkDevice device, VkSwapchainCreateInfoKHR swapchainCreateInfo,
-			VkDescriptorSetLayout setLayout, VkRenderPass renderPass);
-		
-		void DestroyPipelineObjects(VkDevice device);
-
-	};
-
-	class GraphicsPipelineForRigidBodyMesh : public GraphicsPipeline {
-		public:
-		void CreateGraphicsPipeline(VkDevice device, VkSwapchainCreateInfoKHR swapchainCreateInfo,
-			VkDescriptorSetLayout setLayout, VkRenderPass renderPass);
-
-		void DestroyPipelineObjects(VkDevice device);
-
-	};
-
-	class GraphicsPipelineForShadowMap : public GraphicsPipeline{
-
+    class GraphicsPipelineForMesh : public GraphicsPipeline {
     public:
         void CreateGraphicsPipeline(VkDevice device, VkSwapchainCreateInfoKHR swapchainCreateInfo,
             VkDescriptorSetLayout setLayout, VkRenderPass renderPass);
 
         void DestroyPipelineObjects(VkDevice device);
-	};
+    };
+
+    class GraphicsPipelineForCubemapObjects : public GraphicsPipeline {
+    public:
+        void CreateGraphicsPipeline(VkDevice device, VkSwapchainCreateInfoKHR swapchainCreateInfo,
+            VkDescriptorSetLayout setLayout, VkRenderPass renderPass);
+
+        void DestroyPipelineObjects(VkDevice device);
+    };
+
+    class GraphicsPipelineForRigidBodyMesh : public GraphicsPipeline {
+    public:
+        void CreateGraphicsPipeline(VkDevice device, VkSwapchainCreateInfoKHR swapchainCreateInfo,
+            VkDescriptorSetLayout setLayout, VkRenderPass renderPass);
+
+        void DestroyPipelineObjects(VkDevice device);
+    };
+
+    class GraphicsPipelineForShadowMap : public GraphicsPipeline {
+    public:
+        void CreateGraphicsPipeline(VkDevice device, VkSwapchainCreateInfoKHR swapchainCreateInfo,
+            VkDescriptorSetLayout setLayout, VkRenderPass renderPass);
+
+        void DestroyPipelineObjects(VkDevice device);
+    };
 }
 
 #endif

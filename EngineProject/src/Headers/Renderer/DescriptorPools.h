@@ -1,200 +1,104 @@
 #ifndef descriptorpools_h
 #define descriptorpools_h
 
-
 #include	"../../vendor/volk.h"
 #include	<vector>
 #include	<iostream>
 #include	"Images.h"
 
-namespace Engine{
+namespace Engine {
+    //Из пула дескрипторов выделяется память для дескрипторов//
+    //При создании пула указывается максимальное количество дескрипторов в наборе//
 
-	//Пул дескрипторов задает максимально доступное количество дескрипторов в каждом наборе
-	
-	class DescriptorPool {
-		protected:
-		VkDescriptorPool vDescriptorPool;
-		public:
-		VkDescriptorPool Get() {
-			return vDescriptorPool;
-		}
+    class DescriptorPool {
+    protected:
+        VkDescriptorPool vDescriptorPool;
+    public:
+        VkDescriptorPool Get() {
+            return vDescriptorPool;
+        }
 
-		void Destroy(VkDevice device) {
-			vkDestroyDescriptorPool(device, vDescriptorPool, nullptr);
-		}
+        void Destroy(VkDevice device) {
+            vkDestroyDescriptorPool(device, vDescriptorPool, nullptr);
+        }
 
-		virtual void CreateDescriptorPool(VkDevice device, int swapchainImageViewCount) = 0;
-	};
+        virtual void CreateDescriptorPool(VkDevice device, int swapchainImageViewCount) = 0;
+    };
 
-	class DescriptorPoolForMesh : public DescriptorPool {
-		public:
-		void CreateDescriptorPool(VkDevice device, int swapchainImageViewCount){
-
-			std::vector<VkDescriptorPoolSize> poolSizes;
-			VkDescriptorPoolSize mvpPoolSize{};
+    class DescriptorPoolForMesh : public DescriptorPool {
+    public:
+        void CreateDescriptorPool(VkDevice device, int swapchainImageViewCount) {
+            std::vector<VkDescriptorPoolSize> poolSizes;
+            VkDescriptorPoolSize mvpPoolSize{};
             mvpPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
             mvpPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             poolSizes.push_back(mvpPoolSize);
-			
+
             VkDescriptorPoolSize lightSpacePoolSize{};
-			lightSpacePoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
-			lightSpacePoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            lightSpacePoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
+            lightSpacePoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             poolSizes.push_back(lightSpacePoolSize);
 
-			VkDescriptorPoolSize diffuseTextureSamplerPoolSize{};
+            VkDescriptorPoolSize diffuseTextureSamplerPoolSize{};
             diffuseTextureSamplerPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000 * MAX_MATERIALS;
             diffuseTextureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
             poolSizes.push_back(diffuseTextureSamplerPoolSize);
-			
-			VkDescriptorPoolSize pointLightAttributesPoolSize{};
+
+            VkDescriptorPoolSize pointLightAttributesPoolSize{};
             pointLightAttributesPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
             pointLightAttributesPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             poolSizes.push_back(pointLightAttributesPoolSize);
-			
-			VkDescriptorPoolSize сameraPosPoolSize{};
+
+            VkDescriptorPoolSize сameraPosPoolSize{};
             сameraPosPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
             сameraPosPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             poolSizes.push_back(сameraPosPoolSize);
-			
-			VkDescriptorPoolSize materialPoolSize{};
+
+            VkDescriptorPoolSize materialPoolSize{};
             materialPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
             materialPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             poolSizes.push_back(materialPoolSize);
-			
+
             VkDescriptorPoolSize directionalLightAttributesPoolSize{};
-			directionalLightAttributesPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
-			directionalLightAttributesPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            directionalLightAttributesPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
+            directionalLightAttributesPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
             poolSizes.push_back(directionalLightAttributesPoolSize);
 
             VkDescriptorPoolSize specularTextureSamplerPoolSize{};
-			specularTextureSamplerPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000 * MAX_MATERIALS;
-			specularTextureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            specularTextureSamplerPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000 * MAX_MATERIALS;
+            specularTextureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
             poolSizes.push_back(specularTextureSamplerPoolSize);
 
             VkDescriptorPoolSize shadowMapPoolSize{};
-			shadowMapPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
-			shadowMapPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            shadowMapPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
+            shadowMapPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
             poolSizes.push_back(shadowMapPoolSize);
 
             VkDescriptorPoolSize roughnessTextureSamplerPoolSize{};
-			roughnessTextureSamplerPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000 * MAX_MATERIALS;
-			roughnessTextureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            roughnessTextureSamplerPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000 * MAX_MATERIALS;
+            roughnessTextureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
             poolSizes.push_back(roughnessTextureSamplerPoolSize);
 
             VkDescriptorPoolSize metallicTextureSamplerPoolSize{};
-			metallicTextureSamplerPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000 * MAX_MATERIALS;
-			metallicTextureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            metallicTextureSamplerPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000 * MAX_MATERIALS;
+            metallicTextureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
             poolSizes.push_back(metallicTextureSamplerPoolSize);
 
-
-			VkDescriptorPoolCreateInfo createInfo{};
+            VkDescriptorPoolCreateInfo createInfo{};
             createInfo.pPoolSizes = poolSizes.data();
             createInfo.poolSizeCount = (uint32_t)poolSizes.size();
             createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
             createInfo.maxSets = (uint32_t)swapchainImageViewCount * 1000;
             createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-			
-			
-			if (vkCreateDescriptorPool(device, &createInfo, nullptr, &vDescriptorPool) != VK_SUCCESS) {
-				throw std::runtime_error("Failed to create descriptor pool");
-			}
-		}
 
-	};
+            if (vkCreateDescriptorPool(device, &createInfo, nullptr, &vDescriptorPool) != VK_SUCCESS) {
+                throw std::runtime_error("Failed to create descriptor pool");
+            }
+        }
+    };
 
-	class DescriptorPoolForRigidBodyMesh : public DescriptorPool {
-		public:
-		void CreateDescriptorPool(VkDevice device, int swapchainImageViewCount) {
-			std::vector<VkDescriptorPoolSize> poolSizes;
-
-			VkDescriptorPoolSize mvpPoolSize{};
-            mvpPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
-            mvpPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            poolSizes.push_back(mvpPoolSize);
-			
-			VkDescriptorPoolCreateInfo createInfo{};
-			createInfo.pPoolSizes = poolSizes.data();
-			createInfo.poolSizeCount = (uint32_t)poolSizes.size();
-			createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-			createInfo.maxSets = (uint32_t)swapchainImageViewCount * 1000;
-			createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-			
-			if (vkCreateDescriptorPool(device, &createInfo, nullptr, &vDescriptorPool) != VK_SUCCESS) {
-				throw std::runtime_error("Failed to create descriptor pool");
-			}
-		}
-
-	};
-
-	class DescriptorPoolForCubemapObjects : public DescriptorPool {
-		public:
-			void CreateDescriptorPool(VkDevice device, int swapchainImageViewCount) {
-
-			std::vector<VkDescriptorPoolSize> poolSizes;
-
-			VkDescriptorPoolSize poolSize{};
-            poolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
-            poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-            poolSizes.push_back(poolSize);
-			
-			VkDescriptorPoolSize textureSamplerPoolSize{};
-			//Текстура skybox'а
-            textureSamplerPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
-            textureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-            poolSizes.push_back(textureSamplerPoolSize);
-			
-			VkDescriptorPoolCreateInfo createInfo{};
-            createInfo.pPoolSizes = poolSizes.data();
-            createInfo.poolSizeCount = (uint32_t)poolSizes.size();
-            createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-            createInfo.maxSets = (uint32_t)swapchainImageViewCount * 1000;
-            createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-			
-			if (vkCreateDescriptorPool(device, &createInfo, nullptr, &vDescriptorPool) != VK_SUCCESS) {
-				throw std::runtime_error("Failed to create descriptor pool");
-			}
-		}
-
-	};
-
-	class DescriptorPoolForImgui : public DescriptorPool {
-		public:
-		void CreateDescriptorPool(VkDevice device, int swapchainImageViewCount) {
-			VkDescriptorPoolSize poolSizes[] =
-			{
-				{ VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
-				{ VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
-				{ VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
-				{ VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
-				{ VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
-				{ VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
-				{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
-				{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
-				{ VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
-				{ VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
-				{ VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
-			};
-
-			VkDescriptorPoolCreateInfo createInfo{};
-			//
-			{
-				createInfo.pPoolSizes = poolSizes;
-				createInfo.poolSizeCount = (uint32_t)11;
-				createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-				createInfo.maxSets = (uint32_t)swapchainImageViewCount * 1000;
-				createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-			}
-			
-
-			if (vkCreateDescriptorPool(device, &createInfo, nullptr, &vDescriptorPool) != VK_SUCCESS) {
-				throw std::runtime_error("Failed to create descriptor pool");
-			}
-		}
-
-	};
-
-	class DescriptorPoolForShadowMap : public DescriptorPool{
-	public:
+    class DescriptorPoolForRigidBodyMesh : public DescriptorPool {
+    public:
         void CreateDescriptorPool(VkDevice device, int swapchainImageViewCount) {
             std::vector<VkDescriptorPoolSize> poolSizes;
 
@@ -214,8 +118,93 @@ namespace Engine{
                 throw std::runtime_error("Failed to create descriptor pool");
             }
         }
-	};
+    };
 
+    class DescriptorPoolForCubemapObjects : public DescriptorPool {
+    public:
+        void CreateDescriptorPool(VkDevice device, int swapchainImageViewCount) {
+            std::vector<VkDescriptorPoolSize> poolSizes;
+
+            VkDescriptorPoolSize poolSize{};
+            poolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
+            poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            poolSizes.push_back(poolSize);
+
+            VkDescriptorPoolSize textureSamplerPoolSize{};
+            //Текстура skybox'а
+            textureSamplerPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
+            textureSamplerPoolSize.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+            poolSizes.push_back(textureSamplerPoolSize);
+
+            VkDescriptorPoolCreateInfo createInfo{};
+            createInfo.pPoolSizes = poolSizes.data();
+            createInfo.poolSizeCount = (uint32_t)poolSizes.size();
+            createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+            createInfo.maxSets = (uint32_t)swapchainImageViewCount * 1000;
+            createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+
+            if (vkCreateDescriptorPool(device, &createInfo, nullptr, &vDescriptorPool) != VK_SUCCESS) {
+                throw std::runtime_error("Failed to create descriptor pool");
+            }
+        }
+    };
+
+    class DescriptorPoolForImgui : public DescriptorPool {
+    public:
+        void CreateDescriptorPool(VkDevice device, int swapchainImageViewCount) {
+            VkDescriptorPoolSize poolSizes[] =
+            {
+                { VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
+                { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
+                { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
+                { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
+                { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
+                { VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
+                { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
+                { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
+                { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
+                { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
+                { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
+            };
+
+            VkDescriptorPoolCreateInfo createInfo{};
+            //
+            {
+                createInfo.pPoolSizes = poolSizes;
+                createInfo.poolSizeCount = (uint32_t)11;
+                createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+                createInfo.maxSets = (uint32_t)swapchainImageViewCount * 1000;
+                createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+            }
+
+            if (vkCreateDescriptorPool(device, &createInfo, nullptr, &vDescriptorPool) != VK_SUCCESS) {
+                throw std::runtime_error("Failed to create descriptor pool");
+            }
+        }
+    };
+
+    class DescriptorPoolForShadowMap : public DescriptorPool {
+    public:
+        void CreateDescriptorPool(VkDevice device, int swapchainImageViewCount) {
+            std::vector<VkDescriptorPoolSize> poolSizes;
+
+            VkDescriptorPoolSize mvpPoolSize{};
+            mvpPoolSize.descriptorCount = (uint32_t)swapchainImageViewCount * 1000;
+            mvpPoolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+            poolSizes.push_back(mvpPoolSize);
+
+            VkDescriptorPoolCreateInfo createInfo{};
+            createInfo.pPoolSizes = poolSizes.data();
+            createInfo.poolSizeCount = (uint32_t)poolSizes.size();
+            createInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+            createInfo.maxSets = (uint32_t)swapchainImageViewCount * 1000;
+            createInfo.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
+
+            if (vkCreateDescriptorPool(device, &createInfo, nullptr, &vDescriptorPool) != VK_SUCCESS) {
+                throw std::runtime_error("Failed to create descriptor pool");
+            }
+        }
+    };
 }
 
 #endif

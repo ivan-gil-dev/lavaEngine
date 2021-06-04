@@ -13,178 +13,186 @@
 #include "Renderer/Images.h"
 #include "../../vendor/tiny_obj_loader.h"
 
+namespace Engine {
+    //Часть трехмерной модели//
+    //Кол-во таких частей зависит от кол-ва материалов//
+    struct Face {
+        std::vector<uint32_t> indexes;
+        VulkanBuffers::IndexBuffer indexBuffer;
+        short MatID;
+        std::string diffuseMapPath;
+        std::string specularMapPath;
+        std::string metallicMapPath;
+        std::string roughnessMapPath;
+    };
 
+    //Трехмерный объект//
+    class EngineAPI_Export Mesh {
+    private:
+        //Путь к объекту//
+        std::string										MeshPath;
 
-namespace Engine{
-	
+        //Найден ли .mtl файл//
+        bool											MaterialsFound;
+        //Создан ли трехмерный объект//
+        bool											IsCreated = false;
 
-	struct Face {
-		std::vector<uint32_t> indexes;
-		VulkanBuffers::IndexBuffer indexBuffer;
-		short MatID;
-		std::string diffuseMapPath;
-		std::string specularMapPath;
-		std::string metallicMapPath;
-		std::string roughnessMapPath;
-	};
+        //Вершины//
+        std::vector<DataTypes::MeshVertex_t>			Vertices;
+        //Грани//
+        std::vector<Face>								Faces;
 
-	class EngineAPI_Export Mesh {
-	private:
-		std::string										MeshPath;
+        //Уникальные вершины//
+        std::unordered_map<DataTypes::MeshVertex_t, uint32_t> UniqueVertices{};
 
-		bool											MaterialsFound;
-		bool											IsCreated = false;
+        //Вершинный буфер//
+        VulkanBuffers::VertexBuffer					    VertexBuffer;
+        //Вершинный буффер для передачи в шейдер для генерации карты теней//
+        VulkanBuffers::VertexBuffer						ShadowMapBuffer;
 
-		std::vector<DataTypes::MeshVertex_t>			Vertices;
-		std::vector<Face>								Faces;
+        //Матрицы преобразований//
+        DataTypes::MVP_t								MVP{};
 
+        //Оптические параметры модели//
+        DataTypes::Material_t							Material{};
 
-		std::unordered_map<DataTypes::MeshVertex_t, uint32_t> UniqueVertices{};
+        //Наборы дескрипторов для обращения к юниформам//
+        std::vector<VkDescriptorSet>				    DescriptorSets;
+    private:
+        //Буферы для привязки к наборам дескрипторов//
 
-		VulkanBuffers::VertexBuffer					    VertexBuffer;
-		VulkanBuffers::VertexBuffer						ShadowMapBuffer;
+        //Буферы для передачи матриц трансформации//
+        std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMVP_b0;
+        //Буферы для передачи произведения матриц трансформации в системе координат источника света//
+        std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersLightSpace_b1;
 
+        //Буферы для передачи карты цвета объекта//
+        std::vector<Texture>							DiffuseTextures_b1;
+        //Буферы для передачи карты отражаемого цвета объекта//
+        std::vector<Texture>							SpecularTextures_b6;
+        //Буферы для передачи карты шероховатости//
+        std::vector<Texture>							RoughnessTextures_b9;
+        //Буферы для передачи карты металличности//
+        std::vector<Texture>							MetallicTextures_b10;
 
-		DataTypes::MVP_t								MVP{};
+        //Пустая текстура//
+        Texture											Blank;
 
-		DataTypes::Material_t							Material{};
+        //Буфер для передачи атрибутов точечных источников света//
+        std::vector<VulkanBuffers::UniformBuffer>   	UniformBuffersSpotLightAttributes_b2;
+        //Буфер для передачи позиции камеры//
+        std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersDebugCameraPos_b3;
+        //Буфер для передачи оптических свойств трехмерного объекта//
+        std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMaterial_b4;
+        //Буфер для передачи атрибутов направленных источников света//
+        std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersDirectionalLightAttributes_b5;
 
-		std::vector<VkDescriptorSet>				    DescriptorSets;
-	private:
-		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMVP_b0;
-		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersLightSpace_b1;
+        void LoadModel(std::string modelPath);
 
-		std::vector<Texture>							DiffuseTextures_b1;
-		std::vector<Texture>							SpecularTextures_b6;
-		std::vector<Texture>							RoughnessTextures_b9;
-		std::vector<Texture>							MetallicTextures_b10;
-		Texture											Blank;
+        void CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout descriptorSetLayoutForGameObjects,
+            VkDescriptorPool descriptorPoolForGameObjects, std::vector<VkImageView> swapchainImageViews);
 
-		std::vector<VulkanBuffers::UniformBuffer>   	UniformBuffersSpotLightAttributes_b2;
-		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersDebugCameraPos_b3;
-		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersMaterial_b4;
-		std::vector<VulkanBuffers::UniformBuffer>		UniformBuffersDirectionalLightAttributes_b5;
-	
-		void LoadModel(std::string modelPath);
+    public:
 
-		void CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout descriptorSetLayoutForGameObjects, 
-			VkDescriptorPool descriptorPoolForGameObjects, std::vector<VkImageView> swapchainImageViews);
+        bool IsMeshCreated() {
+            return IsCreated;
+        }
 
-		public:
+        bool IsMaterialsFound() {
+            return MaterialsFound;
+        }
 
-			
-		bool IsMeshCreated() {
-			return IsCreated;
-		}
+        DataTypes::MVP_t* pGetMVP();
 
-		bool IsMaterialsFound() {
-				return MaterialsFound;
-		}
+        std::string pGetMeshPath();
 
-		DataTypes::MVP_t *pGetMVP();
+        std::vector<DataTypes::MeshVertex_t>* GetVertices();
 
-		std::string pGetMeshPath();
+        DataTypes::Material_t GetMaterial();
 
-		std::vector<DataTypes::MeshVertex_t>* GetVertices();
+        DataTypes::Material_t* pGetMaterial();
 
-		DataTypes::Material_t GetMaterial();
+        void SetMaterial(DataTypes::Material_t mat);
 
-		DataTypes::Material_t *pGetMaterial();
+        void Draw(VkCommandBuffer commandBuffer, int imageIndex, VkPipeline pipeline);
 
+        void DrawShadowMaps(VkCommandBuffer commandBuffer, int imageIndex, std::vector<VkDescriptorSet>& pDescriptorSets);
 
-		void SetMaterial(DataTypes::Material_t mat);
-	
-		void Draw(VkCommandBuffer commandBuffer, int imageIndex, VkPipeline pipeline);
+        void CreateMesh(std::string modelPath);
 
-		void DrawShadowMaps(VkCommandBuffer commandBuffer, int imageIndex, std::vector<VkDescriptorSet>& pDescriptorSets);
+        void CreateMesh_FromThread(std::string modelPath, std::atomic<bool>& ready);
 
-		void CreateMesh(std::string modelPath);
+        void UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec3 cameraPosition, DataTypes::ViewProjection_t viewProjection, glm::mat4 TransformMatrixProduct,
+            std::vector<DataTypes::PointLightAttributes_t*> spotlightAttributes, std::vector <DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes);
 
-		void CreateMesh_FromThread(std::string modelPath, std::atomic<bool>& ready);
+        void Destroy();
+    };
 
-		void UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec3 cameraPosition, DataTypes::ViewProjection_t viewProjection, glm::mat4 TransformMatrixProduct,
-			std::vector<DataTypes::PointLightAttributes_t*> spotlightAttributes, std::vector <DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes);
+    class WireframeMesh {
+    private:
+        std::vector<DataTypes::WireframeMeshVertex_t> Vertices;
+        std::vector<uint32_t>					Indexes;
+        std::unordered_map<DataTypes::WireframeMeshVertex_t, uint32_t> UniqueVertices{};
 
-		void Destroy();
+        VulkanBuffers::VertexBuffer				VertexBuffer;
+        VulkanBuffers::IndexBuffer				IndexBuffer;
 
-		
+        DataTypes::MVP_t MVP{};
 
-	};
+        std::vector<VkDescriptorSet>			DescriptorSets;
 
-	class WireframeMesh {
-		private:
-		std::vector<DataTypes::WireframeMeshVertex_t> Vertices;
-		std::vector<uint32_t>					Indexes;
-		std::unordered_map<DataTypes::WireframeMeshVertex_t, uint32_t> UniqueVertices{};
+        std::vector<VulkanBuffers::UniformBuffer> UniformBuffersMVP;
 
-		VulkanBuffers::VertexBuffer				VertexBuffer;
-		VulkanBuffers::IndexBuffer				IndexBuffer;
+        void LoadModel(std::string modelPath, glm::vec3 color);
 
-		DataTypes::MVP_t MVP{};
+        void CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout descriptorSetLayoutForRigidBodyMesh,
+            VkDescriptorPool descriptorPoolForRigidBodyMesh, std::vector<VkImageView> imageViews);
 
-		std::vector<VkDescriptorSet>			DescriptorSets;
+    public:
 
-		std::vector<VulkanBuffers::UniformBuffer> UniformBuffersMVP;
+        WireframeMesh();
 
-		void LoadModel(std::string modelPath, glm::vec3 color);
+        Transform Transform;
 
-		void CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout descriptorSetLayoutForRigidBodyMesh, 
-			VkDescriptorPool descriptorPoolForRigidBodyMesh, std::vector<VkImageView> imageViews);
+        void Draw(VkCommandBuffer commandBuffer, int imageIndex, VkPipeline pipeline);
 
-	public:
+        std::vector<DataTypes::WireframeMeshVertex_t> GetVertices();
 
-		WireframeMesh();
+        void CreateMesh(std::string modelPath, glm::vec3 color);
 
-		Transform Transform;
+        void UpdateUniforms(uint32_t imageIndex, VkDevice device, DataTypes::ViewProjection_t viewProjection);
 
-		void Draw(VkCommandBuffer commandBuffer, int imageIndex, VkPipeline pipeline);
+        void Destroy();
+    };
 
-		std::vector<DataTypes::WireframeMeshVertex_t> GetVertices();
+    class CubemapMesh {
+    private:
+        std::vector<DataTypes::MeshVertex_t>	  Vertices;
+        std::vector<uint32_t>					  Indexes;
+        std::vector<glm::vec3>					  CubeMapVertices;
+        VulkanBuffers::VertexBuffer				  mVertexBuffer;
+        VulkanBuffers::IndexBuffer			      mIndexBuffer;
+        std::vector<VulkanBuffers::UniformBuffer> UniformBuffersVP;
+        std::vector<VkDescriptorSet>			  DescriptorSets;
+        CubemapTexture							  mCubemapTexture;
 
-		void CreateMesh(std::string modelPath, glm::vec3 color);
+        void CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout descriptorSetLayoutForCubemap,
+            VkDescriptorPool descriptorPoolForCubemap, std::vector<VkImageView> imageViews);
 
-		void UpdateUniforms(uint32_t imageIndex, VkDevice device, DataTypes::ViewProjection_t viewProjection);
+        void LoadModel(std::string modelPath);
 
-		void Destroy();
+    public:
+        CubemapMesh();
 
-		
+        void CreateCubemapMesh(std::vector<std::string> paths);
 
-	};
+        void Draw(VkCommandBuffer commandBuffer, int imageIndex, VkPipeline pipeline);
 
-	class CubemapMesh{
-	private:
-		std::vector<DataTypes::MeshVertex_t>	  Vertices;
-		std::vector<uint32_t>					  Indexes;
-		std::vector<glm::vec3>					  CubeMapVertices;
-		VulkanBuffers::VertexBuffer				  mVertexBuffer;
-		VulkanBuffers::IndexBuffer			      mIndexBuffer;
-		std::vector<VulkanBuffers::UniformBuffer> UniformBuffersVP;
-		std::vector<VkDescriptorSet>			  DescriptorSets;
-		CubemapTexture							  mCubemapTexture;
-		
+        void UpdateUniforms(uint32_t imageIndex, VkDevice device, DataTypes::ViewProjection_t viewProjection);
 
-		void CreateDescriptorSets(VkDevice device, VkDescriptorSetLayout descriptorSetLayoutForCubemap, 
-			VkDescriptorPool descriptorPoolForCubemap, std::vector<VkImageView> imageViews);
-
-		void LoadModel(std::string modelPath);
-
-		
-	public:
-		CubemapMesh();
-
-		void CreateCubemapMesh(std::vector<std::string> paths);
-
-		void Draw(VkCommandBuffer commandBuffer, int imageIndex, VkPipeline pipeline);
-
-		void UpdateUniforms(uint32_t imageIndex, VkDevice device, DataTypes::ViewProjection_t viewProjection);
-
-		void Destroy();
-
-	
-
-	};
+        void Destroy();
+    };
 }
-
 
 #endif
 #  pragma warning( pop )

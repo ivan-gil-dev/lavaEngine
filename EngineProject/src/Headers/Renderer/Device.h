@@ -1,75 +1,82 @@
 #ifndef device_h
 #define device_h
 
-
 #include	"../../vendor/volk.h"
 #include	"DataTypes.h"
 #include	<vector>
 #include	<iostream>
-namespace Engine{
-	static std::vector<const char*> Layers = { "VK_LAYER_KHRONOS_validation" };
-	static std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+namespace Engine {
+    static std::vector<const char*> Layers = { "VK_LAYER_KHRONOS_validation" };
 
-	class Device {
-		VkDevice LogicalDevice = VK_NULL_HANDLE;
-		VkDeviceCreateInfo CreateInfo{};
-		VkQueue GraphicsQueue = VK_NULL_HANDLE;;
-		public:
-		
-		void CreateDevice(VkPhysicalDevice device, DataTypes::QueueIndices_t indices) {
-			float priority = 1.0f;
+    //Расширение для использования swapchain (цепь изображений)//
+    static std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-			std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
+    //Логическое устройство//
+    class Device {
+        VkDevice LogicalDevice = VK_NULL_HANDLE;
+        VkDeviceCreateInfo CreateInfo{};
+        //Очередь для выполнения команд//
+        VkQueue GraphicsQueue = VK_NULL_HANDLE;;
+    public:
+        //Создать логическое устройство//
+        void CreateDevice(VkPhysicalDevice device, DataTypes::QueueIndices_t indices) {
+            float priority = 1.0f;
 
-			VkDeviceQueueCreateInfo queueInfo{};
-			queueInfo.queueCount = 1;
-			queueInfo.queueFamilyIndex = indices.graphicsQueueIndex; //Индекс очереди, поддерживающий команды отрисовки
-			queueInfo.pQueuePriorities = &priority;
-			queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-			queueCreateInfos.push_back(queueInfo);
+            std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
 
-			VkPhysicalDeviceFeatures features{};
-			features.samplerAnisotropy = VK_TRUE;
-			features.imageCubeArray = VK_TRUE;
-			features.fillModeNonSolid = VK_TRUE;
+            //Передача номера очереди, поддерживающей команды отрисовки//
+            VkDeviceQueueCreateInfo queueInfo{};
+            queueInfo.queueCount = 1;
+            queueInfo.queueFamilyIndex = indices.graphicsQueueIndex; //Индекс очереди, поддерживающий команды отрисовки
+            queueInfo.pQueuePriorities = &priority;
+            queueInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+            queueCreateInfos.push_back(queueInfo);
 
-			CreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-			CreateInfo.pEnabledFeatures = &features;
-			CreateInfo.enabledLayerCount = (uint32_t)Layers.size();
-			CreateInfo.ppEnabledLayerNames = Layers.data();
-			CreateInfo.pQueueCreateInfos = queueCreateInfos.data();
-			CreateInfo.queueCreateInfoCount = (uint32_t)queueCreateInfos.size();
-			CreateInfo.enabledExtensionCount = (uint32_t)deviceExtensions.size();
-			CreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
+            //Дополнительные функции физического устройства//
+            VkPhysicalDeviceFeatures features{};
+            features.samplerAnisotropy = VK_TRUE;
+            features.imageCubeArray = VK_TRUE;
+            features.fillModeNonSolid = VK_TRUE;
+            features.sampleRateShading = VK_TRUE;
 
-			if (vkCreateDevice(device, &CreateInfo, nullptr, &LogicalDevice) != VK_SUCCESS) {
-				throw std::runtime_error("Failed to create logical device");
-			}
-			vkGetDeviceQueue(LogicalDevice, indices.graphicsQueueIndex, 0, &GraphicsQueue);
-		}
+            CreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
+            CreateInfo.pEnabledFeatures = &features;
+            CreateInfo.enabledLayerCount = (uint32_t)Layers.size();//Слой для отладки//
+            CreateInfo.ppEnabledLayerNames = Layers.data();
+            CreateInfo.pQueueCreateInfos = queueCreateInfos.data();
+            CreateInfo.queueCreateInfoCount = (uint32_t)queueCreateInfos.size();
+            CreateInfo.enabledExtensionCount = (uint32_t)deviceExtensions.size();//Расширения//
+            CreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
-		VkQueue GetGraphicsQueue() {
-			return GraphicsQueue;
-		}
+            if (vkCreateDevice(device, &CreateInfo, nullptr, &LogicalDevice) != VK_SUCCESS) {
+                throw std::runtime_error("Failed to create logical device");
+            }
 
-		VkDevice Get() {
-			return LogicalDevice;
-		}
+            //Получение очереди из графического устройства//
+            vkGetDeviceQueue(LogicalDevice, indices.graphicsQueueIndex, 0, &GraphicsQueue);
+        }
 
-		void Destroy() {
-			vkDestroyDevice(LogicalDevice, nullptr);
-		}
+        VkQueue GetGraphicsQueue() {
+            return GraphicsQueue;
+        }
 
-		VkDevice* PGet() {
-			return &LogicalDevice;
-		}
-	
-	};
+        VkDevice Get() {
+            return LogicalDevice;
+        }
 
-	//namespace Globals{
-	//	extern Device gDevice;
-	//}
-	//
+        void Destroy() {
+            vkDestroyDevice(LogicalDevice, nullptr);
+        }
+
+        VkDevice* PGet() {
+            return &LogicalDevice;
+        }
+    };
+
+    //namespace Globals{
+    //	extern Device gDevice;
+    //}
+    //
 }
 
 #endif 

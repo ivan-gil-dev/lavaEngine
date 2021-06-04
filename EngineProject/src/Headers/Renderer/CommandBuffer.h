@@ -2,77 +2,84 @@
 #define commandbuffer_h
 
 #include	"../../vendor/volk.h"
+#include    "../Globals.h"
+
 #include	<iostream>
-namespace Engine{
-	//Буфер для хранения команд
-	class CommandBuffer{
-		VkCommandBuffer vCommandBuffer;
-		public:
-		void AllocateCommandBuffer(VkDevice device, VkCommandPool commandPool){ 
-			VkCommandBufferAllocateInfo allocInfo{};
-			{
-				allocInfo.commandBufferCount = 1;
-				allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-				allocInfo.commandPool = commandPool;
-				allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-			}
+namespace Engine {
+    //Буфер для хранения команд//
+    class CommandBuffer {
+        VkCommandBuffer vCommandBuffer;
+    public:
+        //Выделить память из пула команд//
+        void AllocateCommandBuffer(VkDevice device, VkCommandPool commandPool) {
+            VkCommandBufferAllocateInfo allocInfo{};
+            {
+                allocInfo.commandBufferCount = 1;
+                allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+                allocInfo.commandPool = commandPool;
+                allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+            }
 
-			//Выделить командный буфер из пула
-			vkAllocateCommandBuffers(device, &allocInfo, &vCommandBuffer);
-			
-		}
+            //Выделить командный буфер из пула
+            EngineExec(
+                vkAllocateCommandBuffers(device, &allocInfo, &vCommandBuffer),
+                "Command Buffer Allocation"
+            );
+        }
 
-		//Начать запись команд
-		void BeginCommandBuffer() { 
-			
-			VkCommandBufferBeginInfo beginInfo = {};
-			{
-				beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-			}
+        //Начать запись команд//
+        void BeginCommandBuffer() {
+            VkCommandBufferBeginInfo beginInfo = {};
+            {
+                beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+            }
 
-			
-			if (vkBeginCommandBuffer(vCommandBuffer, &beginInfo) != VK_SUCCESS) {
-				throw std::runtime_error("Failed to begin command buffer");
-			}
-		}
+            EngineExec(
+                vkBeginCommandBuffer(vCommandBuffer, &beginInfo),
+                "Begin Command Buffer"
+            );
+        }
 
-		//Отправить буфер в очередь
-		void SubmitCommandBuffer(VkQueue queue){ 
-			VkCommandBuffer pCommandBuffers[] = { vCommandBuffer };
-			VkSubmitInfo submitInfo{};
-			{
-				submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-				submitInfo.pCommandBuffers = pCommandBuffers;
-				submitInfo.commandBufferCount = 1;
-			}
+        //Отправить буфер в очередь//
+        void SubmitCommandBuffer(VkQueue queue) {
+            VkCommandBuffer pCommandBuffers[] = { vCommandBuffer };
+            VkSubmitInfo submitInfo{};
+            {
+                submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+                submitInfo.pCommandBuffers = pCommandBuffers;
+                submitInfo.commandBufferCount = 1;
+            }
 
-			//Отправить буфер в очередь
-			vkQueueSubmit(queue, 1, &submitInfo, nullptr);
-			vkQueueWaitIdle(queue);
-		}
+            //Отправить буфер в очередь
+            EngineExec(
+                vkQueueSubmit(queue, 1, &submitInfo, nullptr),
+                "Submit to Queue"
+            );
+            vkQueueWaitIdle(queue);
+        }
 
-		void FreeCommandBuffer(VkDevice device, VkCommandPool commandPool){ //<Освободить буфер>
-		
-			if (vCommandBuffer!=VK_NULL_HANDLE)
-			{
-				vkFreeCommandBuffers(device, commandPool, 1, &vCommandBuffer);
-				vCommandBuffer = VK_NULL_HANDLE;
-			}
-			
-		}
+        //Освободить буфер от команд//
+        void FreeCommandBuffer(VkDevice device, VkCommandPool commandPool) { //<Освободить буфер>
+            if (vCommandBuffer != VK_NULL_HANDLE)
+            {
+                vkFreeCommandBuffers(device, commandPool, 1, &vCommandBuffer);
+                vCommandBuffer = VK_NULL_HANDLE;
+            }
+        }
 
-		void EndCommandBuffer() {
-			if (vkEndCommandBuffer(vCommandBuffer) != VK_SUCCESS) {
-				throw std::runtime_error("Failed to record command buffer");
-			}
-			
-		}
+        //Закончить запись//
+        void EndCommandBuffer() {
+            EngineExec(
+                vkEndCommandBuffer(vCommandBuffer),
+                "End Command Buffer"
+            );
+        }
 
-	public:
-		VkCommandBuffer Get() {
-			return vCommandBuffer;
-		}
-	};
+    public:
+        VkCommandBuffer Get() {
+            return vCommandBuffer;
+        }
+    };
 }
 
 #endif

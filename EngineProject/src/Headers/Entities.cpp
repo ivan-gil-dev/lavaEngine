@@ -5,14 +5,13 @@
 //void Engine::Camera::SetPosition(glm::vec3 Pos)
 //{
 //    //CameraPos = glm::vec3(0);
-//   
+//
 //    CameraPos += Pos.x / CameraFront;
 //    CameraPos += Pos.y / CameraUp;
 //    CameraPos += Pos.z / glm::normalize(glm::cross(CameraFront, CameraUp));
-//    
+//
 //    std::cout << CameraPos.x << " " << CameraPos.y << " " << CameraPos.z << " " << std::endl;
 //}
-
 
 Engine::Camera::Camera()
 {
@@ -51,7 +50,6 @@ void Engine::Camera::SetCameraFront(glm::vec3 front)
 }
 
 Engine::DataTypes::ViewProjection_t Engine::Camera::GetViewProjectionForEntity() {
-
     DataTypes::ViewProjection_t viewProjection;
     viewProjection.view = glm::lookAt(CameraPos, CameraPos + CameraFront, CameraUp);
     if (ENABLE_DYNAMIC_VIEWPORT) {
@@ -92,7 +90,6 @@ glm::vec3 Engine::Camera::GetCameraFront()
 
 void Engine::Camera::Update()
 {
-
 }
 
 void Engine::EditorCamera::MouseUpdate()
@@ -101,8 +98,7 @@ void Engine::EditorCamera::MouseUpdate()
         Globals::showCursorEventHandler.HideCursor();
 
         double xpos = Globals::cursorPosition.GetCursorPos().x,
-               ypos = Globals::cursorPosition.GetCursorPos().y;
-
+            ypos = Globals::cursorPosition.GetCursorPos().y;
 
         if (CursorFirstMouse) {
             CursorLastX = xpos;
@@ -136,7 +132,6 @@ void Engine::EditorCamera::MouseUpdate()
             direction.z = glm::sin(glm::radians((float)Yaw)) * glm::cos(glm::radians((float)Pitch));
             CameraFront = glm::normalize(direction);
         }
-
     }
     else {
         Globals::showCursorEventHandler.ShowCursor();
@@ -214,56 +209,51 @@ void Engine::EditorCamera::Update()
         if (Globals::keyPressedEventHandler.IsKeyPressed(KEY_O) && !Globals::keyPressedEventHandler.IsKeyPressed(KEY_F)) {
             CameraPos += CameraUp * moveSpeed * (float)Engine::Globals::DeltaTime;
         }
-    }   
+    }
 }
 
 Engine::PointLightObject::PointLightObject() {
-	pointLightSettings.lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
-	pointLightSettings.lightPosition = glm::vec3(1.0f, 12.0f, 1.0f);
+    pointLightSettings.lightColor = glm::vec3(1.0f, 1.0f, 1.0f);
+    pointLightSettings.lightPosition = glm::vec3(1.0f, 12.0f, 1.0f);
 
-	pointLightSettings.constant = 1.0f;
-	pointLightSettings.linear = 0.09f;
-	pointLightSettings.quadrantic = 0.032f;
+    pointLightSettings.constant = 1.0f;
+    pointLightSettings.linear = 0.09f;
+    pointLightSettings.quadrantic = 0.032f;
 
     pointLightSettings.ambient = 1.f;
     pointLightSettings.diffuse = 1.f;
     pointLightSettings.specular = 1.f;
 
-	Type = ENTITY_TYPE_POINTLIGHT_OBJECT;
-	Name = "PointLight";
+    Type = ENTITY_TYPE_POINTLIGHT_OBJECT;
+    Name = "PointLight";
 }
 
 void Engine::PointLightObject::UpdateUniforms(uint32_t imageIndex, VkDevice device, Camera camera) {
-	pointLightSettings.lightPosition = Transform.GetPosition();
+    pointLightSettings.lightPosition = Transform.GetPosition();
 }
 
 Engine::DataTypes::PointLightAttributes_t* Engine::PointLightObject::pGetPointLightUniformData() {
-	return &pointLightSettings;
+    return &pointLightSettings;
 }
 
 Engine::PointLightObject::~PointLightObject() {
-
 }
 
 Engine::Entity::Entity() {
-	ID = 0;
-	Name = "Entity";
+    ID = 0;
+    Name = "Entity";
 }
 
 Engine::Entity::~Entity() {
-
 }
 
 void Engine::Entity::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
-
 }
 
 void Engine::Entity::Start() {
-
 }
 
 void Engine::Entity::Update() {
-
 }
 
 void Engine::Entity::SetRef(Entity* reference)
@@ -272,29 +262,26 @@ void Engine::Entity::SetRef(Entity* reference)
 }
 
 void Engine::Entity::SetName(std::string name) {
-	Name = name;
+    Name = name;
 }
 
 void Engine::Entity::SetID(int Id) {
-	ID = Id;
+    ID = Id;
 }
 
 Engine::EntityType Engine::Entity::GetEntityType() {
-	return Type;
+    return Type;
 }
 
 std::string Engine::Entity::GetName() {
-	return Name;
+    return Name;
 }
 
 int Engine::Entity::GetID() {
-	return ID;
+    return ID;
 }
 
-
-
 template <typename T> void AddComponent() {
-
 }
 
 template <> void Engine::GameObject::AddComponent<Engine::RigidBody>() {
@@ -307,19 +294,15 @@ template <> void Engine::GameObject::AddComponent<Engine::RigidBody>() {
 }
 
 template <> void Engine::GameObject::AddComponent<Engine::Mesh>() {
-
     if (!IsMeshCreated) pMesh = new Mesh;
     else {
         delete pMesh;
         pMesh = new Mesh;
         IsMeshCreated = true;
     }
-
-
 }
 
 template <typename T> T Engine::GameObject::pGetComponent() {
-
 }
 
 template <> Engine::RigidBody* Engine::GameObject::pGetComponent<Engine::RigidBody*>() {
@@ -331,14 +314,12 @@ template <> Engine::Mesh* Engine::GameObject::pGetComponent<Engine::Mesh*>() {
 }
 
 template <typename T> void Engine::GameObject::DeleteComponent() {
-
 }
 
 template <> void Engine::GameObject::DeleteComponent<Engine::RigidBody>() {
     pRigidBody->Destroy(Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld);
     delete pRigidBody;
     IsRigidbodyCreated = false;
-   
 }
 
 template <> void Engine::GameObject::DeleteComponent<Engine::Mesh>() {
@@ -348,121 +329,119 @@ template <> void Engine::GameObject::DeleteComponent<Engine::Mesh>() {
 }
 
 Engine::GameObject::GameObject() {
-	Type = ENTITY_TYPE_GAME_OBJECT;
-	Name = "Game Object";
-	ID = 0;
+    Type = ENTITY_TYPE_GAME_OBJECT;
+    Name = "Game Object";
+    ID = 0;
 }
 
 void Engine::GameObject::UpdateUniforms(uint32_t imageIndex, VkDevice device, Camera camera, std::vector<DataTypes::PointLightAttributes_t*> spotlightAttributes, std::vector<DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes) {
-	
     if (pRigidBody != nullptr) {
-		pRigidBody->pGetDebugMesh()->UpdateUniforms(imageIndex, device, camera.GetViewProjectionForEntity());
-	}
-	if (pMesh != nullptr) {
-		pMesh->UpdateUniforms(imageIndex, device, camera.GetPosition(), camera.GetViewProjectionForEntity(), Transform.GetMatrixProduct(), spotlightAttributes,  directionalLightAttributes);
-	}
+        pRigidBody->pGetDebugMesh()->UpdateUniforms(imageIndex, device, camera.GetViewProjectionForEntity());
+    }
+    if (pMesh != nullptr) {
+        pMesh->UpdateUniforms(imageIndex, device, camera.GetPosition(), camera.GetViewProjectionForEntity(), Transform.GetMatrixProduct(), spotlightAttributes, directionalLightAttributes);
+    }
 }
 
 void Engine::GameObject::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
-	if (ENABLE_RIGIDBODY_MESH && Globals::states.showRigidbodyMeshes && pRigidBody != nullptr) {
-		pRigidBody->pGetDebugMesh()->Draw(commandBuffer, imageIndex,renderer.graphicsPipelineForRigidBodyMesh.Get());
-	}
-	if (Globals::states.showMeshes && pMesh != nullptr) {
-		pMesh->Draw(commandBuffer, imageIndex,renderer.graphicsPipelineForMesh.Get());
-	}
+    if (ENABLE_RIGIDBODY_MESH && Globals::states.showRigidbodyMeshes && pRigidBody != nullptr) {
+        pRigidBody->pGetDebugMesh()->Draw(commandBuffer, imageIndex, renderer.graphicsPipelineForRigidBodyMesh.Get());
+    }
+    if (Globals::states.showMeshes && pMesh != nullptr) {
+        pMesh->Draw(commandBuffer, imageIndex, renderer.graphicsPipelineForMesh.Get());
+    }
 }
 
 void Engine::GameObject::DrawShadowMaps(VkCommandBuffer commandBuffer, int imageIndex, std::vector<VkDescriptorSet>& pDescriptorSets)
 {
     if (Globals::states.showMeshes && pMesh != nullptr) {
-        pMesh->DrawShadowMaps(commandBuffer, imageIndex,pDescriptorSets);
+        pMesh->DrawShadowMaps(commandBuffer, imageIndex, pDescriptorSets);
     }
 }
 
 Engine::GameObject::~GameObject() {
-	if (pMesh != nullptr) {
-		pMesh->Destroy();
-		delete pMesh;
-	}
-	if (pRigidBody != nullptr) {
-		pRigidBody->Destroy(Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld);
-		delete pRigidBody;
-	}
+    if (pMesh != nullptr) {
+        pMesh->Destroy();
+        delete pMesh;
+    }
+
+    if (pRigidBody != nullptr) {
+        pRigidBody->Destroy(Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld);
+        delete pRigidBody;
+    }
 }
 
 void Engine::GameObject::ApplyPhysicsToEntity() {
-	
-	if (pRigidBody != 0) {
-		if (pRigidBody->GetBulletRigidBody()->getMass() != 0) {
+    if (pRigidBody != 0) {
+        if (pRigidBody->GetBulletRigidBody()->getMass() != 0) {
+            //Получение трансформаций из физической модели
+            btTransform worldTransform;
+            worldTransform = pRigidBody->GetBulletRigidBody()->getCenterOfMassTransform();
 
-			//Получение трансформаций из физической модели
-			btTransform worldTransform;
-			worldTransform = pRigidBody->GetBulletRigidBody()->getCenterOfMassTransform();
-
-			//Применить трансформации к графической модели
-			glm::vec3 position = glm::vec3(
+            //Применить трансформации к графической модели
+            glm::vec3 position = glm::vec3(
                 worldTransform.getOrigin().getX(),
-				worldTransform.getOrigin().getY(),
-				worldTransform.getOrigin().getZ()
+                worldTransform.getOrigin().getY(),
+                worldTransform.getOrigin().getZ()
             );
 
-			Transform.Translate(glm::vec3(position.x, position.y, position.z));
+            Transform.Translate(glm::vec3(position.x, position.y, position.z));
 
-			glm::quat quaternion = glm::quat(
-				(float)worldTransform.getRotation().getX(),
-				(float)worldTransform.getRotation().getY(),
-				(float)worldTransform.getRotation().getZ(),
-				(float)worldTransform.getRotation().getW()
-			);
+            glm::quat quaternion = glm::quat(
+                (float)worldTransform.getRotation().getX(),
+                (float)worldTransform.getRotation().getY(),
+                (float)worldTransform.getRotation().getZ(),
+                (float)worldTransform.getRotation().getW()
+            );
 
-			Transform.SetQuaternion(quaternion);
+            Transform.SetQuaternion(quaternion);
 
-			if (pRigidBody->pGetDebugMesh() != nullptr) {
-				pRigidBody->pGetDebugMesh()->Transform.Translate(position);
-				pRigidBody->pGetDebugMesh()->Transform.SetQuaternion(quaternion);
-			}
-		}
-	}
+            if (pRigidBody->pGetDebugMesh() != nullptr) {
+                pRigidBody->pGetDebugMesh()->Transform.Translate(position);
+                pRigidBody->pGetDebugMesh()->Transform.SetQuaternion(quaternion);
+            }
+        }
+    }
 }
 
 void Engine::GameObject::ApplyEntityTransformToRigidbody() {
-	if (pRigidBody != nullptr) {
-		pRigidBody->SetRigidBodyTransform(Transform);
-	}
+    if (pRigidBody != nullptr) {
+        pRigidBody->SetRigidBodyTransform(Transform);
+    }
 }
 
 Engine::CubemapObject::CubemapObject(std::vector<std::string> paths) {
-	Type = ENTITY_TYPE_CUBEMAP_OBJECT;
-	Name = "CubemapObect";
-	ID = 0;
+    Type = ENTITY_TYPE_CUBEMAP_OBJECT;
+    Name = "CubemapObect";
+    ID = 0;
 
     cubemapPaths = paths;
 
-	pMesh = new CubemapMesh;
-	pMesh->CreateCubemapMesh(paths);
+    pMesh = new CubemapMesh;
+    pMesh->CreateCubemapMesh(paths);
 }
 
 void Engine::CubemapObject::Draw(VkCommandBuffer commandBuffer, int imageIndex) {
-	if (Globals::states.showSkybox && pMesh != nullptr) {
-		pMesh->Draw(commandBuffer, imageIndex, renderer.graphicsPipelineForCubemapObjects.Get());
-	}
+    if (Globals::states.showSkybox && pMesh != nullptr) {
+        pMesh->Draw(commandBuffer, imageIndex, renderer.graphicsPipelineForCubemapObjects.Get());
+    }
 }
 
 void Engine::CubemapObject::UpdateUniforms(uint32_t imageIndex, VkDevice device, Camera camera) {
-	if (pMesh != nullptr) {
-		pMesh->UpdateUniforms(imageIndex, device, camera.GetViewProjectionForCubemap());
-	}
+    if (pMesh != nullptr) {
+        pMesh->UpdateUniforms(imageIndex, device, camera.GetViewProjectionForCubemap());
+    }
 }
 
-std::vector<std::string> Engine::CubemapObject::GetCubemapPaths(){
+std::vector<std::string> Engine::CubemapObject::GetCubemapPaths() {
     return cubemapPaths;
 }
 
 Engine::CubemapObject::~CubemapObject() {
-	if (pMesh != nullptr) {
-		pMesh->Destroy();
-		delete pMesh;
-	}
+    if (pMesh != nullptr) {
+        pMesh->Destroy();
+        delete pMesh;
+    }
 }
 
 Engine::DirectionalLightObject::DirectionalLightObject()
@@ -471,7 +450,7 @@ Engine::DirectionalLightObject::DirectionalLightObject()
     Name = "Directional Light";
     directionalLightSettings.lightColor = glm::vec3(255.0f, 255.0f, 255.0f);
     directionalLightSettings.lightDirection = glm::vec3(0.25, 1, 0.25);
-    
+
     directionalLightSettings.ambient = 1.0f;
     directionalLightSettings.diffuse = 1.0f;
     directionalLightSettings.specular = 1.0f;
@@ -479,7 +458,6 @@ Engine::DirectionalLightObject::DirectionalLightObject()
 
 void Engine::DirectionalLightObject::UpdateUniforms(uint32_t imageIndex, VkDevice device, Camera camera)
 {
-
 }
 
 Engine::DataTypes::DirectionalLightAttributes_t* Engine::DirectionalLightObject::pGetDirectionalLightUniformData()
@@ -489,5 +467,4 @@ Engine::DataTypes::DirectionalLightAttributes_t* Engine::DirectionalLightObject:
 
 Engine::DirectionalLightObject::~DirectionalLightObject()
 {
-
 }

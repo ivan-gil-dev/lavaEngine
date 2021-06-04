@@ -12,44 +12,39 @@
 #include "Renderer/SyncObjects.h"
 #include <spdlog/sinks/basic_file_sink.h>
 namespace Engine {
-	namespace Globals {
+    namespace Lua {
+        EngineAPI_GlobalVar lua_State* gLuaState;
+    }
+    namespace Globals {
+        EngineAPI_GlobalVar KeyPressedEventHandler keyPressedEventHandler;
+        EngineAPI_GlobalVar CursorPosition cursorPosition;
+        EngineAPI_GlobalVar ShowCursorEventHandler showCursorEventHandler;
 
-		EngineAPI_GlobalVar KeyPressedEventHandler keyPressedEventHandler;
-		EngineAPI_GlobalVar CursorPosition cursorPosition;
-		EngineAPI_GlobalVar ShowCursorEventHandler showCursorEventHandler;
+        EngineAPI_GlobalVar int   gHeight = 1366,
+            gWidth = 768;
 
-		EngineAPI_GlobalVar int   gHeight = 1366,
-		                    	  gWidth = 768;
+        EngineAPI_GlobalVar States_t states{
+            false,//ToggleFullscreen
+            true, //ShowMeshes
+            true, //ShowRigidbodyMeshes
+            true, //UseSceneCamera
+            true, //ShowSkybox
+            true  //DrawShadows
+        };
 
-       
+        std::shared_ptr<spdlog::logger> gLogger = spdlog::basic_logger_mt("file", "logs/log.txt", true);
 
+        EngineAPI_GlobalVar BulletPhysicsGlobalObjects bulletPhysicsGlobalObjects;
+        EngineAPI_GlobalVar bool  gIsScenePlaying = false;
+        EngineAPI_GlobalVar double  DeltaTime;
 
-		EngineAPI_GlobalVar States_t states{
-			false,//ToggleFullscreen
-			true, //ShowMeshes
-			true, //ShowRigidbodyMeshes
-			true, //UseSceneCamera
-			true, //ShowSkybox
-			true  //DrawShadows
-		};
-		
+        const int gmax_frames = 2;
 
+        EngineAPI_GlobalVar VkSampleCountFlagBits gMSAAsamples = VK_SAMPLE_COUNT_2_BIT;
+        EngineAPI_GlobalVar lua_State* gLuaState;
 
+        Application App;
 
-		std::shared_ptr<spdlog::logger> gLogger = spdlog::basic_logger_mt("file", "logs/log.txt",true);
-
-		EngineAPI_GlobalVar BulletPhysicsGlobalObjects bulletPhysicsGlobalObjects;
-		EngineAPI_GlobalVar bool  gIsScenePlaying = false;
-		EngineAPI_GlobalVar double  DeltaTime;
-
-		const int gmax_frames = 2;
-
-		EngineAPI_GlobalVar VkSampleCountFlagBits gMSAAsamples = VK_SAMPLE_COUNT_2_BIT;
-
-		Application App;
-
-		
-
-		Scene* gScene;
-	}
+        Scene* gScene;
+    }
 }

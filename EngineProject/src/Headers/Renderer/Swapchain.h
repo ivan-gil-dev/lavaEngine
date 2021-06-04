@@ -5,37 +5,35 @@
 #include	"DataTypes.h"
 #include	<vector>
 #include	<iostream>
-namespace Engine{
-	class Swapchain {
-		VkSwapchainKHR swapchain;
-		VkSwapchainCreateInfoKHR CreateInfo{};
-		std::vector<VkImage> SwapchainImages;
-		std::vector<VkImageView> SwapchainImageViews;
-		std::vector<VkFramebuffer> SwapchainFramebuffers;
-	public:
-		void CreateSwapchain(VkPhysicalDevice physicalDevice, VkDevice device, VkSurfaceKHR surface,
-			DataTypes::QueueIndices_t indices);
-		
-		void CreateImageViews(VkDevice device);
+namespace Engine {
+    class Swapchain {
+        VkSwapchainKHR swapchain;
+        VkSwapchainCreateInfoKHR CreateInfo{};
+        std::vector<VkImage> SwapchainImages;
+        std::vector<VkImageView> SwapchainImageViews;
+        std::vector<VkFramebuffer> SwapchainFramebuffers;
+    public:
+        void CreateSwapchain(VkPhysicalDevice physicalDevice, VkDevice device, VkSurfaceKHR surface,
+            DataTypes::QueueIndices_t indices);
 
-		VkSwapchainKHR Get();
+        void CreateImageViews(VkDevice device);
 
-		void DestroySwapchainObjects(VkDevice device);
+        VkSwapchainKHR Get();
 
-		VkSwapchainCreateInfoKHR GetInfo();
+        void DestroySwapchainObjects(VkDevice device);
 
-		std::vector<VkImageView>* PGetImageViews();
+        VkSwapchainCreateInfoKHR GetInfo();
 
-		std::vector<VkFramebuffer> GetSwapchainFramebuffers();
+        std::vector<VkImageView>* PGetImageViews();
 
-		void SetFramebuffers(std::vector<VkFramebuffer> framebuffers);
+        std::vector<VkFramebuffer> GetSwapchainFramebuffers();
 
-	};
+        void SetFramebuffers(std::vector<VkFramebuffer> framebuffers);
+    };
 
-	//namespace Globals{
-	//	extern Swapchain gSwapchain;
-	//}
-	
+    //namespace Globals{
+    //	extern Swapchain gSwapchain;
+    //}
 }
 
 #endif

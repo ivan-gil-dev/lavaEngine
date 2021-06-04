@@ -24,4 +24,8 @@
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="scripts\test.lua" />
+    <None Include="CoreAssets\settings.lua" />
+  </ItemGroup>
 </Project>
