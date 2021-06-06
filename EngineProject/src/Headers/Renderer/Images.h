@@ -108,7 +108,8 @@ namespace Engine {
         void CreateDepthImageView(VkDevice device);
     public:
         void CreateDepthBuffer(VkDevice logicalDevice, VkQueue commandBufferQueue,
-            VkPhysicalDevice physicalDevice, VkCommandPool commandPool, int swapchainImageViewCount, VkDescriptorPool pool, VkDescriptorSetLayout* pSetLayout);
+            VkPhysicalDevice physicalDevice, VkCommandPool commandPool,
+            int swapchainImageViewCount, VkDescriptorPool pool, VkDescriptorSetLayout* pSetLayout);
 
         void UpdateDescriptorSets(VkDevice device, std::vector<VulkanBuffers::UniformBuffer> UniformBuffers);
 

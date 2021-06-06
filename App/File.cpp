@@ -97,6 +97,14 @@ public:
     }
 };
 
+class ScriptTester : public Engine::GameObject {
+public:
+    void Update() override {
+        //int var = script.getVar<lua_Integer>("a");
+        //std::cout << var << std::endl;
+    }
+};
+
 extern "C" {
     __declspec(dllexport) void DemoExe(
         Engine::Scene* scene,
@@ -159,8 +167,8 @@ extern "C" {
                 rigidBody->SetRestitution(2.0f);
                 rigidBody->SetRigidbodyScale(glm::vec3(3.f, 3.f, 3.f));
 
-                Sphere->Transform.Translate(glm::vec3(i * 3, i * 3, i * 3));
-                Sphere->Transform.Rotate(glm::vec3(0.1f, 90.1f, 15.1f));
+                Sphere->Transform.SetTranslation(glm::vec3(i * 3, i * 3, i * 3));
+                Sphere->Transform.SetRotation(glm::vec3(0.1f, 90.1f, 15.1f));
 
                 Sphere->SetID((int)Sphere);
                 Sphere->SetName("Sphere");
@@ -192,8 +200,8 @@ extern "C" {
                 rigidBody->SetRestitution(0.5f);
                 rigidBody->SetRigidbodyScale(glm::vec3(1.5f, 1.5f, 1.5f));
 
-                box->Transform.Translate(glm::vec3(i * 3, i * 3, i * 3));
-                box->Transform.Rotate(glm::vec3(0.1f, 90.1f, 15.1f));
+                box->Transform.SetTranslation(glm::vec3(i * 3, i * 3, i * 3));
+                box->Transform.SetRotation(glm::vec3(0.1f, 90.1f, 15.1f));
 
                 box->SetID(reinterpret_cast<int>(box));
                 box->SetName("box");
@@ -229,16 +237,31 @@ extern "C" {
         gameObject2->ApplyEntityTransformToRigidbody();
         entities->push_back(gameObject2);
 
-        GameObject* obj = new GameObject;
+        GameObject* obj = new ScriptTester;
         obj->SetID(reinterpret_cast<int>(obj));
         obj->SetName("Test");
-        obj->AddComponent <RigidBody>();
+        obj->Transform.SetTranslation(glm::vec3(0.0f, 10.0f, 0.0f));
+        obj->pGetScript()->SetScriptPath("CoreAssets/scripts/script.lua");
+
         obj->AddComponent <Mesh>();
+
         mesh = obj->pGetComponent<Mesh*>();
-        rigidBody = obj->pGetComponent<RigidBody*>();
-        mesh->CreateMesh("CoreAssets/kettle/kettle.obj");
-        rigidBody->CreateRigidBody(mesh, dynamicsWorld, obj->GetID());
+        mesh->CreateMesh("CoreAssets/AtlasCube.obj");
+
         entities->push_back(obj);
+
+        GameObject* obj2 = new ScriptTester;
+        obj2->SetID(reinterpret_cast<int>(obj2));
+        obj2->SetName("Test2");
+        obj2->Transform.SetTranslation(glm::vec3(0.0f, 10.0f, 10.0f));
+        obj2->pGetScript()->SetScriptPath("CoreAssets/scripts/script2.lua");
+
+        obj2->AddComponent <Mesh>();
+
+        mesh = obj2->pGetComponent<Mesh*>();
+        mesh->CreateMesh("CoreAssets/AtlasCube.obj");
+
+        entities->push_back(obj2);
 
         DirectionalLightObject* dlight = new DirectionalLightObject;
         dlight->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(1, -1, 1);
@@ -258,18 +281,18 @@ extern "C" {
         directionalLightAttributes->push_back(dlight2->pGetDirectionalLightUniformData());*/
 
         PointLightObject* pointLight = new PointLightObject;
-        pointLight->Transform.Translate(glm::vec3(1.0f, 585.0f, 0.0f));
+        pointLight->Transform.SetTranslation(glm::vec3(1.0f, 585.0f, 0.0f));
         pointLight->SetID(reinterpret_cast<int>(pointLight));
         entities->push_back(pointLight);
 
         PointLightObject* pointLight2 = new PointLightObject;
-        pointLight2->Transform.Translate(glm::vec3(25.0f, 3.0f, 13.0f));
+        pointLight2->Transform.SetTranslation(glm::vec3(25.0f, 3.0f, 13.0f));
         pointLight2->pGetPointLightUniformData()->diffuse = 100;
         pointLight2->SetID(reinterpret_cast<int>(pointLight2));
         entities->push_back(pointLight2);
 
         PointLightObject* pointLight3 = new PointLightObject;
-        pointLight3->Transform.Translate(glm::vec3(80.0f, 3.0f, 13.0f));
+        pointLight3->Transform.SetTranslation(glm::vec3(80.0f, 3.0f, 13.0f));
         pointLight3->pGetPointLightUniformData()->diffuse = 100;
         pointLight3->SetID(reinterpret_cast<int>(pointLight3));
         entities->push_back(pointLight3);

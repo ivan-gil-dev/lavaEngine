@@ -42,43 +42,43 @@
     <ClCompile Include="src\EntryPoint.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Headers\Renderer\Buffers.cpp">
+    <ClCompile Include="src\Source\Buffers.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Headers\Renderer\Images.cpp">
+    <ClCompile Include="src\Source\Images.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Headers\Mesh.cpp">
+    <ClCompile Include="src\Source\Mesh.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Headers\Application.cpp">
+    <ClCompile Include="src\Source\Application.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Headers\Globals.cpp">
+    <ClCompile Include="src\Source\Globals.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Headers\RigidBody.cpp">
+    <ClCompile Include="src\Source\RigidBody.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Headers\Entities.cpp">
+    <ClCompile Include="src\Source\Entities.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Headers\Renderer\Swapchain.cpp">
+    <ClCompile Include="src\Source\Swapchain.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Headers\Renderer\Renderer.cpp">
+    <ClCompile Include="src\Source\Renderer.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Headers\Scene.cpp">
+    <ClCompile Include="src\Source\Scene.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Headers\Renderer\Pipelines.cpp">
+    <ClCompile Include="src\Source\Pipelines.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Headers\Renderer\SyncObjects.cpp">
+    <ClCompile Include="src\Source\SyncObjects.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\Headers\Script.cpp">
+    <ClCompile Include="src\Source\Script.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>

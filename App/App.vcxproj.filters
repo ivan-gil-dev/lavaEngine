@@ -27,5 +27,6 @@
   <ItemGroup>
     <None Include="scripts\test.lua" />
     <None Include="CoreAssets\settings.lua" />
+    <None Include="CoreAssets\scripts\script.lua" />
   </ItemGroup>
 </Project>

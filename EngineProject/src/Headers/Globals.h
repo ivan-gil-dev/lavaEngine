@@ -20,6 +20,9 @@ extern "C" {
 
 #pragma comment(lib,"lua54/liblua54.a")
 
+#include <LuaBridge/LuaBridge.h>
+#include <LuaBridge/detail/LuaRef.h>
+
 #define EngineAPI_Export __declspec(dllexport)
 
 #ifdef ExportGlobalsDLL

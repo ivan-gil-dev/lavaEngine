@@ -1,47 +1,32 @@
 #pragma once
 #include "Globals.h"
 namespace Engine {
+    class Entity;
     namespace Lua {
-        class Script
+        class EngineAPI_Export Script
         {
-            bool CheckLua(int r) {
-                if (r != LUA_OK)
-                {
-                    std::string err = lua_tostring(gLuaState, -1);
-                    spdlog::warn("Lua error: {0}", err);
-                    std::cout << err << std::endl;
-                }
-                return r;
-            }
+            bool CheckLua(int r);
+
+            std::string path = "";
 
         public:
-            bool doFile(std::string path) {
-                bool r = CheckLua(luaL_dofile(gLuaState, path.c_str()));
-                return r;
-            }
+            int doScriptUpdate(Entity* entity);
 
-            template <typename T> T getVar(std::string varName) {
-            }
+            int doScript();
 
-            template <> int getVar<int>(std::string varName) {
-                lua_getglobal(Engine::Lua::gLuaState, varName.c_str());
-                return lua_tointeger(Engine::Lua::gLuaState, -1);
-            }
+            void SetScriptPath(std::string scrPath);
 
-            template <> float getVar<float>(std::string varName) {
-                lua_getglobal(Engine::Lua::gLuaState, varName.c_str());
-                return lua_tonumber(Engine::Lua::gLuaState, -1);
-            }
+            std::string GetScriptPath();
 
-            template <> bool getVar<bool>(std::string varName) {
-                lua_getglobal(Engine::Lua::gLuaState, varName.c_str());
-                return lua_toboolean(Engine::Lua::gLuaState, -1);
-            }
+            template <typename T> T getVar(std::string varName);
 
-            template <> std::string getVar<std::string>(std::string varName) {
-                lua_getglobal(Engine::Lua::gLuaState, varName.c_str());
-                return lua_tostring(Engine::Lua::gLuaState, -1);
-            }
+            template <> lua_Integer getVar<lua_Integer>(std::string varName);
+
+            template <> lua_Number getVar<lua_Number>(std::string varName);
+
+            template <> bool getVar<bool>(std::string varName);
+
+            template <> std::string getVar<std::string>(std::string varName);
         };
     }
 }

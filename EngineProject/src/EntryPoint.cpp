@@ -1,6 +1,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #  pragma warning( push )
 #  pragma warning( disable: 4099 )
+
 #include	"Headers/Application.h"
 #include <spdlog/sinks/basic_file_sink.h>
 

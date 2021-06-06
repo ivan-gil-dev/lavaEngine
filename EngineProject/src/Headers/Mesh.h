@@ -15,8 +15,7 @@
 
 namespace Engine {
     //Часть трехмерной модели//
-    //Кол-во таких частей зависит от кол-ва материалов//
-    struct Face {
+    struct Shape {
         std::vector<uint32_t> indexes;
         VulkanBuffers::IndexBuffer indexBuffer;
         short MatID;
@@ -39,8 +38,8 @@ namespace Engine {
 
         //Вершины//
         std::vector<DataTypes::MeshVertex_t>			Vertices;
-        //Грани//
-        std::vector<Face>								Faces;
+        //Форма//
+        std::vector<Shape>								Shapes;
 
         //Уникальные вершины//
         std::unordered_map<DataTypes::MeshVertex_t, uint32_t> UniqueVertices{};
@@ -122,8 +121,10 @@ namespace Engine {
 
         void CreateMesh_FromThread(std::string modelPath, std::atomic<bool>& ready);
 
-        void UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec3 cameraPosition, DataTypes::ViewProjection_t viewProjection, glm::mat4 TransformMatrixProduct,
-            std::vector<DataTypes::PointLightAttributes_t*> spotlightAttributes, std::vector <DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes);
+        void UpdateUniforms(uint32_t imageIndex, VkDevice device, glm::vec3 cameraPosition,
+            DataTypes::ViewProjection_t viewProjection, glm::mat4 TransformMatrixProduct,
+            std::vector<DataTypes::PointLightAttributes_t*> spotlightAttributes,
+            std::vector <DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes);
 
         void Destroy();
     };

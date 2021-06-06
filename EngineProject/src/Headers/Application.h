@@ -47,8 +47,7 @@ public:
 
     ImDrawData* ImguiDrawData;
 
-    int			WindowWidth,
-        WindowHeight;
+    int			WindowWidth, WindowHeight;
 
     std::chrono::steady_clock::time_point Time,
         LastFrameTime;

@@ -88,10 +88,6 @@ namespace Engine {
             }
         }
     };
-
-    /*namespace Globals{
-        extern PhysicalDevice gPhysicalDevice;
-    }*/
 }
 
 #endif

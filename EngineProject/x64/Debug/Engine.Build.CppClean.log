@@ -1,6 +1,5 @@
 g:\dev\cpp\winapi branch\engineproject\x64\debug\vc142.pdb
 g:\dev\cpp\winapi branch\engineproject\x64\debug\vc142.idb
-g:\dev\cpp\winapi branch\engineproject\x64\debug\imgui_widgets.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\imgui_impl_win32.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\imgui_impl_vulkan.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\imgui_impl_glfw.obj
@@ -20,6 +19,8 @@ g:\dev\cpp\winapi branch\engineproject\x64\debug\application.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\entrypoint.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\renderer.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\pipelines.obj
+g:\dev\cpp\winapi branch\engineproject\x64\debug\script.obj
+g:\dev\cpp\winapi branch\engineproject\x64\debug\imgui_widgets.obj
 g:\dev\cpp\winapi branch\engineproject\x64\debug\volk.obj
 g:\dev\cpp\winapi branch\x64\debug\engine.lib
 g:\dev\cpp\winapi branch\x64\debug\engine.exp
@@ -30,6 +31,5 @@ g:\dev\cpp\winapi branch\engineproject\x64\debug\engine.tlog\cl.read.1.tlog
 g:\dev\cpp\winapi branch\engineproject\x64\debug\engine.tlog\cl.write.1.tlog
 g:\dev\cpp\winapi branch\engineproject\x64\debug\engine.tlog\engine.write.1u.tlog
 g:\dev\cpp\winapi branch\engineproject\x64\debug\engine.tlog\link.command.1.tlog
-g:\dev\cpp\winapi branch\engineproject\x64\debug\engine.tlog\link.delete.1.tlog
 g:\dev\cpp\winapi branch\engineproject\x64\debug\engine.tlog\link.read.1.tlog
 g:\dev\cpp\winapi branch\engineproject\x64\debug\engine.tlog\link.write.1.tlog

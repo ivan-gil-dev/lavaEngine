@@ -156,6 +156,7 @@
     <ClInclude Include="FloorScript.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="CoreAssets\scripts\script.lua" />
     <None Include="CoreAssets\settings.lua" />
     <None Include="scripts\test.lua" />
   </ItemGroup>

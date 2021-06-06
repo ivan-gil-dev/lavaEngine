@@ -8,6 +8,7 @@
 #include "../../vendor/glm/gtc/quaternion.hpp"
 #include "../../vendor/glm/gtx/quaternion.hpp"
 
+#include "Script.h"
 #include "Renderer/DescriptorSetLayouts.h"
 #include "Renderer/DataTypes.h"
 #include "Renderer/Images.h"
@@ -39,10 +40,22 @@ namespace Engine {
         EntityType Type;
         int ID;
         std::string Name;
+        Lua::Script script;
         Entity* ref;
     public:
+
+        void lua_Test(std::string testVar);
+
+        void lua_MoveEntity(float x, float y, float z);
+
+        void lua_RotateEntity(float x, float y, float z);
+
         Entity();
         virtual ~Entity();
+
+        virtual void ExecuteScript();
+
+        Lua::Script* pGetScript();
 
         Transform Transform;
 
@@ -169,9 +182,13 @@ namespace Engine {
 
         template <> void DeleteComponent<Mesh>();
 
-        void UpdateUniforms(uint32_t imageIndex, VkDevice device, Camera camera, std::vector<DataTypes::PointLightAttributes_t*> spotlightAttributes, std::vector<DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes);
+        void UpdateUniforms(uint32_t imageIndex, VkDevice device,
+            Camera camera, std::vector<DataTypes::PointLightAttributes_t*> spotlightAttributes,
+            std::vector<DataTypes::DirectionalLightAttributes_t*> directionalLightAttributes);
 
         void Draw(VkCommandBuffer commandBuffer, int imageIndex) override;
+
+        void ExecuteScript() override;
 
         void DrawShadowMaps(VkCommandBuffer commandBuffer, int imageIndex, std::vector<VkDescriptorSet>& pDescriptorSets);
 

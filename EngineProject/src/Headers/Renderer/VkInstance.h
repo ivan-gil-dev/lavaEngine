@@ -18,7 +18,7 @@ namespace Engine {
     //Слой валидации (проверка объектов при создании или удалении в соответствии со спецификацией KHRONOS)//
     static std::vector<const char*> layers = { "VK_LAYER_KHRONOS_validation" };
 
-    //Функция определяющая как выводить и тип выводимых отладочных сообщений//
+    //Функция определяющая как выводить сообщения для отладки//
     static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType,
         const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData) {
         if (messageType == VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT) {
@@ -41,9 +41,9 @@ namespace Engine {
         //Информация о создании сеанса//
         VkInstanceCreateInfo createInfo{};
         //Обработчик отладочных сообщений//
-        VkDebugUtilsMessengerEXT debugMessenger; \
-            //Информация о создании обработчика отладочных сообщений//
-            VkDebugUtilsMessengerCreateInfoEXT messengerInfo = {};
+        VkDebugUtilsMessengerEXT debugMessenger;
+        //Информация о создании обработчика отладочных сообщений//
+        VkDebugUtilsMessengerCreateInfoEXT messengerInfo = {};
     public:
         //Создать сеанс//
         void createInstance() {
