@@ -1,4 +1,6 @@
 #pragma once
+#  pragma warning( push )
+#  pragma warning( disable: 4251 )
 #include "Globals.h"
 namespace Engine {
     class Entity;
@@ -30,3 +32,4 @@ namespace Engine {
         };
     }
 }
+# pragma warning( pop )

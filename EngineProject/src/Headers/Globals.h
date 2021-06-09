@@ -114,6 +114,8 @@ namespace Engine {
             }
         };
 
+        EngineAPI_GlobalVar extern bool enableEditor;
+
         EngineAPI_GlobalVar extern States_t states;
 
         EngineAPI_GlobalVar extern int gHeight, gWidth;

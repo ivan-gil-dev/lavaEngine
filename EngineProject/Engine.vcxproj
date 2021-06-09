@@ -76,7 +76,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)/glfw/include;$(SolutionDir)/Lava/vendor;$(VULKAN_SDK)\Include;$(SolutionDir)/spdlog/;$(SolutionDir)/bullet3/src;$(UniversalCRT_IncludePath);$(SolutionDir)/include;$(SolutionDir)/lua;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\bullet3\lib\debug;$(SolutionDir)\glfw\lib-vc2019;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\bullet3\lib\;$(SolutionDir)\glfw\lib-vc2019;$(LibraryPath)</LibraryPath>
     <TargetName>Engine</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -99,7 +99,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level2</WarningLevel>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>BT_USE_DOUBLE_PRECISION;_DEBUG;_CONSOLE;VK_USE_PLATFORM_WIN32_KHR;ExportGlobalsDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>

@@ -6,6 +6,32 @@
 #include <thread>
 #include "../Headers/Script.h"
 
+void ResetEntities(std::vector<Engine::Entity*>* Entities) {
+    for (size_t i = 0; i < Entities->size(); i++) {
+        //Сброс позиции сущности//
+        Entities->at(i)->Transform.ResetTransform();
+
+        if (Entities->at(i)->GetEntityType() == Engine::ENTITY_TYPE_GAME_OBJECT) {
+            Engine::GameObject* obj = (Engine::GameObject*)Entities->at(i);
+
+            if (obj->pGetComponent<Engine::RigidBody*>() != nullptr) {
+                //Применение параметров перемещениия к физическому телу//
+                obj->ApplyEntityTransformToRigidbody();
+
+                btRigidBody* pRigidbody = obj->pGetComponent<Engine::RigidBody*>()->GetBulletRigidBody();
+
+                //Обнуление физических параметров//
+                if (pRigidbody->getMass() != 0) {
+                    pRigidbody->clearForces();
+                    pRigidbody->clearGravity();
+                    pRigidbody->setLinearVelocity(btVector3(0, 0, 0));
+                    pRigidbody->setAngularVelocity(btVector3(0, 0, 0));
+                }
+            }
+        }
+    }
+}
+
 /*Определение функции для вызова из другого проекта*/
 typedef void (*DemoFunc)(
     Engine::Scene*,
@@ -511,31 +537,9 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
             else {
                 Engine::Globals::gIsScenePlaying = false;
 
-                //Сброс параметров объектов//
                 if (ResetPhysics) {
-                    for (size_t i = 0; i < Entities.size(); i++) {
-                        //Сброс позиции сущности//
-                        Entities.at(i)->Transform.ResetTransform();
-
-                        if (Entities.at(i)->GetEntityType() == Engine::ENTITY_TYPE_GAME_OBJECT) {
-                            Engine::GameObject* obj = (Engine::GameObject*)Entities.at(i);
-
-                            if (obj->pGetComponent<Engine::RigidBody*>() != nullptr) {
-                                //Применение параметров перемещениия к физическому телу//
-                                obj->ApplyEntityTransformToRigidbody();
-
-                                btRigidBody* pRigidbody = obj->pGetComponent<Engine::RigidBody*>()->GetBulletRigidBody();
-
-                                //Обнуление физических параметров//
-                                if (pRigidbody->getMass() != 0) {
-                                    pRigidbody->clearForces();
-                                    pRigidbody->clearGravity();
-                                    pRigidbody->setLinearVelocity(btVector3(0, 0, 0));
-                                    pRigidbody->setAngularVelocity(btVector3(0, 0, 0));
-                                }
-                            }
-                        }
-                    }
+                    //Сброс параметров объектов//
+                    ResetEntities(Engine::Globals::gScene->pGetVectorOfEntities());
                     Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld->clearForces();
                     ResetPhysics = false;
                 }
@@ -609,7 +613,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                     {
                         Engine::GameObject* obj = new Engine::GameObject;
                         obj->SetName(Entities[SelectedItem_ID]->GetName());
-                        obj->SetID(int(obj));
+                        obj->SetID(reinterpret_cast<uint64_t>(reinterpret_cast<int*>(obj)));
                         obj->Transform = Entities[SelectedItem_ID]->Transform;
                         if (((Engine::GameObject*)Entities[SelectedItem_ID])->pGetComponent<Engine::Mesh*>() != nullptr)
                         {
@@ -733,7 +737,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                     Engine::GameObject* obj = new Engine::GameObject;
                     //obj->AddComponent<Engine::Mesh>();
                     //obj->pGetComponent<Engine::Mesh*>()->CreateMesh("");
-                    obj->SetID((int)obj);
+                    obj->SetID(reinterpret_cast<uint64_t>(reinterpret_cast<int*>(obj)));
                     Entities.push_back(obj);
                 }
 
@@ -742,7 +746,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                 {
                     Engine::PointLightObject* obj = new Engine::PointLightObject;
 
-                    obj->SetID((int)obj);
+                    obj->SetID(reinterpret_cast<uint64_t>(reinterpret_cast<int*>(obj)));
                     Engine::Globals::gScene->pGetVectorOfSpotlightAttributes()->push_back(obj->pGetPointLightUniformData());
                     Entities.push_back(obj);
                 }
@@ -755,7 +759,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                     obj->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(1, -1, 1);
                     Engine::Globals::gScene->pGetVectorOfDirectionalLightAttributes()->push_back(obj->pGetDirectionalLightUniformData());
 
-                    obj->SetID((int)obj);
+                    obj->SetID(reinterpret_cast<uint64_t>(reinterpret_cast<int*>(obj)));
                     Entities.push_back(obj);
                 }
 
@@ -1122,6 +1126,8 @@ void RegisterClasses() {
 void Application::Init() {
     Engine::Lua::gLuaState = luaL_newstate();
     luaL_openlibs(Engine::Lua::gLuaState);
+
+    luabridge::setGlobal(Engine::Lua::gLuaState, 0, "DeltaTime");
     RegisterClasses();
 
     Engine::Lua::Script scr;
@@ -1130,8 +1136,8 @@ void Application::Init() {
 
     if (r == LUA_OK)
     {
-        WindowWidth = scr.getVar<lua_Integer>("windowWidth");
-        WindowHeight = scr.getVar<lua_Integer>("windowHeight");
+        WindowWidth = (int)scr.getVar<lua_Integer>("windowWidth");
+        WindowHeight = (int)scr.getVar<lua_Integer>("windowHeight");
     }
     else {
         WindowWidth = 1366;
@@ -1140,7 +1146,7 @@ void Application::Init() {
 
     Engine::Globals::gHeight = WindowHeight;
     Engine::Globals::gWidth = WindowWidth;
-    sceneEditor.enableEditor = true;
+
     //Заполнение оконного класса//
     {
         const wchar_t CLASS_NAME[] = L"Engine";
@@ -1214,6 +1220,8 @@ void Application::Init() {
         Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld
     );
 
+    sceneEditor.enableEditor = Engine::Globals::enableEditor;
+
     if (ENABLE_IMGUI) {
         sceneEditor.InitEditor(hwnd);
     }
@@ -1229,6 +1237,8 @@ void Application::Init() {
 //Главный цикл//
 void Application::Execute() {
     MSG msg = { };
+    ResetEntities(Engine::Globals::gScene->pGetVectorOfEntities());
+
     while (msg.message != WM_QUIT) {
         //Обработка сообщений//
         if (PeekMessage(&msg, NULL, 0U, 0U, PM_REMOVE)) {
@@ -1246,10 +1256,11 @@ void Application::Execute() {
 
         //Перевод в секунды
         Engine::Globals::DeltaTime /= 1000000;
+        luabridge::setGlobal(Engine::Lua::gLuaState, Engine::Globals::DeltaTime, "DeltaTime");
 
         if (Engine::Globals::gIsScenePlaying) {
             //Шаг симуляции физической модели перемещения//
-            float step = Engine::Globals::DeltaTime;
+            float step = (float)Engine::Globals::DeltaTime;
             Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld->stepSimulation(step, 0);
         }
 

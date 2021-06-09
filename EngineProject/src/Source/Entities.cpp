@@ -303,7 +303,7 @@ void Engine::Entity::SetName(std::string name) {
     Name = name;
 }
 
-void Engine::Entity::SetID(int Id) {
+void Engine::Entity::SetID(uint64_t Id) {
     ID = Id;
 }
 
@@ -315,7 +315,7 @@ std::string Engine::Entity::GetName() {
     return Name;
 }
 
-int Engine::Entity::GetID() {
+uint64_t Engine::Entity::GetID() {
     return ID;
 }
 

@@ -20,7 +20,7 @@ private:
 
 public:
     std::atomic<bool> LoadingIsEnded = true;//Ожидание завершения потока загрузки
-    bool enableEditor = true;
+    bool enableEditor = false;
     Engine::EditorCamera editorCamera{};//Камера редактора сцен
     int   SelectedItem_ID = -1;  //Текущий выбранный элемент
     float MenubarHeight = 0;    //Высота менюбара (для вычисления отступов)

@@ -38,7 +38,7 @@ namespace Engine {
     class EngineAPI_Export Entity {
     protected:
         EntityType Type;
-        int ID;
+        uint64_t ID;
         std::string Name;
         Lua::Script script;
         Entity* ref;
@@ -71,13 +71,13 @@ namespace Engine {
 
         void SetName(std::string name);
 
-        void SetID(int Id);
+        void SetID(uint64_t Id);
 
         EntityType GetEntityType();
 
         std::string GetName();
 
-        int GetID();
+        uint64_t GetID();
     };
 
     class EngineAPI_Export Camera : public Entity {

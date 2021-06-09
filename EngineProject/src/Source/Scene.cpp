@@ -71,21 +71,21 @@ void Engine::Scene::Load(const std::string& path)
                     rigidbody->CreateRigidBody(
                         RIGIDBODY_SHAPE_TYPE_PLANE,
                         Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
-                        int(entity));
+                        reinterpret_cast<uint64_t>(reinterpret_cast<int*>(entity)));
                 }
 
                 if (shapeType == "Cube") {
                     rigidbody->CreateRigidBody(
                         RIGIDBODY_SHAPE_TYPE_CUBE,
                         Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
-                        int(entity));
+                        reinterpret_cast<uint64_t>(reinterpret_cast<int*>(entity)));
                 }
 
                 if (shapeType == "Sphere") {
                     rigidbody->CreateRigidBody(
                         RIGIDBODY_SHAPE_TYPE_SPHERE,
                         Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
-                        int(entity));
+                        reinterpret_cast<uint64_t>(reinterpret_cast<int*>(entity)));
                 }
 
                 rigidbody->SetMass(entityJson["Rigidbody"]["Mass"]);
@@ -121,9 +121,9 @@ void Engine::Scene::Load(const std::string& path)
                 entityJson["LightColor"]["B"]
             );
 
-            attrib->ambient = entityJson.value("Ambient", 1);
-            attrib->diffuse = entityJson.value("Diffuse", 1);
-            attrib->specular = entityJson.value("Specular", 1);
+            attrib->ambient = entityJson.value("Ambient", 1.f);
+            attrib->diffuse = entityJson.value("Diffuse", 1.f);
+            attrib->specular = entityJson.value("Specular", 1.f);
 
             pointLightAttributes.push_back(attrib);
         }
@@ -141,9 +141,9 @@ void Engine::Scene::Load(const std::string& path)
             attrib->lightColor.g = entityJson["Color"]["G"];
             attrib->lightColor.b = entityJson["Color"]["B"];
 
-            attrib->ambient = entityJson.value("Ambient", 1);
+            attrib->ambient = entityJson.value("Ambient", 1.0f);
             attrib->diffuse = entityJson.value("Diffuse", 0.5);
-            attrib->specular = entityJson.value("Specular", 1);
+            attrib->specular = entityJson.value("Specular", 1.f);
 
             directionalLightAttributes.push_back(attrib);
         }
@@ -163,7 +163,7 @@ void Engine::Scene::Load(const std::string& path)
             break;
         }
 
-        entity->SetID((int)entity);
+        entity->SetID(reinterpret_cast<uint64_t>(reinterpret_cast<int*>(entity)));
         entity->SetName(entityJson["Name"]);
 
         glm::vec3 Position;
@@ -232,7 +232,7 @@ void Engine::Scene::New()
 
     mesh->CreateMesh("CoreAssets/plane.obj");
 
-    gameObject2->SetID((int)gameObject2);
+    gameObject2->SetID(reinterpret_cast<uint64_t>(reinterpret_cast<int*>(gameObject2)));
     gameObject2->SetName("Plane");
 
     gameObject2->Transform.Scale(glm::vec3(70.0f, 70.0f, 70.0f));
@@ -242,7 +242,7 @@ void Engine::Scene::New()
     dlight->pGetDirectionalLightUniformData()->lightDirection = glm::vec3(1, -1, 1);
     dlight->pGetDirectionalLightUniformData()->lightColor = glm::vec3(1, 1, 1);
 
-    dlight->SetID((int)dlight);
+    dlight->SetID(reinterpret_cast<uint64_t>(reinterpret_cast<int*>(dlight)));
     entities.push_back(dlight);
     directionalLightAttributes.push_back(dlight->pGetDirectionalLightUniformData());
 }

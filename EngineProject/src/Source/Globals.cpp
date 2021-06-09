@@ -42,6 +42,7 @@ namespace Engine {
 
         EngineAPI_GlobalVar VkSampleCountFlagBits gMSAAsamples = VK_SAMPLE_COUNT_2_BIT;
         EngineAPI_GlobalVar lua_State* gLuaState;
+        EngineAPI_GlobalVar bool enableEditor;
 
         Application App;
 

@@ -72,7 +72,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(SolutionDir)Engine\src\Headers;$(SolutionDir)Engine\vendor\;$(VULKAN_SDK)/include;$(SolutionDir)/spdlog/;$(SolutionDir)/bullet3/src;$(SolutionDir)/glfw/include;$(SolutionDir)/include;$(SolutionDir)/lua;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)\bullet3\lib\debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)\bullet3\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
