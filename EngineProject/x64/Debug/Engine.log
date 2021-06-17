@@ -1,10 +1,7 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(519,5): warning MSB8028: промежуточный каталог (x64\Debug\) содержит файлы, которые используются совместно с другим проектом (Lava.vcxproj).  Это может привести к ошибкам очистки и перестроения.
-  Script.cpp
-  Pipelines.cpp
-  Renderer.cpp
   EntryPoint.cpp
   Application.cpp
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Source\Application.cpp(1253,100): warning C4244: =: преобразование "_Rep" в "double", возможна потеря данных
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Source\Application.cpp(1428,100): warning C4244: =: преобразование "_Rep" в "double", возможна потеря данных
           with
           [
               _Rep=__int64
@@ -34,41 +31,27 @@ C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.2
           [
               _Iter=wchar_t *
           ]
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Source\Application.cpp(106): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Source\Application.cpp(121): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
           with
           [
               _Elem=wchar_t,
               _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
               _Alloc=std::allocator<char>
           ]
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Source\Application.cpp(106): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Source\Application.cpp(121): message : выполняется компиляция ссылки на экземпляр шаблон функции "std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)"
           with
           [
               _Elem=wchar_t,
               _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
               _Alloc=std::allocator<char>
           ]
-  Buffers.cpp
   Entities.cpp
   Globals.cpp
-  Images.cpp
   Mesh.cpp
-G:\dev\cpp\WinAPI Branch\EngineProject\src\Source\Mesh.cpp(135,42): warning C4834: отмена возвращаемого значения функции с атрибутом "nodiscard"
-  SyncObjects.cpp
-  RigidBody.cpp
-  Swapchain.cpp
+G:\dev\cpp\WinAPI Branch\EngineProject\src\Source\Mesh.cpp(136,42): warning C4834: отмена возвращаемого значения функции с атрибутом "nodiscard"
+  Renderer.cpp
   Scene.cpp
-  imgui.cpp
-  imgui_demo.cpp
-  imgui_draw.cpp
-  imgui_impl_glfw.cpp
-  imgui_impl_vulkan.cpp
-  imgui_impl_win32.cpp
   Создание кода...
-  Компиляция...
-  imgui_widgets.cpp
-  Создание кода...
-  volk.c
 LINK : warning LNK4075: не учитывается "/INCREMENTAL" из-за спецификации "/FORCE"
      Создается библиотека G:\dev\cpp\WinAPI Branch\x64\Debug\Engine.lib и объект G:\dev\cpp\WinAPI Branch\x64\Debug\Engine.exp
 LINK : warning LNK4098: библиотека по умолчанию "MSVCRT" конфликтует с использованием других библиотек; используйте /NODEFAULTLIB:library

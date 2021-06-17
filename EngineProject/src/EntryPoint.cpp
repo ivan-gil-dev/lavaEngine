@@ -14,7 +14,7 @@ __declspec(dllexport) int main() {
     catch (const std::exception& e) {
         spdlog::error(e.what());
         Engine::Globals::gLogger->error(e.what());
-        std::cin.get();
+        return -1;
     }
     return 0;
 }

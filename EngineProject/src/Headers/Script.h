@@ -4,6 +4,8 @@
 #include "Globals.h"
 namespace Engine {
     class Entity;
+    class GameObject;
+
     namespace Lua {
         class EngineAPI_Export Script
         {
@@ -13,6 +15,8 @@ namespace Engine {
 
         public:
             int doScriptUpdate(Entity* entity);
+
+            int doScriptOnCollision(GameObject* obj1, GameObject* obj2);
 
             int doScript();
 

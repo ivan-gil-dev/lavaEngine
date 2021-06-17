@@ -1,4 +1,6 @@
+
 function update(e)
-    e:RotateEntity(0,1,0)
+    rotSpeed = 1000    
+    e:RotateEntity(0,rotSpeed*DeltaTime,0)
 end
 

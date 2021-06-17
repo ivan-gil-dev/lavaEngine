@@ -2,19 +2,10 @@
 #include "../Headers/Events.h"
 #include "../Headers/Renderer/Renderer.h"
 
-//void Engine::Camera::SetPosition(glm::vec3 Pos)
-//{
-//    //CameraPos = glm::vec3(0);
-//
-//    CameraPos += Pos.x / CameraFront;
-//    CameraPos += Pos.y / CameraUp;
-//    CameraPos += Pos.z / glm::normalize(glm::cross(CameraFront, CameraUp));
-//
-//    std::cout << CameraPos.x << " " << CameraPos.y << " " << CameraPos.z << " " << std::endl;
-//}
-
 Engine::Camera::Camera()
 {
+    Name = "Camera";
+    Type = ENTITY_TYPE_CAMERA_OBJECT;
     CursorFirstMouse = true;
 
     CameraPos = glm::vec3(0.0f, 6.0f, 0.0f);
@@ -37,6 +28,16 @@ Engine::Camera::Camera()
     CameraFront = glm::normalize(direction);
 
     ProjectionMatrix = glm::perspective(glm::radians(FOV), ((float)Engine::Globals::gWidth / Engine::Globals::gHeight), 0.1f, 1000.0f);
+}
+
+void Engine::Camera::SetActive()
+{
+    Active = true;
+}
+
+void Engine::Camera::SetNotActive()
+{
+    Active = false;
 }
 
 void Engine::Camera::SetCameraPos(glm::vec3 pos)
@@ -239,6 +240,21 @@ Engine::DataTypes::PointLightAttributes_t* Engine::PointLightObject::pGetPointLi
 Engine::PointLightObject::~PointLightObject() {
 }
 
+void Engine::PointLightObject::ExecuteScript()
+{
+    script.doScriptUpdate(this);
+}
+
+void Engine::Entity::TriggerDestroy()
+{
+    DestroyEntity = true;
+}
+
+bool Engine::Entity::IsDestroyTriggered()
+{
+    return DestroyEntity;
+}
+
 void Engine::Entity::lua_Test(std::string testVar)
 {
     std::cout << testVar << std::endl;
@@ -264,6 +280,11 @@ void Engine::Entity::lua_RotateEntity(float x, float y, float z)
             Transform.GetEulerAngles().z + z
         )
     );
+}
+
+void Engine::Entity::lua_TranslateEntity(float x, float y, float z)
+{
+    Transform.SetTranslation(glm::vec3(x, y, z));
 }
 
 Engine::Entity::Entity() {
@@ -357,12 +378,14 @@ template <typename T> void Engine::GameObject::DeleteComponent() {
 template <> void Engine::GameObject::DeleteComponent<Engine::RigidBody>() {
     pRigidBody->Destroy(Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld);
     delete pRigidBody;
+    pRigidBody = nullptr;
     IsRigidbodyCreated = false;
 }
 
 template <> void Engine::GameObject::DeleteComponent<Engine::Mesh>() {
     pMesh->Destroy();
     delete pMesh;
+    pMesh = nullptr;
     IsMeshCreated = false;
 }
 
@@ -379,7 +402,9 @@ void Engine::GameObject::UpdateUniforms(uint32_t imageIndex, VkDevice device, Ca
         pRigidBody->pGetDebugMesh()->UpdateUniforms(imageIndex, device, camera.GetViewProjectionForEntity());
     }
     if (pMesh != nullptr) {
-        pMesh->UpdateUniforms(imageIndex, device, camera.GetPosition(), camera.GetViewProjectionForEntity(), Transform.GetMatrixProduct(), spotlightAttributes, directionalLightAttributes);
+        pMesh->UpdateUniforms(imageIndex, device, camera.GetPosition(),
+            camera.GetViewProjectionForEntity(), Transform.GetMatrixProduct(),
+            spotlightAttributes, directionalLightAttributes);
     }
 }
 

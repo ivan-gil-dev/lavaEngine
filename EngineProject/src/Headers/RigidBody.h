@@ -13,13 +13,30 @@ namespace Engine {
         RIGIDBODY_SHAPE_TYPE_PLANE,
         RIGIDBODY_SHAPE_TYPE_CUBE,
         RIGIDBODY_SHAPE_TYPE_MESH,
-        RIGIDBODY_SHAPE_TYPE_SPHERE
+        RIGIDBODY_SHAPE_TYPE_SPHERE,
+        RIGIDBODY_SHAPE_TYPE_STATIC_MESH
+    };
+
+    class Engine_Bullet3Rigidbody : public btRigidBody {
+        uint64_t entity_id;
+    public:
+        Engine_Bullet3Rigidbody(btRigidBodyConstructionInfo info) :
+            btRigidBody(info)
+        {
+        }
+
+        void SetEntityId(uint64_t ex_entity_id) {
+            entity_id = ex_entity_id;
+        }
+        uint64_t GetEntityId() {
+            return entity_id;
+        }
     };
 
     class EngineAPI_Export RigidBody {
         RigidBodyShapeType    ShapeType;
-        btConvexShape* pShape;
-        btRigidBody* pRigidBody;
+        btCollisionShape* pShape;
+        Engine_Bullet3Rigidbody* pRigidBody;
 
         btDefaultMotionState* pMotionState;
         WireframeMesh		  DebugMesh;
@@ -34,12 +51,12 @@ namespace Engine {
     private:
         std::vector<glm::vec3>* LoadVertices(std::string modelPath);
 
-        void CreateShape(Mesh* mesh);
+        void CreateShape(Mesh* mesh, bool IsStatic);
 
         void CreateShape(RigidBodyShapeType shapeType);
 
         //Создание твердого тела
-        void CreateBodyWithMass(btDynamicsWorld* dynamicsWorld, int userIndex);
+        void CreateBodyWithMass(btDynamicsWorld* dynamicsWorld, uint64_t userIndex);
 
     public:
         RigidBody();
@@ -52,13 +69,11 @@ namespace Engine {
 
         WireframeMesh* pGetDebugMesh();
 
-        btRigidBody* GetBulletRigidBody();
+        Engine_Bullet3Rigidbody* GetBulletRigidBody();
 
-        btCollisionShape* GetBulletShape();
+        void CreateRigidBody(Mesh* mesh, btDynamicsWorld* dynamicsWorld, uint64_t id, bool IsStatic);
 
-        void CreateRigidBody(Mesh* mesh, btDynamicsWorld* dynamicsWorld, int id);
-
-        void CreateRigidBody(RigidBodyShapeType shapeType, btDynamicsWorld* dynamicsWorld, int id);
+        void CreateRigidBody(RigidBodyShapeType shapeType, btDynamicsWorld* dynamicsWorld, uint64_t id);
 
         void Destroy(btDynamicsWorld* dynamicsWorld);
 

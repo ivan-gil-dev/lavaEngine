@@ -13,12 +13,6 @@ void Engine::Scene::Load(const std::string& path)
         delete entities[i];
     }
 
-    for (size_t i = 0; i < cameras.size(); i++)
-    {
-        delete cameras[i];
-    }
-    cameras.clear();
-
     activeCamera = nullptr;
 
     entities.clear();
@@ -185,6 +179,13 @@ void Engine::Scene::Load(const std::string& path)
         entity->Transform.SetRotation(Rotation);
         entity->Transform.Scale(Scale);
 
+        if (entityJson.count("Script") != 0)
+        {
+            entity->pGetScript()->SetScriptPath(
+                entityJson["Script"].value("Path", "")
+            );
+        }
+
         if (entityJson["Type"] == "GameObject") {
             ((GameObject*)entity)->ApplyEntityTransformToRigidbody();
         }
@@ -195,11 +196,6 @@ void Engine::Scene::Load(const std::string& path)
 
 void Engine::Scene::New()
 {
-    for (size_t i = 0; i < cameras.size(); i++)
-    {
-        delete cameras[i];
-    }
-    cameras.clear();
     activeCamera = nullptr;
 
     for (size_t i = 0; i < entities.size(); i++) {
@@ -346,6 +342,7 @@ void Engine::Scene::SaveAs(const std::string& path)
         sceneJson["Entities"][i]["Transform"]["Rotation"]["X"] = entities[i]->Transform.EulerAngles.x;
         sceneJson["Entities"][i]["Transform"]["Rotation"]["Y"] = entities[i]->Transform.EulerAngles.y;
         sceneJson["Entities"][i]["Transform"]["Rotation"]["Z"] = entities[i]->Transform.EulerAngles.z;
+        sceneJson["Entities"][i]["Script"]["Path"] = entities[i]->pGetScript()->GetScriptPath();
     }
 
     //std::cout << sceneJson.dump(1) << std::endl;
@@ -421,18 +418,26 @@ std::vector<Engine::DataTypes::PointLightAttributes_t*>* Engine::Scene::pGetVect
     return &pointLightAttributes;
 }
 
-std::vector<Engine::Camera*>* Engine::Scene::pGetVectorOfCameras()
+void Engine::Scene::SetActiveCamera(Camera* camera)
 {
-    return &cameras;
+    if (activeCamera != nullptr)
+    {
+        activeCamera->SetNotActive();
+    }
+    activeCamera = camera;
+    activeCamera->SetActive();
 }
 
-void Engine::Scene::SetActiveCameraFromIndex(int id)
-{
-    if (id < cameras.size())
-    {
-        activeCamera = cameras[id];
-    }
-}
+//void Engine::Scene::SetActiveCameraFromObjID(uint64_t id)
+//{
+//    for (size_t i = 0; i < entities.size(); i++)
+//    {
+//        if (entities[i]->GetID() == id && entities[i]->GetEntityType() == ENTITY_TYPE_CAMERA_OBJECT)
+//        {
+//            activeCamera = (Camera*)entities[i];
+//        }
+//    }
+//}
 
 Engine::Camera* Engine::Scene::pGetActiveCamera()
 {
@@ -452,11 +457,6 @@ void Engine::Scene::UpdateActiveCamera()
 void Engine::Scene::CleanScene()
 {
     //Save();
-
-    for (size_t i = 0; i < cameras.size(); i++)
-    {
-        delete cameras[i];
-    }
 
     for (size_t i = 0; i < entities.size(); i++) {
         delete entities[i];

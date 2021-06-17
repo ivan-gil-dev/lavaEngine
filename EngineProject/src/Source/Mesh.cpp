@@ -25,6 +25,7 @@ void Engine::Mesh::LoadModel(std::string modelPath) {
             }
 
             reader.ParseFromFile("CoreAssets/cube.obj", reader_config);
+            MeshPath = "CoreAssets/cube.obj";
         }
     }
 
@@ -440,6 +441,20 @@ std::vector<Engine::DataTypes::MeshVertex_t>* Engine::Mesh::GetVertices() {
     return &Vertices;
 }
 
+std::vector<glm::uint32_t>* Engine::Mesh::GetIndexes()
+{
+    std::vector<uint32_t>* Indexes = new  std::vector<uint32_t>;
+
+    for (int i = 0; i < Shapes.size(); i++)
+    {
+        for (size_t j = 0; j < Shapes[i].indexes.size(); j++)
+        {
+            Indexes->push_back(Shapes[i].indexes[j]);
+        }
+    }
+    return Indexes;
+}
+
 Engine::DataTypes::Material_t Engine::Mesh::GetMaterial() {
     return Material;
 }
@@ -519,7 +534,8 @@ void Engine::Mesh::CreateMesh(std::string modelPath) {
 
         LoadModel(modelPath);
 
-        {//Создание буферов
+        {
+            //Создание буферов
             //<1x1 текстура (0,0,0,255)>
 
             DiffuseTextures_b1.resize(MAX_MATERIALS);

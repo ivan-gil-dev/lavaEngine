@@ -20,7 +20,31 @@ int Engine::Lua::Script::doScriptUpdate(Entity* entity)
     if (r == LUA_OK)
     {
         luabridge::LuaRef update = luabridge::getGlobal(gLuaState, "update");
-        update(entity);
+        if (!update.isNil())
+        {
+            update(entity);
+        }
+
+        return 0;
+    }
+    else {
+        return -1;
+    }
+}
+
+int Engine::Lua::Script::doScriptOnCollision(GameObject* obj1, GameObject* obj2)
+{
+    //Компилировать скрипт
+    int r = doScript();
+    //Если нет ошибок то выполнить функцию onCollision
+    if (r == LUA_OK)
+    {
+        luabridge::LuaRef onCollision = luabridge::getGlobal(gLuaState, "onCollision");
+        if (!onCollision.isNil())
+        {
+            onCollision(obj1, obj2);
+        }
+
         return 0;
     }
     else {

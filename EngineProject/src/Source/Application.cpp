@@ -32,13 +32,14 @@ void ResetEntities(std::vector<Engine::Entity*>* Entities) {
     }
 }
 
-/*Определение функции для вызова из другого проекта*/
+//Определение функции для вызова из .exe
 typedef void (*DemoFunc)(
     Engine::Scene*,
     btDynamicsWorld*
     );
 DemoFunc demo;
 
+//Служебная структура ImGui
 struct InputTextCallback_UserData
 {
     std::string* Str;
@@ -46,6 +47,20 @@ struct InputTextCallback_UserData
     void* ChainCallbackUserData;
 };
 
+//string -> wstring
+std::wstring StringToWideString(const std::string& s)
+{
+    int len;
+    int slength = (int)s.length() + 1;
+    len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
+    wchar_t* buf = new wchar_t[len];
+    MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
+    std::wstring r(buf);
+    delete[] buf;
+    return r;
+}
+
+//Служебная функция ImGui для обработки ввода текста
 int InputTextCallback(ImGuiInputTextCallbackData* data)
 {
     InputTextCallback_UserData* user_data = (InputTextCallback_UserData*)data->UserData;
@@ -100,8 +115,8 @@ std::string WinApiOpenDialog() {
                     // Display the file name to the user.
                     if (SUCCEEDED(hr))
                     {
-                        //                      Получение пути к файлу
-                        //                      и приведение типов из PWSTR -> std::string
+                        // Получение пути к файлу
+                        // и приведение типа из PWSTR -> std::string
                         std::wstring str(pszFilePath);
                         std::string path(str.begin(), str.end());
 
@@ -188,6 +203,7 @@ std::string WinApiSaveDialog() {
     return result;
 }
 
+//Оконная процедура
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     //Обработка оконных событий в ImGui
@@ -201,6 +217,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
             Engine::Globals::keyPressedEventHandler.ProcessKeyDownEvent(wparam, lparam);
         }
 
+        //Убрать звук предупреждения при нажатии комбинаций системных клавиш
         MSG m;
         m = {};
         m.hwnd = hwnd;
@@ -236,7 +253,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         break;
 
     case WM_SIZE:
-        //std::cout << "CALL TO WM_SIZE" << wparam << std::endl;
+        //Пересоздание свапчейна при изменении размера окна
 
         if (Engine::renderer.device.Get() != VK_NULL_HANDLE) {
             Engine::renderer.recreateSwapchain();
@@ -244,12 +261,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 
         return true;
         break;
-
-        /*	case WM_MOVING:
-                    if (Engine::renderer.device.Get() != VK_NULL_HANDLE) {
-                        Engine::renderer.recreateSwapchain();
-                    }
-                    break;*/
 
     case WM_SIZING:
         if (Engine::renderer.device.Get() != VK_NULL_HANDLE) {
@@ -266,6 +277,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
         break;
 
     case WM_MOUSEMOVE:
+        //Получение позиции курсора
         Engine::Globals::cursorPosition.SetCursorPosFromWinAPI(LOWORD(lparam), HIWORD(lparam));
         return true;
         break;
@@ -295,7 +307,7 @@ void SceneEditor::InitEditor(HWND hwnd) {
         throw std::runtime_error(error);
     }
 
-    /*Передача активных компонентов Vulkan в ImGui*/
+    /*Передача существующих дескрипторов Vulkan в ImGui*/
     ImGui_ImplVulkan_InitInfo init_info = {}; {
         init_info.Instance = Engine::renderer.instance.get();
         init_info.PhysicalDevice = Engine::renderer.physicalDevice.Get();
@@ -310,6 +322,7 @@ void SceneEditor::InitEditor(HWND hwnd) {
         init_info.CheckVkResultFn = imguiErrFunction;
     }
 
+    //Инициализация библиотеки ImGui для Vulkan
     if (!ImGui_ImplVulkan_Init(&init_info, Engine::renderer.renderPass.GetRenderPass())) {
         std::string error = "Failed to init imgui for Vulkan";
         throw std::runtime_error(error);
@@ -318,11 +331,10 @@ void SceneEditor::InitEditor(HWND hwnd) {
     Engine::CommandBuffer oneTimeSubmitCommandBuffer;
 
     //Использование буфера команд для загрузки шрифтов в GPU
-    //Затем Imgui будет использовать загруженный шрифт
     oneTimeSubmitCommandBuffer.AllocateCommandBuffer(Engine::renderer.device.Get(), Engine::renderer.commandPool.Get());
     oneTimeSubmitCommandBuffer.BeginCommandBuffer();
 
-    /*Создание текстуры из шрифта(преобразование шрифта в изображение)*/
+    //Загрузка шрифтов в библиотеку
     if (!ImGui_ImplVulkan_CreateFontsTexture(oneTimeSubmitCommandBuffer.Get())) {
         std::string error = "Failed to load fonts to Imgui";
         throw std::runtime_error(error);
@@ -338,19 +350,16 @@ void SceneEditor::InitEditor(HWND hwnd) {
 }
 
 /*Поведение панелей ImGui и порядок отрисовки*/
-void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) {
+void SceneEditor::UpdateEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) {
     if (enableEditor) {
         ImGui::ShowDemoWindow(&DemoWindowActive);
 
         /*Начало записи настроек меню*/
         ImGui::BeginMainMenuBar();
-
         /*получение высоты меню*/
         MenubarHeight = ImGui::GetWindowHeight();
-
         /*Сдвинуть вьюпорт сцены на высоту менюбара*/
         Engine::renderer.rendererViewport.y = MenubarHeight;
-
         /*Уменьшить размер вьюпорта сцены на высоту менюбара*/
         Engine::renderer.rendererViewport.height = Engine::renderer.swapchain.GetInfo().imageExtent.height - MenubarHeight;
 
@@ -362,7 +371,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                 /*Сброс выбранного объекта*/
                 SelectedItem_ID = -1;
 
-                //Ожидание бездействия очереди
+                //Ожидание бездействия очереди обрабоки команд
                 //для выполнения команд отрисовки
                 Engine::renderer.WaitForDrawFences();
 
@@ -373,7 +382,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                     std::ref(LoadingIsEnded)
                 );
 
-                /*Сброс флага окончания загрузки*/
+                /*Сброс флага окончания выполнения потока*/
                 LoadingIsEnded = false;
 
                 /*Запуск потока*/
@@ -391,10 +400,11 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                     }
                 }
 
-                /*сброс векторов камеры редактора*/
+                /*сброс параметров камеры редактора*/
                 editorCamera.Reset();
 
-                /*    Выставить флаг для пересоздания буферов команд*/
+                /*Выставить флаг для перезаписи команд отрисовки,
+                                     так как кол-во объектов в сцене изменилось*/
                 Engine::renderer.SetRebuildTrigger();
             }
 
@@ -466,7 +476,6 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
             //Пункт меню "Save"
             ImGui::MenuItem("Save", "", &Save);
             if (Save) {
-                //Если путь к сцене не пустой
                 if (Engine::Globals::gScene->GetScenePath() != "")
                 {
                     spdlog::info("Saving...");
@@ -520,18 +529,18 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
             }
 
             ImGui::MenuItem(u8"Exit", "ALT + F4", &CloseWindow);
-
             ImGui::EndMenu();
+
             if (CloseWindow) {
                 SendMessage(hwnd, WM_CLOSE, 0, 0);
             }
-        }    //Конец меню//
+        }
 
         if (ImGui::BeginMenu(u8"Simulation")) {
             ImGui::MenuItem(u8"Start", "", &StartButtonActive);
 
             if (StartButtonActive) {//Обработка нажатия кнопки "старт"//
-                Engine::Globals::gIsScenePlaying = true; //Проигрывание сцены//
+                Engine::Globals::gIsScenePlaying = true; //Сцена проигрывается//
                 ResetPhysics = true; //Физика будет сброшена после остановки симуляции//
             }
             else {
@@ -604,6 +613,11 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                     //Вызов всплывающего окна Popup//
                     ImGui::OpenPopup("Popup");
                 }
+            }
+
+            if (SelectedItem_ID > Entities.size() - 1)
+            {
+                SelectedItem_ID = -1;
             }
 
             if (ImGui::BeginPopup("Popup")) {
@@ -773,10 +787,10 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
             ImGui::End();
         }
         else {
-            //растяжение 3D вьюпорта если панель иерархии не отображена//
+            //растяжение 3D вьюпорта если панель иерархии не отображена
             Engine::renderer.rendererViewport.x = 0;
             Engine::renderer.rendererViewport.width = static_cast<float>(Engine::renderer.swapchain.GetInfo().imageExtent.width);
-        }//конец панели иерархии//
+        }//конец панели иерархии
 
         //Панель свойств//
         if (ShowPropertiesPanel) {
@@ -981,8 +995,11 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                                     ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->CreateRigidBody(
                                         Engine::RIGIDBODY_SHAPE_TYPE_CUBE,
                                         Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
-                                        SelectedItem_ID
+                                        reinterpret_cast<uint64_t>(reinterpret_cast<int*>(Entities[SelectedItem_ID]))
                                     );
+
+                                    std::cout << reinterpret_cast<uint64_t>(reinterpret_cast<int*>(Entities[SelectedItem_ID])) << std::endl;
+                                    std::cout << ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->GetBulletRigidBody()->GetEntityId() << std::endl;
                                 }
                                 if (ImGui::MenuItem("Plane"))
                                 {
@@ -990,7 +1007,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                                     ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->CreateRigidBody(
                                         Engine::RIGIDBODY_SHAPE_TYPE_PLANE,
                                         Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
-                                        SelectedItem_ID
+                                        reinterpret_cast<uint64_t>(reinterpret_cast<int*>(Entities[SelectedItem_ID]))
                                     );
                                 }
                                 if (ImGui::MenuItem("Sphere"))
@@ -999,7 +1016,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                                     ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->CreateRigidBody(
                                         Engine::RIGIDBODY_SHAPE_TYPE_SPHERE,
                                         Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
-                                        SelectedItem_ID
+                                        reinterpret_cast<uint64_t>(reinterpret_cast<int*>(Entities[SelectedItem_ID]))
                                     );
                                 }
                                 if (ImGui::MenuItem("Mesh"))
@@ -1008,12 +1025,59 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                                     ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->CreateRigidBody(
                                         ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>(),
                                         Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
-                                        SelectedItem_ID
+                                        reinterpret_cast<uint64_t>(reinterpret_cast<int*>(Entities[SelectedItem_ID])),
+                                        false
+                                    );
+                                }
+                                if (ImGui::MenuItem("Static Mesh"))
+                                {
+                                    ((Engine::GameObject*)Entities.at(SelectedItem_ID))->AddComponent<Engine::RigidBody>();
+                                    ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::RigidBody*>()->CreateRigidBody(
+                                        ((Engine::GameObject*)Entities.at(SelectedItem_ID))->pGetComponent<Engine::Mesh*>(),
+                                        Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld,
+                                        reinterpret_cast<uint64_t>(reinterpret_cast<int*>(Entities[SelectedItem_ID])),
+                                        true
                                     );
                                 }
 
                                 Engine::renderer.SetRebuildTrigger();
                                 ImGui::EndPopup();
+                            }
+                        }
+                    }
+
+                    //Управление скриптом
+                    if (ImGui::CollapsingHeader(u8"Script")) {
+                        ImGui::TextWrapped((Entities.at(SelectedItem_ID))->pGetScript()->GetScriptPath().c_str());
+                        if (ImGui::Button("Browse Script"))
+                        {
+                            std::string path = WinApiOpenDialog();
+                            if (path != "")
+                            {
+                                Entities.at(SelectedItem_ID)->pGetScript()->SetScriptPath(path);
+                            }
+                        }
+                        if (Entities.at(SelectedItem_ID)->pGetScript()->GetScriptPath() != "")
+                        {
+                            if (ImGui::Button("Open Script"))
+                            {
+                                std::string scriptPath = Entities.at(SelectedItem_ID)->pGetScript()->GetScriptPath();
+                                std::replace(scriptPath.begin(), scriptPath.end(), '/', '\\');
+                                std::wstring scr = StringToWideString(scriptPath);
+                                LPCWSTR s = scr.c_str();
+
+                                SHELLEXECUTEINFO ShExecInfo;
+                                ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+                                ShExecInfo.fMask = NULL;
+                                ShExecInfo.hwnd = NULL;
+                                ShExecInfo.lpVerb = NULL;
+                                ShExecInfo.lpFile = s;
+                                ShExecInfo.lpParameters = NULL;
+                                ShExecInfo.lpDirectory = NULL;
+                                ShExecInfo.nShow = SW_MAXIMIZE;
+                                ShExecInfo.hInstApp = NULL;
+
+                                int r = ShellExecuteEx(&ShExecInfo);
                             }
                         }
                     }
@@ -1061,6 +1125,42 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                         *((Engine::PointLightObject*)Entities.at(SelectedItem_ID))->pGetPointLightUniformData() = pointLightAttributes;
                     }
 
+                    //Управление скриптом
+                    if (ImGui::CollapsingHeader(u8"Script")) {
+                        ImGui::TextWrapped((Entities.at(SelectedItem_ID))->pGetScript()->GetScriptPath().c_str());
+                        if (ImGui::Button("Browse Script"))
+                        {
+                            std::string path = WinApiOpenDialog();
+                            if (path != "")
+                            {
+                                Entities.at(SelectedItem_ID)->pGetScript()->SetScriptPath(path);
+                            }
+                        }
+                        if (Entities.at(SelectedItem_ID)->pGetScript()->GetScriptPath() != "")
+                        {
+                            if (ImGui::Button("Open Script"))
+                            {
+                                std::string scriptPath = Entities.at(SelectedItem_ID)->pGetScript()->GetScriptPath();
+                                std::replace(scriptPath.begin(), scriptPath.end(), '/', '\\');
+                                std::wstring scr = StringToWideString(scriptPath);
+                                LPCWSTR s = scr.c_str();
+
+                                SHELLEXECUTEINFO ShExecInfo;
+                                ShExecInfo.cbSize = sizeof(SHELLEXECUTEINFO);
+                                ShExecInfo.fMask = NULL;
+                                ShExecInfo.hwnd = NULL;
+                                ShExecInfo.lpVerb = NULL;
+                                ShExecInfo.lpFile = s;
+                                ShExecInfo.lpParameters = NULL;
+                                ShExecInfo.lpDirectory = NULL;
+                                ShExecInfo.nShow = SW_MAXIMIZE;
+                                ShExecInfo.hInstApp = NULL;
+
+                                int r = ShellExecuteEx(&ShExecInfo);
+                            }
+                        }
+                    }
+
                     break;
                 }
                 case Engine::ENTITY_TYPE_DIRECTIONAL_LIGHT_OBJECT:
@@ -1095,6 +1195,7 @@ void SceneEditor::DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities) 
                     break;
                 }
                 default:
+
                     break;
                 }
             }
@@ -1118,8 +1219,81 @@ void RegisterClasses() {
         .addFunction("Test", &Engine::Entity::lua_Test)
         .addFunction("MoveEntity", &Engine::Entity::lua_MoveEntity)
         .addFunction("RotateEntity", &Engine::Entity::lua_RotateEntity)
+        .addFunction("TranslateEntity", &Engine::Entity::lua_TranslateEntity)
+        .addFunction("TriggerDestroy", &Engine::Entity::TriggerDestroy)
+        .addFunction("GetName", &Engine::Entity::GetName)
+        .endClass()
+        .beginClass<Engine::GameObject>("GameObject")
+        .addFunction("Test", &Engine::GameObject::lua_Test)
+        .addFunction("MoveEntity", &Engine::GameObject::lua_MoveEntity)
+        .addFunction("RotateEntity", &Engine::GameObject::lua_RotateEntity)
+        .addFunction("TranslateEntity", &Engine::GameObject::lua_TranslateEntity)
+        .addFunction("TriggerDestroy", &Engine::GameObject::TriggerDestroy)
+        .addFunction("GetName", &Engine::Entity::GetName)
+        .addFunction("ApplyEntityTransformToRigidbody", &Engine::GameObject::ApplyEntityTransformToRigidbody)
         .endClass()
         .getGlobalNamespace(Engine::Lua::gLuaState);
+}
+
+void ProcessCollisions() {
+    struct ContactObjects
+    {
+        Engine::Entity* obj1;
+        Engine::Entity* obj2;
+        ContactObjects(Engine::Entity* ent1, Engine::Entity* ent2) {
+            obj1 = ent1;
+            obj2 = ent2;
+        }
+    };
+
+    std::vector<ContactObjects> contactObjects;
+
+    btDynamicsWorld* world = Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld;
+    int numManifolds = world->getDispatcher()->getNumManifolds();
+
+    for (int i = 0; i < numManifolds; i++)
+    {
+        btPersistentManifold* contactManifold = world->getDispatcher()->getManifoldByIndexInternal(i);
+        const btCollisionObject* obA = contactManifold->getBody0();
+        const btCollisionObject* obB = contactManifold->getBody1();
+
+        int numContacts = contactManifold->getNumContacts();
+        for (int j = 0; j < numContacts; j++)
+        {
+            btManifoldPoint& pt = contactManifold->getContactPoint(j);
+            if (pt.getDistance() < 0.f)
+            {
+                const btVector3& ptA = pt.getPositionWorldOnA();
+                const btVector3& ptB = pt.getPositionWorldOnB();
+                const btVector3& normalOnB = pt.m_normalWorldOnB;
+            }
+        }
+
+        Engine::Entity* entityA = reinterpret_cast<Engine::Entity*>(((Engine::Engine_Bullet3Rigidbody*)obA)->GetEntityId());
+        Engine::Entity* entityB = reinterpret_cast<Engine::Entity*>(((Engine::Engine_Bullet3Rigidbody*)obB)->GetEntityId());
+
+        contactObjects.push_back(ContactObjects(entityA, entityB));
+    }
+
+    for (std::vector<ContactObjects>::iterator i = contactObjects.begin(); i != contactObjects.end(); i++)
+    {
+        (*i).obj1->pGetScript()->doScriptOnCollision((Engine::GameObject*)(*i).obj1, (Engine::GameObject*)(*i).obj2);
+        /*if ((*i).obj1->GetName() == "Sphere" && (*i).obj2->GetName() == "box")
+        {
+            (*i).obj2->DestroyEntity = true;
+        }*/
+    }
+
+    std::vector<Engine::Entity*>* Entities = Engine::Globals::gScene->pGetVectorOfEntities();
+
+    for (std::vector<Engine::Entity*>::iterator i = Entities->begin(); i != Entities->end(); i++)
+    {
+        if ((*i)->IsDestroyTriggered()) {
+            Engine::renderer.WaitForDrawFences();
+            delete (*i);
+            Entities->erase(i--);
+        }
+    }
 }
 
 //Инициализация//
@@ -1202,7 +1376,7 @@ void Application::Init() {
             0);
     }
 
-    ::ShowWindow(hwnd, SW_SHOWDEFAULT);
+    //::ShowWindow(hwnd, SW_SHOWDEFAULT);
     ::UpdateWindow(hwnd);
 
     //Первоначальная настройка компонентов Vulkan//
@@ -1237,6 +1411,7 @@ void Application::Init() {
 //Главный цикл//
 void Application::Execute() {
     MSG msg = { };
+
     ResetEntities(Engine::Globals::gScene->pGetVectorOfEntities());
 
     while (msg.message != WM_QUIT) {
@@ -1262,6 +1437,7 @@ void Application::Execute() {
             //Шаг симуляции физической модели перемещения//
             float step = (float)Engine::Globals::DeltaTime;
             Engine::Globals::bulletPhysicsGlobalObjects.dynamicsWorld->stepSimulation(step, 0);
+            ProcessCollisions();
         }
 
         if (ENABLE_IMGUI) {
@@ -1272,7 +1448,7 @@ void Application::Execute() {
                 ImGui::NewFrame();
 
                 //Запись данных кадра//
-                sceneEditor.DrawEditor(hwnd, *Engine::Globals::gScene->pGetVectorOfEntities());
+                sceneEditor.UpdateEditor(hwnd, *Engine::Globals::gScene->pGetVectorOfEntities());
 
                 //Подготовка данных для передачи в GPU//
                 ImGui::Render();
@@ -1281,57 +1457,54 @@ void Application::Execute() {
             }
         }
 
-        if (sceneEditor.LoadingIsEnded)
+        Engine::Globals::DeltaTime *= 10;
+
+        if (!Engine::Globals::gIsScenePlaying)
         {
-            Engine::Globals::DeltaTime *= 10;
-            if (!Engine::Globals::gIsScenePlaying)
+            sceneEditor.editorCamera.Update();
+
+            std::thread drawWithEditorCamera(
+                &Engine::Renderer::DrawScene,
+                &Engine::renderer,
+                ImguiDrawData,
+                Engine::Globals::gScene,
+                sceneEditor.editorCamera
+            );
+
+            drawWithEditorCamera.join();
+        }
+        else
+        {
+            for (size_t i = 0; i < Engine::Globals::gScene->pGetVectorOfEntities()->size(); i++)
             {
-                sceneEditor.editorCamera.Update();
-
-                std::thread drawWithEditorCamera(
-                    &Engine::Renderer::DrawScene,
-                    &Engine::renderer,
-                    ImguiDrawData,
-                    Engine::Globals::gScene,
-                    sceneEditor.editorCamera
-                );
-
-                drawWithEditorCamera.join();
-            }
-            else {
-                for (size_t i = 0; i < Engine::Globals::gScene->pGetVectorOfEntities()->size(); i++) {
-                    //Применение физической модели к графической//
-                    if (Engine::Globals::gScene->pGetVectorOfEntities()->at(i)->GetEntityType() == Engine::ENTITY_TYPE_GAME_OBJECT) {
-                        ((Engine::GameObject*)Engine::Globals::gScene->pGetVectorOfEntities()->at(i))->ApplyPhysicsToEntity();
-                    }
-                    //Обновление состояния объектов//
-                    Engine::Globals::gScene->pGetVectorOfEntities()->at(i)->Update();
-                    Engine::Globals::gScene->pGetVectorOfEntities()->at(i)->ExecuteScript();
-                }
-
-                if (Engine::Globals::states.useSceneCamera)
+                //Применение физической модели к графической//
+                if (Engine::Globals::gScene->pGetVectorOfEntities()->at(i)->GetEntityType() == Engine::ENTITY_TYPE_GAME_OBJECT)
                 {
-                    //Отрисовка сцены c активной камерой//
-                    if (Engine::Globals::gScene->pGetActiveCamera() != nullptr)
-                    {
-                        Engine::Globals::gScene->UpdateActiveCamera();
-
-                        std::thread drawWithActiveCamera(
-                            &Engine::Renderer::DrawScene,
-                            &Engine::renderer,
-                            ImguiDrawData,
-                            Engine::Globals::gScene,
-                            *Engine::Globals::gScene->pGetActiveCamera()
-                        );
-
-                        drawWithActiveCamera.join();
-                    }
+                    ((Engine::GameObject*)Engine::Globals::gScene->pGetVectorOfEntities()->at(i))->ApplyPhysicsToEntity();
                 }
-                if (!Engine::Globals::states.useSceneCamera || Engine::Globals::gScene->pGetActiveCamera() == nullptr) {
-                    //Если активная камера не определена//
-                    //Или флаг использования активной камееры не выставлен//
-                    //То отрисовка из камеры редактора//
+                //Обновление состояния объектов//
+                Engine::Globals::gScene->pGetVectorOfEntities()->at(i)->Update();
+                Engine::Globals::gScene->pGetVectorOfEntities()->at(i)->ExecuteScript();
+            }
 
+            if (Engine::Globals::states.useSceneCamera)
+            {
+                //Отрисовка сцены c активной камерой//
+                if (Engine::Globals::gScene->pGetActiveCamera() != nullptr)
+                {
+                    Engine::Globals::gScene->UpdateActiveCamera();
+
+                    std::thread drawWithActiveCamera(
+                        &Engine::Renderer::DrawScene,
+                        &Engine::renderer,
+                        ImguiDrawData,
+                        Engine::Globals::gScene,
+                        *Engine::Globals::gScene->pGetActiveCamera()
+                    );
+
+                    drawWithActiveCamera.join();
+                }
+                else {
                     sceneEditor.editorCamera.Update();
 
                     std::thread drawWithEditorCamera(
@@ -1344,6 +1517,23 @@ void Application::Execute() {
 
                     drawWithEditorCamera.join();
                 }
+            }
+            else if (Engine::Globals::gScene->pGetActiveCamera() == nullptr) {
+                //Если активная камера не определена//
+                //Или флаг использования активной камееры не выставлен//
+                //То отрисовка из камеры редактора//
+
+                sceneEditor.editorCamera.Update();
+
+                std::thread drawWithEditorCamera(
+                    &Engine::Renderer::DrawScene,
+                    &Engine::renderer,
+                    ImguiDrawData,
+                    Engine::Globals::gScene,
+                    sceneEditor.editorCamera
+                );
+
+                drawWithEditorCamera.join();
             }
         }
     }

@@ -97,14 +97,6 @@ public:
     }
 };
 
-class ScriptTester : public Engine::GameObject {
-public:
-    void Update() override {
-        //int var = script.getVar<lua_Integer>("a");
-        //std::cout << var << std::endl;
-    }
-};
-
 extern "C" {
     __declspec(dllexport) void DemoExe(
         Engine::Scene* scene,
@@ -119,13 +111,13 @@ extern "C" {
         std::vector<Entity*>* entities = scene->pGetVectorOfEntities();
         std::vector<DataTypes::DirectionalLightAttributes_t*>* directionalLightAttributes = scene->pGetVectorOfDirectionalLightAttributes();
         std::vector<DataTypes::PointLightAttributes_t*>* pointLightAttributes = scene->pGetVectorOfSpotlightAttributes();
-        std::vector<Engine::Camera*>* cameras = scene->pGetVectorOfCameras();
 
         Camera* cam = new PlayerCamera;
         cam->SetCameraFront(glm::vec3(0.f, -1.f, -1.f));
         cam->SetCameraPos(glm::vec3(5.0f, 50.0f, 50.f));
-        cameras->push_back(cam);
-        scene->SetActiveCameraFromIndex(0);
+        cam->SetID(reinterpret_cast<uint64_t>(reinterpret_cast<int*>(cam)));
+        entities->push_back(cam);
+        scene->SetActiveCamera(cam);
 
         Mesh* mesh;
         RigidBody* rigidBody;
@@ -158,7 +150,7 @@ extern "C" {
                 rigidBody->CreateRigidBody(
                     RIGIDBODY_SHAPE_TYPE_SPHERE,
                     dynamicsWorld,
-                    (int)reinterpret_cast<uint64_t>(reinterpret_cast<int*>(Sphere))
+                    reinterpret_cast<uint64_t>(reinterpret_cast<int*>(Sphere))
                 );
 
                 mesh->pGetMaterial()->metallic = 10.0f;
@@ -177,6 +169,8 @@ extern "C" {
                 Sphere->Transform.Scale(glm::vec3(1.5f, 1.5f, 1.5f));
 
                 Sphere->ApplyEntityTransformToRigidbody();
+                Sphere->pGetScript()->SetScriptPath("CoreAssets/scripts/sphere.lua");
+
                 entities->push_back(Sphere);
 
                 cam->SetRef(Sphere);
@@ -195,7 +189,7 @@ extern "C" {
                 rigidBody->CreateRigidBody(
                     RIGIDBODY_SHAPE_TYPE_CUBE,
                     dynamicsWorld,
-                    (int)reinterpret_cast<uint64_t>(reinterpret_cast<int*>(box))
+                    reinterpret_cast<uint64_t>(reinterpret_cast<int*>(box))
                 );
 
                 rigidBody->SetRestitution(0.5f);
@@ -224,7 +218,7 @@ extern "C" {
         mesh->CreateMesh("CoreAssets/ceramic.obj");
         rigidBody->CreateRigidBody(RIGIDBODY_SHAPE_TYPE_PLANE,
             dynamicsWorld,
-            (int)reinterpret_cast<uint64_t>(reinterpret_cast<int*>(gameObject2))
+            reinterpret_cast<uint64_t>(reinterpret_cast<int*>(gameObject2))
         );
 
         gameObject2->SetID(reinterpret_cast<uint64_t>(reinterpret_cast<int*>(gameObject2)));
@@ -238,7 +232,7 @@ extern "C" {
         gameObject2->ApplyEntityTransformToRigidbody();
         entities->push_back(gameObject2);
 
-        GameObject* obj = new ScriptTester;
+        GameObject* obj = new GameObject;
         obj->SetID(reinterpret_cast<uint64_t>(reinterpret_cast<int*>(obj)));
         obj->SetName("Test");
         obj->Transform.SetTranslation(glm::vec3(0.0f, 10.0f, 0.0f));
@@ -251,7 +245,7 @@ extern "C" {
 
         entities->push_back(obj);
 
-        GameObject* obj2 = new ScriptTester;
+        GameObject* obj2 = new GameObject;
         obj2->SetID(reinterpret_cast<uint64_t>(reinterpret_cast<int*>(obj2)));
         obj2->SetName("Test2");
         obj2->Transform.SetTranslation(glm::vec3(0.0f, 10.0f, 10.0f));

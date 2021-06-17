@@ -144,61 +144,121 @@ void Engine::RigidBody::CreateShape(RigidBodyShapeType shapeType) {
     }
 }
 
-void Engine::RigidBody::CreateShape(Mesh* mesh) {
-    ShapeType = RIGIDBODY_SHAPE_TYPE_MESH;
+void Engine::RigidBody::CreateShape(Mesh* mesh, bool IsStatic) {
+    if (IsStatic)
+    {
+        ShapeType = RIGIDBODY_SHAPE_TYPE_STATIC_MESH;
+    }
+    else {
+        ShapeType = RIGIDBODY_SHAPE_TYPE_MESH;
+    }
 
     if (ENABLE_RIGIDBODY_MESH) {
         DebugMesh.CreateMesh(mesh->pGetMeshPath(), glm::vec3(0.0f, 1.0f, 0.0f));
     }
 
-    std::vector<DataTypes::MeshVertex_t>* Vertices = mesh->GetVertices();
+    if (IsStatic)
+    {
+        std::vector<DataTypes::MeshVertex_t>* Vertices = mesh->GetVertices();
+        std::vector<uint32_t>* Indexes = mesh->GetIndexes();
+        btTriangleMesh* triMesh = new btTriangleMesh;
 
-    pShape = new btConvexHullShape;
-    for (size_t i = 0; i < mesh->GetVertices()->size(); i++) {
-        ((btConvexHullShape*)pShape)->addPoint(btVector3(
-            btScalar(Vertices->at(i).pos.x),
-            -btScalar(Vertices->at(i).pos.y),
-            btScalar(Vertices->at(i).pos.z)
-        )
-            ,
-            true);
+        for (size_t i = 0; i < Vertices->size(); i += 3) {
+            btVector3 v1(
+                Vertices->at(i).pos.x,
+                Vertices->at(i).pos.y,
+                Vertices->at(i).pos.z);
+
+            btVector3 v2(
+                Vertices->at(i + 1).pos.x,
+                Vertices->at(i + 1).pos.y,
+                Vertices->at(i + 1).pos.z);
+
+            btVector3 v3(
+                Vertices->at(i + 2).pos.x,
+                Vertices->at(i + 2).pos.y,
+                Vertices->at(i + 2).pos.z);
+
+            triMesh->addTriangle(v1, v2, v3, false);
+        }
+
+        for (size_t i = 0; i < Indexes->size(); i += 3)
+        {
+            triMesh->addTriangleIndices(int(Indexes->at(i)), int(Indexes->at(i + 1)), int(Indexes->at(i + 2)));
+        }
+
+        pShape = new btBvhTriangleMeshShape(triMesh, false);
+        delete Indexes;
     }
+    else {
+        std::vector<DataTypes::MeshVertex_t>* Vertices = mesh->GetVertices();
 
-    //((btConvexHullShape*)pShape)->optimizeConvexHull();
-    ((btConvexHullShape*)pShape)->initializePolyhedralFeatures();
-    ((btConvexHullShape*)pShape)->recalcLocalAabb();
+        pShape = new btConvexHullShape;
+        for (size_t i = 0; i < mesh->GetVertices()->size(); i++) {
+            ((btConvexHullShape*)pShape)->addPoint(btVector3(
+                btScalar(Vertices->at(i).pos.x),
+                -btScalar(Vertices->at(i).pos.y),
+                btScalar(Vertices->at(i).pos.z)
+            )
+                ,
+                true);
+        }
+
+        ((btConvexHullShape*)pShape)->initializePolyhedralFeatures();
+        ((btConvexHullShape*)pShape)->recalcLocalAabb();
+    }
 }
 
-void Engine::RigidBody::CreateBodyWithMass(btDynamicsWorld* dynamicsWorld, int userIndex) {
+void Engine::RigidBody::CreateBodyWithMass(btDynamicsWorld* dynamicsWorld, uint64_t userIndex) {
     btTransform transform;
     transform.setIdentity();
-    transform.setOrigin(btVector3(0, 0, 0));
 
     btVector3 bodyInertia;
     btScalar bodyMass = mass;
 
-    if (bodyMass == 0) pMotionState = 0;
-    else {
+    if (ShapeType == RIGIDBODY_SHAPE_TYPE_STATIC_MESH)
+    {
+        mass = 0;
+        btScalar bodyMass = mass;
         pMotionState = new btDefaultMotionState(transform);
-        pShape->calculateLocalInertia(bodyMass, bodyInertia);
+        btRigidBody::btRigidBodyConstructionInfo constructionInfo(
+            bodyMass,
+            pMotionState,
+            pShape,
+            btVector3(0, 0, 0)
+        );
+        constructionInfo.m_restitution = GetRestitution();
+        constructionInfo.m_friction = GetFriction();
+
+        pRigidBody = new Engine_Bullet3Rigidbody(constructionInfo);
+        pRigidBody->setUserPointer(this);
+        pRigidBody->setUserIndex(userIndex);
+
+        dynamicsWorld->addRigidBody(pRigidBody);
     }
+    else {
+        if (bodyMass == 0) pMotionState = 0;
+        else {
+            pMotionState = new btDefaultMotionState(transform);
+            pShape->calculateLocalInertia(bodyMass, bodyInertia);
+        }
 
-    btRigidBody::btRigidBodyConstructionInfo constructionInfo(
-        bodyMass,
-        pMotionState,
-        pShape,
-        bodyInertia
-    );
+        btRigidBody::btRigidBodyConstructionInfo constructionInfo(
+            bodyMass,
+            pMotionState,
+            pShape,
+            bodyInertia
+        );
+        constructionInfo.m_restitution = GetRestitution();
+        constructionInfo.m_friction = GetFriction();
 
-    constructionInfo.m_restitution = GetRestitution();
-    constructionInfo.m_friction = GetFriction();
+        pRigidBody = new Engine_Bullet3Rigidbody(constructionInfo);
+        pRigidBody->setActivationState(DISABLE_DEACTIVATION);
+        pRigidBody->setUserPointer(this);
+        pRigidBody->SetEntityId(userIndex);
 
-    pRigidBody = new btRigidBody(constructionInfo);
-    pRigidBody->setActivationState(DISABLE_DEACTIVATION);
-    pRigidBody->setUserPointer(this);
-    pRigidBody->setUserIndex(userIndex);
-
-    dynamicsWorld->addRigidBody(pRigidBody);
+        dynamicsWorld->addRigidBody(pRigidBody);
+    }
 }
 
 Engine::RigidBody::RigidBody() {
@@ -251,21 +311,17 @@ Engine::WireframeMesh* Engine::RigidBody::pGetDebugMesh() {
     return &DebugMesh;
 }
 
-btRigidBody* Engine::RigidBody::GetBulletRigidBody() {
+Engine::Engine_Bullet3Rigidbody* Engine::RigidBody::GetBulletRigidBody() {
     return pRigidBody;
 }
 
-btCollisionShape* Engine::RigidBody::GetBulletShape() {
-    return pShape;
-}
-
-void Engine::RigidBody::CreateRigidBody(RigidBodyShapeType shapeType, btDynamicsWorld* dynamicsWorld, int id) {
+void Engine::RigidBody::CreateRigidBody(RigidBodyShapeType shapeType, btDynamicsWorld* dynamicsWorld, uint64_t id) {
     CreateShape(shapeType);
     CreateBodyWithMass(dynamicsWorld, id);
 }
 
-void Engine::RigidBody::CreateRigidBody(Mesh* mesh, btDynamicsWorld* dynamicsWorld, int id) {
-    CreateShape(mesh);
+void Engine::RigidBody::CreateRigidBody(Mesh* mesh, btDynamicsWorld* dynamicsWorld, uint64_t id, bool IsStatic) {
+    CreateShape(mesh, IsStatic);
     CreateBodyWithMass(dynamicsWorld, id);
 }
 
@@ -285,7 +341,7 @@ Engine::RigidBodyShapeType Engine::RigidBody::GetShapeType() {
 
 void Engine::RigidBody::SetMass(float val) {
     mass = val;
-    if (pShape != nullptr) {
+    if (pShape != nullptr && ShapeType != RIGIDBODY_SHAPE_TYPE_STATIC_MESH) {
         btVector3 bodyInertia;
         btScalar bodyMass = mass;
         pShape->calculateLocalInertia(bodyMass, bodyInertia);

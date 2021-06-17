@@ -9,19 +9,19 @@
 //Редактор сцены
 class SceneEditor {
 private:
-
+    Engine::Scene bufferSceneData;
     bool DemoWindowActive = true,  //Демо ImGui (для отладки)
         ShowHierarchyPanel = true,  //Показать панель иерархии
         ShowPropertiesPanel = true,  //Показать панель свойств
         StartButtonActive,			  //Обработка нажатия кнопки старт
-        ResetPhysics = true,  //Сбросить физические параметры (Если симуляция не начата)
+        ResetPhysics = false,  //Сбросить физические параметры (Если симуляция не начата)
         CloseWindow = false, //Закрыть окно
         OpenFileDialog = false; //Вывод диалогового окна для открытия файла
 
 public:
+    Engine::EditorCamera editorCamera{};//Камера редактора сцен
     std::atomic<bool> LoadingIsEnded = true;//Ожидание завершения потока загрузки
     bool enableEditor = false;
-    Engine::EditorCamera editorCamera{};//Камера редактора сцен
     int   SelectedItem_ID = -1;  //Текущий выбранный элемент
     float MenubarHeight = 0;    //Высота менюбара (для вычисления отступов)
 public:
@@ -30,7 +30,7 @@ public:
     void InitEditor(HWND hwnd);
 
     //Обработка интерфейса в главном цикле
-    void DrawEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities);
+    void UpdateEditor(HWND hwnd, std::vector<Engine::Entity*>& Entities);
 };
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);

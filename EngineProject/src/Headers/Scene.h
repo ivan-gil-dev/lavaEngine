@@ -22,8 +22,6 @@ namespace Engine {
 
         std::string scenePath;//ѕуть к сцене
 
-        std::vector<Camera*> cameras;
-
         Camera* activeCamera;
 
     public:
@@ -54,9 +52,7 @@ namespace Engine {
 
         std::vector<DataTypes::PointLightAttributes_t*>* pGetVectorOfSpotlightAttributes();
 
-        std::vector<Camera*>* pGetVectorOfCameras();
-
-        void SetActiveCameraFromIndex(int id);
+        void SetActiveCamera(Camera* camera);
 
         Camera* pGetActiveCamera();
 

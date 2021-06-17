@@ -107,6 +107,8 @@ namespace Engine {
 
         std::vector<DataTypes::MeshVertex_t>* GetVertices();
 
+        std::vector<uint32_t>* GetIndexes();
+
         DataTypes::Material_t GetMaterial();
 
         DataTypes::Material_t* pGetMaterial();

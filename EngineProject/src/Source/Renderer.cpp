@@ -310,7 +310,7 @@ namespace Engine {
     void Renderer::WaitForDrawFences()
     {
         VkResult r = vkWaitForFences(device.Get(), syncObjects.GetFences().size(), syncObjects.GetFences().data(), VK_TRUE, UINT64_MAX);
-        std::cout << "Wait For Fence Result " << r << std::endl;
+        //std::cout << "Wait For Fence Result " << r << std::endl;
     }
 
     void Renderer::BuildCommandBuffers(ImDrawData* drawData, Scene* scene)

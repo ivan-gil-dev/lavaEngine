@@ -169,7 +169,6 @@ void main(){
         result += CalculateSpotlight(light.spotlight[i],norm,viewDir);
     }
     
-
     for (int i = 0; i < MAX_DLIGHTS; i++){
        result += CalculateDirectionalLight(directionalLight.directionalLight_t[i],norm,viewDir);
     }

@@ -27,7 +27,8 @@ namespace Engine {
         ENTITY_TYPE_GAME_OBJECT,
         ENTITY_TYPE_CUBEMAP_OBJECT,
         ENTITY_TYPE_POINTLIGHT_OBJECT,
-        ENTITY_TYPE_DIRECTIONAL_LIGHT_OBJECT
+        ENTITY_TYPE_DIRECTIONAL_LIGHT_OBJECT,
+        ENTITY_TYPE_CAMERA_OBJECT
     };
 
     enum ComponentType {
@@ -42,7 +43,12 @@ namespace Engine {
         std::string Name;
         Lua::Script script;
         Entity* ref;
+        bool DestroyEntity = false;
     public:
+
+        void TriggerDestroy();
+
+        bool IsDestroyTriggered();
 
         void lua_Test(std::string testVar);
 
@@ -50,8 +56,12 @@ namespace Engine {
 
         void lua_RotateEntity(float x, float y, float z);
 
+        void lua_TranslateEntity(float x, float y, float z);
+
         Entity();
         virtual ~Entity();
+
+        //virtual void lua_Destroy();
 
         virtual void ExecuteScript();
 
@@ -96,6 +106,10 @@ namespace Engine {
         bool	  CursorFirstMouse;
 
         Camera();
+
+        void SetActive();
+
+        void SetNotActive();
 
         void SetCameraPos(glm::vec3 pos);
 
@@ -146,6 +160,8 @@ namespace Engine {
     public:
         PointLightObject();
         ~PointLightObject();
+
+        void ExecuteScript() override;
 
         void UpdateUniforms(uint32_t imageIndex, VkDevice device, Camera camera);
 
